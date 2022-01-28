@@ -3,9 +3,11 @@
 'bLoOoM hOw dO i gEt tHaT tHiNG yOu jUsT sHoWeD!!1??!?!'
 Here you go you fk noob
 
+## /ct import Bloom
+
 ### Features
 
-##### General / QoL
+#### General / QoL
 - Chat Editor
   - Replace parts of some messages - eg "ez" bypass, '/=' -> ≠.
 <img src="https://i.imgur.com/gmVN9ry.png">
@@ -20,7 +22,7 @@ Here you go you fk noob
 - Auto Reparty
   - Automatically reparty after a dungeon has ended.
 
-##### Dungeons
+#### Dungeons
 - Dungeon warp cooldown
   - Show how long to go before your dungeon cooldown is over and you can warp again.
 - Crystal Timer
@@ -37,13 +39,13 @@ Here you go you fk noob
 - Three Weirdos Solver
   - Idiot-proof three weirdos solver that deletes incorrect chests.
 
-##### GUI
+#### GUI
 - Party List Overlay
   - Overlay of all party members and shows who's leader.
 - Speed Display Overlay
   - Same as SBA's except it goes past 500.
 
-##### Party Finder
+#### Party Finder
 - Auto Kick
   - Options to Automatically kick players who join via party finder.
   - Set minimum secrets requirement.

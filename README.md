@@ -5,6 +5,17 @@ Here you go you fk noob
 
 ## /ct import Bloom
 
+## Installation
+
+### NOTE: ChatTriggers must be installed.
+
+1. Download the github files. Code (Green button) -> Download Zip
+2. Extract the folder (Right click -> Extract Here) and navigate through the extracted folder until you see these files. <img src="https://i.imgur.com/VPbb284.png">
+3. Open a new file explorer (Or do /ct files in-game) and navigate to your ChatTriggers 'modules' folder (.minecraft/config/ChatTriggers/modules)
+4. Copy and paste (or drag) the "Bloom" folder from the folder you downloaded earlier. If you already have an earlier version of the module installed, the old files should be automatically replaced and your old configs will be saved.
+5. Run the command "/ct load" in-game.
+6. The command to open the config GUI is "/bl"
+
 ### Features
 
 #### General / QoL

@@ -1,0 +1,8 @@
+{
+    "name": "Bloom",
+    "description": "Random stuff idk",
+    "version": "3.1.1",
+    "author": "UnclaimedBloom6",
+    "entry": "index.js",
+    "requires": ["requestV2", "CustomTabCompletions", "PogData", "Vigilance"]
+}

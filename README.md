@@ -29,6 +29,10 @@ Here you go you fk noob
   - Automatically reparty after a dungeon has ended.
 
 #### Dungeons
+- Zero Ping Terminals
+  - Allows clicking on terminals with no cooldown, giving the effect of having 0 ping.
+  - WARNING: This may become bannable in the future. The probability of being banned for this currently is low, however there is still some risk.
+
 - Dungeon warp cooldown
   - Show how long to go before your dungeon cooldown is over and you can warp again.
 

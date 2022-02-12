@@ -1,9 +1,9 @@
 {
     "latestVersion": "3.1.1",
     "changelog": [
-        "Test one",
-        "Test two",
-        "This is another test."
+        "First public release of Bloom.",
+        "Added Zero Ping Terminals",
+        "Fixed rose red and bone meal not being detected in color terminals."
     ],
     "author": "UnclaimedBloom6"
 }

@@ -32,6 +32,7 @@ Here you go you fk noob
 - Zero Ping Terminals
   - Allows clicking on terminals with no cooldown, giving the effect of having 0 ping.
   - WARNING: This may become bannable in the future. The probability of being banned for this currently is low, however there is still some risk.
+  - A video showcasing this feature can be watched [Here](https://youtu.be/uGcyKpzsc8M)
 
 - Dungeon warp cooldown
   - Show how long to go before your dungeon cooldown is over and you can warp again.

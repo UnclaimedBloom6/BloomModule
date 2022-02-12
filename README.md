@@ -3,7 +3,7 @@
 'bLoOoM hOw dO i gEt tHaT tHiNG yOu jUsT sHoWeD!!1??!?!'
 Here you go you fk noob
 
-## /ct import Bloom
+### For versions without Zero Ping Terminals, run "/ct import Bloom" in-game.
 
 ## Installation
 

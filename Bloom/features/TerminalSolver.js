@@ -43,7 +43,6 @@ class TerminalSolver {
             }
             else if (inv.getName().startsWith("Select all the ")) {
                 let color = inv.getName().match(/Select all the (.+) items!/)[1].toLowerCase()
-                ChatLib.chat(color)
                 this.correctSlots = getInvItemsTo(45).filter(a => fixColor(inv.getStackInSlot(a).getName().removeFormatting().toLowerCase()).startsWith(color)).filter(a => !isEnchanted(a))
             }
             else if (inv.getName().startsWith("What starts with: '")) {

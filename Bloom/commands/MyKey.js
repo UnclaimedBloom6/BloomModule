@@ -1,7 +1,7 @@
 import { prefix, data, fn, getMojangInfo } from "../utils/Utils"
 import request from "../../requestV2"
 
-const myKey = register("command", () => {
+export const myKey = register("command", () => {
     if (!data.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     new Message(`${prefix} &aGetting API Key stats...`).setChatLineId(75677).chat()
     request(`https://api.hypixel.net/key?key=${data.apiKey}`).then(keyStuff => {
@@ -18,5 +18,3 @@ const myKey = register("command", () => {
         ChatLib.chat(`${prefix} &cError: ${error}`)
     })
 }).setName("mykey")
-
-export { myKey }

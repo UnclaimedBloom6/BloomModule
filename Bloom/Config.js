@@ -96,7 +96,7 @@ class Config {
     // Reparty
     @SwitchProperty({
         name: "Auto Reparty",
-        description: "Automatically reparty after the dungeon boss has been defeated if you are the party leader.",
+        description: "Automatically reparty after the dungeon boss has been defeated if you are the party leader.\n&cNOTE: If another mod hides boss messages this will not work.",
         category: "General",
         subcategory: "Reparty"
     })
@@ -234,6 +234,14 @@ class Config {
         subcategory: "Terminals"
     })
     mazeHelper = true
+
+    @SwitchProperty({
+        name: "Hide Terminal Tooltips",
+        description: "Hides the tooltips when hovering over items in terminals.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    hideTerminalTooltips = true
 
     // ---------------------------------------------------------------
     // Gui

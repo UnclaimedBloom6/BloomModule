@@ -1,7 +1,7 @@
 import { addAllPlayersCompletion } from "../utils/TabCompletion"
 import { chatIncrement, fn, getGuildInfo, getHypixelPlayer, getMojangInfo, getRank, monthsShort, prefix } from "../utils/Utils"
 
-let memberCommand = register("command", (player) => {
+export const memberCommand = register("command", (player) => {
 	if (!player) player = Player.getName()
 	chatIncrement++
 	let currentChat = chatIncrement
@@ -88,5 +88,3 @@ let memberCommand = register("command", (player) => {
 }).setName("mem")
 
 addAllPlayersCompletion(memberCommand)
-
-export { memberCommand }

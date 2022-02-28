@@ -1,7 +1,7 @@
 import { prefix, calcSkillLevel, data, fn, getMojangInfo, getRecentProfile, getSbProfiles, getSlothPixelPlayer, title } from "../utils/Utils";
 import { maxLevels, normalSkill } from "../utils/SkillsProgression";
 
-const skillsCommand = register("command", (player) => {
+export const skillsCommand = register("command", (player) => {
     if (!data.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (!player) player = Player.getName()
     new Message(`${prefix} &aGetting skills for ${player}...`).setChatLineId(65443).chat()
@@ -59,4 +59,3 @@ const skillsCommand = register("command", (player) => {
         ChatLib.chat(`1 ${error}`)
     })
 }).setName("skills")
-export { skillsCommand }

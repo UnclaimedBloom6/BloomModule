@@ -1,16 +1,12 @@
 import { hidePartyStuff } from "../Utils/Utils"
+import Config from "../Config"
 
-class AutoDSParty {
-    constructor() {
-        register("chat", (player, classs, level) => {
-            if (player !== Player.getName()) return
-            new Thread(() => {
-                hidePartyStuff(750)
-                ChatLib.command("pl")
-                Thread.sleep(750)
-                ChatLib.command("ds p", true)
-            }).start()
-        }).setChatCriteria("Dungeon Finder > ${player} joined the dungeon group! (${classs} Level ${*})")
-    }
-}
-export default new AutoDSParty()
+register("chat", (player, classs, level) => {
+    if (!Config.autoDSParty || player !== Player.getName()) return
+    new Thread(() => {
+        hidePartyStuff(750)
+        ChatLib.command("pl")
+        Thread.sleep(750)
+        ChatLib.command("ds p", true)
+    }).start()
+}).setChatCriteria("Dungeon Finder > ${player} joined the dungeon group! (${classs} Level ${*})")

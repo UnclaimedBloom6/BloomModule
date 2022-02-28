@@ -1,9 +1,11 @@
 {
-    "latestVersion": "3.1.1",
+    "latestVersion": "3.2.0",
     "changelog": [
-        "First public release of Bloom.",
-        "Added Zero Ping Terminals",
-        "Fixed rose red and bone meal not being detected in color terminals."
+        "Major code cleanup.",
+        "Improved dungeon warp timer (Shows other players cooldowns too).",
+        "Made toggle for Auto /ds actually work.",
+        "Added a first install message.",
+        "Fixed cactus green not being detected in terminal solver."
     ],
     "author": "UnclaimedBloom6"
 }

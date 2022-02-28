@@ -11,7 +11,8 @@ class TerminalSolver {
             "lapis": "blue",
             "cocoa": "brown",
             "dandelion": "yellow",
-            "rose": "red"
+            "rose": "red",
+            "cactus": "green"
         }
         const windowNames = [
             "Correct all the panes!",
@@ -72,7 +73,7 @@ class TerminalSolver {
                 this.correctSlots = []
             }
         })
-
+        
         const highlightSlot = (slot, rgba) => {
             // From AlonAddons
             let x = slot % 9;
@@ -82,7 +83,7 @@ class TerminalSolver {
             Renderer.translate(0, 0, 260);
             Renderer.drawRect(rgba ? Renderer.color(rgba[0], rgba[1], rgba[2], rgba[3]) : Renderer.color(0, 255, 0, 255), renderX - 8, renderY - 8, 16, 16);
         }
-
+        
         register("guiRender", () => {
             if (!this.correctSlots.length || !this.inTerm) return
             let invName = Player.getOpenedInventory().getName()
@@ -91,9 +92,9 @@ class TerminalSolver {
             // if (invName == "Navigate the maze!" && Config.mazeHelper) this.correctSlots.map(a => highlightSlot(a, [255, 150, 150, 255]))
             if (invName == "Navigate the maze!" && Config.mazeHelper && Config.zeroPingTerminals) highlightSlot(this.correctSlots[0], [255, 150, 150, 255])
         })
-
+        
         register("itemTooltip", (lore, item, event) => {
-            if (this.inTerm) cancel(event)
+            if (this.inTerm && Config.hideTerminalTooltips) cancel(event)
         })
     }
 }

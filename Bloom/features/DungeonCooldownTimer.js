@@ -1,61 +1,79 @@
 import Config from "../Config"
-import { prefix, data } from "../utils/Utils"
+import Dungeon from "../utils/Dungeon"
+import { prefix, data, stripRank } from "../utils/Utils"
 
-class DungeonCooldownTimer {
-    constructor() {
-        this.lastWarp = null
-        this.cooldown = 70
-        
-        this.restarting = false
-        this.rsFloor = null
-
-        register("chat", () => {
-            this.lastWarp = new Date().getTime()
-        }).setCriteria("SkyBlock Dungeon Warp (${*} players)")
-
-        register("renderOverlay", () => {
-            if (!Config.dungeonCooldown) return
-            let timeSince = Math.floor(70 - (new Date().getTime() - this.lastWarp) / 1000)
-            if (!this.lastWarp || timeSince < 0) {
-                if (this.restarting) {
-                    ChatLib.command(`${this.rsFloor}`, true)
-                    this.restarting = false
-                    this.rsFloor = null
-                    World.playSound("random.orb", 1, 1)
-                }
-                return
-            }
-            if (Config.dungeonCooldown || Config.cooldownMoveGui.isOpen()) {
-                Renderer.drawStringWithShadow(`&bCooldown: ${timeSince}`, data.dungeonWarpCooldown.x, data.dungeonWarpCooldown.y)
-            }
-        })
-        
-        register("dragged", (dx, dy, x, y) => {
-            if (Config.cooldownMoveGui.isOpen()) {
-                data.dungeonWarpCooldown.x = x
-                data.dungeonWarpCooldown.y = y
-                data.save()
-            }
-        })
-
-        register("command", (floor, reparty) => {
-            if (!floor) return ChatLib.chat(`${prefix} &a//rs <floor> [dont reparty?]`)
-            if (floor == "stop") {
-                this.restarting = false
-                this.rsFloor = null
-                return
-            }
-            new Thread(() => {
-                ChatLib.chat(`${prefix} &aRestarting &b${floor} &aafter cooldown is over!`)
-                if (!reparty || reparty.trim() == "") {
-                    ChatLib.command("/rp", true)
-                    Thread.sleep(4000)
-                }
-                this.restarting = true
-                this.rsFloor = floor
-            }).start()
-        }).setName("/rs")
-
+register("dragged", (dx, dy, x, y) => {
+    if (Config.cooldownMoveGui.isOpen()) {
+        data.dungeonWarpCooldown.x = x
+        data.dungeonWarpCooldown.y = y
+        data.save()
     }
+})
+
+if (!data.dungeonWarps) {
+    data.dungeonWarps = {}
+    data.save()
 }
-export default new DungeonCooldownTimer()
+// &a[VIP] Unclaimedd&r&e warped the party to a SkyBlock dungeon!&r
+const addWarp = (name, formatted) => {
+    data.dungeonWarps[name] = {"lastWarp": new Date().getTime(), "formatted": formatted}
+    data.save()
+}
+const getWarpTime = (player) => 70 - Math.floor((new Date().getTime() - data.dungeonWarps[player].lastWarp) / 1000)
+register("chat", (event) => {
+    let player = ChatLib.getChatMessage(event, true).match(/(.+)&e warped the party to a SkyBlock dungeon!&r/)[1]
+    let uf = stripRank(player.removeFormatting())
+    addWarp(uf, player)
+}).setCriteria("${*} warped the party to a SkyBlock dungeon!")
+
+register("chat", () => {
+    addWarp("You", "&6You")
+}).setCriteria("SkyBlock Dungeon Warp (${*} players)")
+
+register("renderOverlay", () => {
+    // Renderer.drawString(JSON.stringify(data.dungeonWarps, "", 4), data.dungeonWarpCooldown.x, data.dungeonWarpCooldown.y)
+    if ((!Config.dungeonCooldown || !Object.keys(data.dungeonWarps).length) && !Config.cooldownMoveGui.isOpen()) return
+    Renderer.drawString(`&6&lWarp Cooldown\n` + Object.keys(data.dungeonWarps).map(a => `${data.dungeonWarps[a].formatted}: &d${getWarpTime(a)}s`).join("\n"), data.dungeonWarpCooldown.x, data.dungeonWarpCooldown.y)
+})
+
+register("step", () => {
+    for (let i of Object.keys(data.dungeonWarps)) {
+        if (getWarpTime(i) < 0) {
+            delete data.dungeonWarps[i]
+            data.save()
+        }
+    }
+})
+
+let rsFloor = null
+let restarting = false
+
+const restart = (floor, reparty) => {
+    if (floor == "stop") {
+        rsFloor = null
+        restarting = false
+        ChatLib.chat(`${prefix} &aNo longer restarting!`)
+        return
+    }
+    if (!floor && Dungeon.floor) rsFloor = Dungeon.floor.toLowerCase()
+    else rsFloor = floor
+    ChatLib.chat(`${prefix} &aRestarting &b${rsFloor} &aafter cooldown is over!`)
+
+    if (reparty) {
+        ChatLib.command("/rp", true)
+        setTimeout(() => {
+            restarting = true
+        }, 3000);
+    }
+    else restarting = true
+}
+register("command", (floor) => restart(floor, true)).setName("rs")
+register("command", (floor) => restart(floor, false)).setName("/rs")
+
+register("tick", () => {
+    if (!restarting || !rsFloor || Object.keys(data.dungeonWarps).includes("You")) return
+    ChatLib.command(rsFloor, true)
+    World.playSound("random.orb", 1, 1)
+    restarting = false
+    rsFloor = null
+})

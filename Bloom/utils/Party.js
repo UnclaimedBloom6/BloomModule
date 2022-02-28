@@ -14,7 +14,8 @@ class Party {
 		this.memberLeft = [
 			/(.+) &r&ehas been removed from the party.&r/,
 			/(.+) &r&ehas left the party.&r/,
-			/(.+) &r&ewas removed from your party because they disconnected&r/
+			/(.+) &r&ewas removed from your party because they disconnected&r/,
+            /Kicked (.+) because they were offline./
 		]
 		this.partyDisbanded = [
 			/.+ &r&ehas disbanded the party!&r/,

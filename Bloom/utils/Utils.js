@@ -2,10 +2,11 @@ import PogObject from "../../PogData/index"
 import request from "../../requestV2/index"
 import { catacombs, cataSkills, maxLevels, normalSkill, runecrafting } from "./SkillsProgression"
 
-const prefix = "&8[&bBloom&8]&r"
-const BlockPoss = Java.type("net.minecraft.util.BlockPos")
-const Blocks = Java.type("net.minecraft.init.Blocks")
-const data = new PogObject("Bloom", {
+export const prefix = "&8[&bBloom&8]&r"
+export const BlockPoss = Java.type("net.minecraft.util.BlockPos")
+export const Blocks = Java.type("net.minecraft.init.Blocks")
+export const data = new PogObject("Bloom", {
+    "firstTime": true,
     "apiKey": null,
     "speedDisplay": {
         "x": 0,
@@ -30,9 +31,9 @@ const data = new PogObject("Bloom", {
     }
 }, "data/data.json")
 
-const fn = (num) => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-const getTabList = () => TabList.getNames().map(a => ChatLib.removeFormatting(a))
-// const title = (string) => {
+export const fn = (num) => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+export const getTabList = () => TabList.getNames().map(a => ChatLib.removeFormatting(a))
+// export const title = (string) => {
 //     let split = string.split(" ")
 //     let final = ""
 //     for (let i = 0; i < split.length; i++) {
@@ -42,11 +43,11 @@ const getTabList = () => TabList.getNames().map(a => ChatLib.removeFormatting(a)
 //     }
 //     return final.trim()
 // }
-const title = (text) => text.split(" ").map(a => a[0].toUpperCase() + a.slice(1)).join(" ")
+export const title = (text) => text.split(" ").map(a => a[0].toUpperCase() + a.slice(1)).join(" ")
 
 let hidePartyListDuration = null
 let hidePartyListStart = null
-const hidePartyStuff = (ms) => {
+export const hidePartyStuff = (ms) => {
 	hidePartyListStart = new Date().getTime()
 	hidePartyListDuration = ms
 }
@@ -68,17 +69,17 @@ register("tick", () => {
 	}
 })
 
-const isBetween = (a, b, c) => (a - b) * (a - c) <= 0
-const stripRank = (rankedPlayer) => rankedPlayer.replace(/\[[\w+\+-]+] /, "")
+export const isBetween = (a, b, c) => (a - b) * (a - c) <= 0
+export const stripRank = (rankedPlayer) => rankedPlayer.replace(/\[[\w+\+-]+] /, "")
 
-const getMojangInfo = (player) => player.length > 16 ? request(`https://sessionserver.mojang.com/session/minecraft/profile/${player}`) : request(`https://api.mojang.com/users/profiles/minecraft/${player}`)
-const getHypixelPlayer = (uuid) => request(`https://api.hypixel.net/player?key=${data.apiKey}&uuid=${uuid}`)
-const getSbProfiles = (uuid) => request(`https://api.hypixel.net/skyblock/profiles?key=${data.apiKey}&uuid=${uuid}`)
-const getSlothPixelPlayer = (player) => request(`https://api.slothpixel.me/api/players/${player}`)
-const getGuildInfo = (player) => request(`https://api.slothpixel.me/api/guilds/${player}`)
+export const getMojangInfo = (player) => player.length > 16 ? request(`https://sessionserver.mojang.com/session/minecraft/profile/${player}`) : request(`https://api.mojang.com/users/profiles/minecraft/${player}`)
+export const getHypixelPlayer = (uuid) => request(`https://api.hypixel.net/player?key=${data.apiKey}&uuid=${uuid}`)
+export const getSbProfiles = (uuid) => request(`https://api.hypixel.net/skyblock/profiles?key=${data.apiKey}&uuid=${uuid}`)
+export const getSlothPixelPlayer = (player) => request(`https://api.slothpixel.me/api/players/${player}`)
+export const getGuildInfo = (player) => request(`https://api.slothpixel.me/api/guilds/${player}`)
 // I MADE IT BETTER
-const getRecentProfile = (profiles, uuid) => profiles.profiles.map(a => [a.members[uuid].last_save, a]).sort((a, b) => a[0] - b[0]).reverse()[0][1]
-// const getRecentProfile = (profiles, uuid) => {
+export const getRecentProfile = (profiles, uuid) => profiles.profiles.map(a => [a.members[uuid].last_save, a]).sort((a, b) => a[0] - b[0]).reverse()[0][1]
+// export const getRecentProfile = (profiles, uuid) => {
 //     if (!profiles["profiles"]) return null
 //     let lastProfile = []
 //     for (let profile in profiles["profiles"]) {
@@ -96,10 +97,10 @@ const getRecentProfile = (profiles, uuid) => profiles.profiles.map(a => [a.membe
 //     }
 //     return profiles["profiles"][lastProfile[1]]
 // }
-const getSecs = (ms) => !ms ? "0s" : Math.floor(ms/10)/100 + "s"
-const getTime = (ms) => !ms ? "?" : Math.floor(ms/60000) !== 0 ? `${Math.floor(ms/60000)}m ${Math.floor(ms/1000)%60}s` : `${Math.floor(ms/1000)%60}s`
+export const getSecs = (ms) => !ms ? "0s" : Math.floor(ms/10)/100 + "s"
+export const getTime = (ms) => !ms ? "?" : Math.floor(ms/60000) !== 0 ? `${Math.floor(ms/60000)}m ${Math.floor(ms/1000)%60}s` : `${Math.floor(ms/1000)%60}s`
 
-const calcSkillLevel = (skill, xp) => {
+export const calcSkillLevel = (skill, xp) => {
     if (!xp || !skill) return 0
     let level = 0
     let progression = normalSkill
@@ -114,7 +115,7 @@ const calcSkillLevel = (skill, xp) => {
                 break
             }
         }
-        return Math.round((level + (xp - progression[level]) / (progression[level + 1] - progression[level])) * 100) / 100
+        return Math.floor((level + (xp - progression[level]) / (progression[level + 1] - progression[level])) * 100) / 100
     }
 
     if (Object.keys(maxLevels).includes(skill)) {
@@ -131,10 +132,10 @@ const calcSkillLevel = (skill, xp) => {
     }
 }
 
-const getDistance = (x1, y1, z1, x2, y2, z2) => Math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
+export const getDistance = (x1, y1, z1, x2, y2, z2) => Math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
 
-const removeUnicode = (text) => text.replace(/[^\u0000-\u007F]/g, "")
-const colors = {
+export const removeUnicode = (text) => text.replace(/[^\u0000-\u007F]/g, "")
+export const colors = {
 	"BLACK": "&0",
 	"DARK_BLUE": "&1",
 	"DARK_GREEN": "&2",
@@ -152,7 +153,7 @@ const colors = {
 	"YELLOW": "&e",
 	"WHITE": "&f"
 }
-const getRank = (playerInfo) => {
+export const getRank = (playerInfo) => {
 	// Gets the player's rank via the Hypixel player API method json
 	let rankFormats = {
 		"VIP": "&a[VIP]",
@@ -187,9 +188,9 @@ const getRank = (playerInfo) => {
 	}
 	return currRank
 }
-let chatIncrement = 3457
+export let chatIncrement = 3457
 
-function toTime(timeStamp) {
+export const toTime = (timeStamp) => {
 	if (!timeStamp) return `??:??`
 	let minutes = parseInt(timeStamp / 1000 / 60)
 	let seconds = parseInt((timeStamp - (minutes * 1000 * 60)) / 1000)
@@ -197,9 +198,9 @@ function toTime(timeStamp) {
 	if (isNaN(minutes) || isNaN(seconds)) return(`??:??`)
 	return(`${minutes ? minutes+":" : ""}${seconds}`)
 }
-const monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+export const monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-const partyPlayers = ([players]) => {
+export const partyPlayers = ([players]) => {
     if (!players || !players.length) return
     ChatLib.command(`p ${players[0]}`)
     if (players.length == 1) return
@@ -208,39 +209,7 @@ const partyPlayers = ([players]) => {
     }, 500);
 }
 
-const setEnchanted = (slot) => Player.getOpenedInventory()?.getStackInSlot(slot)?.itemStack?.func_77966_a(net.minecraft.enchantment.Enchantment.field_180314_l, 1)
-const setPaneToGreen = (slot) => Player.getOpenedInventory()?.getStackInSlot(slot)?.setDamage(5)
-const isEnchanted = (slot) => Player.getOpenedInventory()?.getStackInSlot(slot)?.isEnchanted()
-
-export {
-    prefix,
-    BlockPoss,
-    Blocks,
-    data,
-    getTabList,
-    fn,
-    title,
-    isBetween,
-    stripRank,
-    getMojangInfo,
-    getHypixelPlayer,
-    getSbProfiles,
-    getSlothPixelPlayer,
-    getGuildInfo,
-    getRecentProfile,
-    hidePartyStuff,
-    getSecs,
-    getTime,
-    calcSkillLevel,
-    getDistance,
-    removeUnicode,
-    colors,
-    getRank,
-    chatIncrement,
-    toTime,
-    monthsShort,
-    partyPlayers,
-    setEnchanted,
-    setPaneToGreen,
-    isEnchanted
-}
+export const setEnchanted = (slot) => Player.getOpenedInventory()?.getStackInSlot(slot)?.itemStack?.func_77966_a(net.minecraft.enchantment.Enchantment.field_180314_l, 1)
+export const setPaneToGreen = (slot) => Player.getOpenedInventory()?.getStackInSlot(slot)?.setDamage(5)
+export const isEnchanted = (slot) => Player.getOpenedInventory()?.getStackInSlot(slot)?.isEnchanted()
+export const clickSlot = (slot, windowId, btn) => Client.getMinecraft().field_71442_b.func_78753_a(windowId ? windowId : Player.getOpenedInventory().getWindowId(), slot, btn ? btn : 2, 3, Player.getPlayer())

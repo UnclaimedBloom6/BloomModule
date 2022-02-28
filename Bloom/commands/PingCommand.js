@@ -2,7 +2,7 @@ import { prefix } from "../utils/Utils"
 
 let lastPingCommand
 let waitingPingCommand
-let pingCommand = register("command", () => {
+export const pingCommand = register("command", () => {
 	lastPingCommand = new Date().getTime()
 	waitingPingCommand = true
 	new Message(`${prefix} &aCalculating Ping...`).setChatLineId(47564875).chat()
@@ -18,5 +18,3 @@ register("chat", event => {
 		waitingPingCommand = false
 	}
 }).setCriteria(/&rUnknown command. Type \".+" for help.&r/)
-
-export { pingCommand }

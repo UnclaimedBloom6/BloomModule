@@ -1,6 +1,6 @@
-import { isEnchanted, setEnchanted, setPaneToGreen } from "../Utils/Utils"
-import TerminalSolver from "./TerminalSolver"
+import { clickSlot, isEnchanted, setEnchanted, setPaneToGreen } from "../Utils/Utils"
 import Config from "../Config"
+import TerminalSolver from "./TerminalSolver"
 
 class ZeroPingTerms {
     constructor() {
@@ -8,22 +8,21 @@ class ZeroPingTerms {
         this.clicked = []
         this.enchantedSlots = []
         this.greenPanes = []
-        this.clickSlot = (slot) => Client.getMinecraft().field_71442_b.func_78753_a(this.windowId, slot, 2, 3, Player.getPlayer())
         this.doStuff = (gui, event) => {
             let correct = TerminalSolver.correctSlots
-            if (!correct.length) return
-    
+            if (!correct.length || !TerminalSolver.inTerm) return
+
             let slot = gui ? gui.getSlotUnderMouse()?.field_75222_d : correct[0]
             if (slot == null || this.clicked.includes(slot)) return event ? cancel(event) : null
-    
+
             let wi = Player.getPlayer().field_71070_bA.field_75152_c
             if (this.windowId < wi) this.windowId = wi
-    
+
             let inv = Player.getOpenedInventory()
             let invName = inv.getName()
-    
+
             let action = (slot) => setEnchanted(slot)
-    
+
             if (["Correct all the panes!", "Select all the ", "What starts with: '"].some(a => invName.startsWith(a))) {
                 if (!correct.includes(slot)) return event ? cancel(event) : null
                 if (invName == "Correct all the panes!") {
@@ -40,8 +39,11 @@ class ZeroPingTerms {
             this.clicked.push(slot)
             TerminalSolver.correctSlots = TerminalSolver.correctSlots.filter(a => a !== slot)
             if (event) cancel(event)
-            this.clickSlot(slot)
-            action(slot)
+            clickSlot(slot, this.windowId)
+            try {
+                action(slot)
+            }
+            catch(e) {}
             this.windowId++
         }
         register("guiMouseClick", (mx, my, btn, gui, event) => {
@@ -51,8 +53,12 @@ class ZeroPingTerms {
 
         register("guiRender", () => {
             if (!TerminalSolver.inTerm) return
-            this.enchantedSlots.filter(a => !isEnchanted(a)).map(a => setEnchanted(a))
-            this.greenPanes.map(a => setPaneToGreen(a))
+            // Index out of range error that I cba making an actual fix for
+            try { 
+                this.greenPanes.map(a => setPaneToGreen(a))
+                this.enchantedSlots.filter(a => !isEnchanted(a)).map(a => setEnchanted(a))
+            }
+            catch(e) {}
         })
         register("tick", () => {
             if (!TerminalSolver.inTerm) {

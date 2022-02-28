@@ -2,7 +2,7 @@ import { addAllPlayersCompletion } from "../utils/TabCompletion"
 import { getMojangInfo, prefix } from "../utils/Utils"
 import request from "../../requestV2"
 
-let scammerCommand = register("command", (player) => {
+export const scammerCommand = register("command", (player) => {
 	if (!player) player = Player.getName()
 	new Message(`${prefix} &aChecking if ${player} is a scammer...`).setChatLineId(468576858).chat()
 	getMojangInfo(player).then(mojangInfo => {
@@ -35,5 +35,3 @@ let scammerCommand = register("command", (player) => {
 }).setName("check")
 
 addAllPlayersCompletion(scammerCommand)
-
-export { scammerCommand }

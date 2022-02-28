@@ -4,7 +4,7 @@ import { addAllPlayersCompletion } from "../utils/TabCompletion"
 import { data, getHypixelPlayer, getMojangInfo, prefix, getRank, getSbProfiles, getRecentProfile, calcSkillLevel, fn, chatIncrement, toTime } from "../utils/Utils"
 
 let lastDsCommand = null
-const dsCommand = register("command", (player) => {
+export const dsCommand = register("command", (player) => {
     if (!data.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)
@@ -145,5 +145,3 @@ const dsCommand = register("command", (player) => {
 }).setName("ds")
 
 addAllPlayersCompletion(dsCommand)
-
-export { dsCommand }

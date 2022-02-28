@@ -3,7 +3,7 @@ import { addPartyCompletion } from "../utils/TabCompletion"
 import { hidePartyStuff, partyPlayers, prefix } from "../utils/Utils"
 
 let lastReparty
-let repartyCommand = register("command", ...args => {
+export const repartyCommand = register("command", ...args => {
 	new Thread(() => {
         args = !args ? [] : args
         hidePartyStuff(3000)
@@ -36,5 +36,3 @@ register("chat", event => {
 	if (/.+ &r&ehas disbanded the party!&r/.test(formatted)) cancel(event)
 	if (/.+ &r&einvited &r.+ &r&eto the party! They have &r&c60 &r&eseconds to accept.&r/.test(formatted)) cancel(event)
 }).setCriteria("${*}")
-
-export { repartyCommand }

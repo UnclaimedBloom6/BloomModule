@@ -63,7 +63,7 @@ register("chat", (event) => {
         cancel(event)
     }
     if (/☠Defeated(.+)in(.+)/.test(noSpaces)) {
-        bossKilled = noSpaces.match(/☠Defeated(.+)in(.+)/)[1].replace("The", "The ")
+        bossKilled = noSpaces.match(/☠Defeated(.+)in(.+)/)[1].replace("The", "The ").replace(/,/g, ", ").replace("and", " and ")
         time = noSpaces.match(/☠Defeated(.+)in(.+)/)[2]
         if (time.includes("(NEWRECORD!)")) {
             timePB = " &d&l(NEW RECORD!)"

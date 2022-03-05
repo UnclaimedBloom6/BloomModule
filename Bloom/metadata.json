@@ -1,7 +1,7 @@
 {
     "name": "Bloom",
     "description": "Random stuff idk",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "author": "UnclaimedBloom6",
     "entry": "index.js",
     "requires": ["requestV2", "CustomTabCompletions", "PogData", "Vigilance"]

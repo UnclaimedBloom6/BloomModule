@@ -50,11 +50,14 @@ export const dsCommand = register("command", (player) => {
                 let playedMM = Object.keys(master).length !== 0
                 
                 let selectedClass = dung["selected_dungeon_class"]
+
+                const prettify = (level) => level >= 120 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
                 
                 let cataXP = parseInt(cata["experience"])
                 let cataLevel = calcSkillLevel("catacombs", cataXP)
                 let cataLevelInt = parseInt(cataLevel)
-                let cataLevelStr = cataLevelInt == 50 ? `&6&l50` : `${cataLevel}`
+                let cataLevelStr = prettify(cataLevel)
+                let cataLow = cataLevel > 50 ? 50 : cataLevelInt
                 
                 let totalNormal = 0
                 let totalMaster = 0
@@ -73,9 +76,8 @@ export const dsCommand = register("command", (player) => {
                     let classLvl = calcSkillLevel(classs, classXP)
                     classLvls.push(classLvl)
                     let xpCurr = parseInt(classXP - catacombs[parseInt(classLvl)])
-                    let xpNext = catacombs[parseInt(classLvl)+1] - catacombs[parseInt(classLvl)]
-                    
-                    nameHover += classs == selectedClass ? `\n&a${classWithSymbols[classs]} - &e${classLvl}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)` : `\n&c${classWithSymbols[classs]} - &e${classLvl}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)`
+                    let xpNext = catacombs[parseInt(classLvl)+1] - catacombs[parseInt(classLvl)] || 0
+                    nameHover += `\n${classs == selectedClass ? "&a" : "&c"}${classWithSymbols[classs]} - &e${prettify(classLvl)}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)`
                     
                 })
                 let classAverage = Math.round(classLvls.reduce((a, b) => a + b) / classLvls.length * 100) / 100
@@ -93,15 +95,15 @@ export const dsCommand = register("command", (player) => {
                     }
                     return str
                 }
-                let xpNext = catacombs[cataLevelInt+1] - catacombs[cataLevelInt]
+                let xpNext = catacombs[cataLow+1] - catacombs[cataLow]
                 xpNext = isNaN(xpNext) ? 0 : xpNext
                 let percentTo50 = Math.floor(cataXP / catacombs[catacombs.length - 1] * 10000) / 100
                 let cataHover = `&e&nCatacombs\n` +
-                    `&aTotal XP: &6${fn(cataXP)}\n` +
-                    `&aProgress: &6${fn(cataXP - catacombs[cataLevelInt])}&a/&6${fn(xpNext)}\n` +
-                    `&aRemaining: &6${fn(parseInt(catacombs[cataLevelInt+1] - cataXP))}\n` +
-                    `&aPercent To 50: &6${percentTo50}%`
-                
+                    `&bTotal XP: &6${fn(cataXP)}\n` +
+                    `&aProgress: &6${fn(cataXP - catacombs[cataLow])}&a/&6${fn(xpNext)}\n` +
+                    (cataLevel < 50 ? `&eRemaining: &6${fn(parseInt(catacombs[cataLow+1] - cataXP) || 0)}\n` : "") +
+                    `&dPercent To 50: &6${percentTo50}%`
+                if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%200000000)}&c/&6200,000,000`
                 let compHover = getCompHover() + `\n&a${fn(totalNormal)}`
                 compHover += totalMaster == 0 ? "" :  ` &8| &c${fn(totalMaster)}`
                 compHover += `\n&aTotal: &e${fn(totalNormal + totalMaster)}`

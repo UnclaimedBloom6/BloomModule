@@ -1,11 +1,12 @@
 {
-    "latestVersion": "3.2.0",
+    "latestVersion": "3.2.1",
     "changelog": [
-        "Major code cleanup.",
-        "Improved dungeon warp timer (Shows other players cooldowns too).",
-        "Made toggle for Auto /ds actually work.",
-        "Added a first install message.",
-        "Fixed cactus green not being detected in terminal solver."
+        "Added run splits for new F7.",
+        "Added solver for new \"Change all to same color!\" terminal (0 ping doesnt work for it).",
+        "Added support for catacombs levels up to 120 in the /ds command.",
+        "Added some extra info to the /ds command related to higher catacombs players.",
+        "Added spaces between the boss names in custom end info on F7.",
+        "Still working on 0 ping for the new terminal, no ETA. No idea why it doesn't work currently."
     ],
     "author": "UnclaimedBloom6"
 }

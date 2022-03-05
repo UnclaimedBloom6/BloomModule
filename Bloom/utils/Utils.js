@@ -31,6 +31,29 @@ export const data = new PogObject("Bloom", {
     }
 }, "data/data.json")
 
+// export const colorOrder = [
+//     "orange",
+//     "yellow",
+//     "green",
+//     "blue",
+//     "red"
+// ]
+export const colorOrder = [1, 4, 13, 11, 14]
+
+// export const paneMetas = {
+//     "orange": 1,
+//     "yellow": 4,
+//     "green": 13,
+//     "blue": 11,
+//     "red": 14
+// }
+export const paneMetas = {
+    1: "orange",
+    4: "yellow",
+    13: "green",
+    11: "blue",
+    14: "red"
+}
 export const fn = (num) => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 export const getTabList = () => TabList.getNames().map(a => ChatLib.removeFormatting(a))
 // export const title = (string) => {
@@ -107,14 +130,11 @@ export const calcSkillLevel = (skill, xp) => {
     let maxLevel = 50
 
     const getLevel = () => {
-        if (xp > progression[maxLevel]) return maxLevel
-        
-        for (let i = 0; i < progression.length; i++) {
-            if (progression[i] >= xp) {
-                level = i - 1
-                break
-            }
+        if (xp > progression[maxLevel]) {
+            if (skill !== "catacombs") return maxLevel
+            return Math.floor((50 + (xp - progression[50])/200000000) * 100)/100
         }
+        level = progression.filter(a => a < xp).length
         return Math.floor((level + (xp - progression[level]) / (progression[level + 1] - progression[level])) * 100) / 100
     }
 
@@ -169,23 +189,15 @@ export const getRank = (playerInfo) => {
 		"Technoblade": "&d[PIG&b+++&d]"
 	}
 	let username = playerInfo["player"]["displayname"]
-	if (username in specialRanks) {
-		return specialRanks[username]
-	}
+	if (username in specialRanks) return specialRanks[username]
 	if ("rank" in playerInfo["player"] && playerInfo["player"]["rank"] in rankFormats) { return rankFormats[playerInfo["player"]["rank"]] }
 	let currRank = "&7"
-	if ("newPackageRank" in playerInfo["player"]) {
-		currRank = rankFormats[playerInfo["player"]["newPackageRank"]]
-	}
+	if ("newPackageRank" in playerInfo["player"]) currRank = rankFormats[playerInfo["player"]["newPackageRank"]]
 	if ("monthlyPackageRank" in playerInfo["player"] && playerInfo["player"]["monthlyPackageRank"] == "SUPERSTAR") {
 		currRank = "&6[MVP&c++&6]"
-		if ("monthlyRankColor" in playerInfo["player"]) {
-			currRank = currRank.replace("&b", colors[playerInfo["player"]["monthlyRankColor"]])
-		}
+		if ("monthlyRankColor" in playerInfo["player"]) currRank = currRank.replace("&b", colors[playerInfo["player"]["monthlyRankColor"]])
 	}
-	if ("rankPlusColor" in playerInfo["player"]) {
-		currRank = currRank.replace(/\+/g, `${colors[playerInfo['player']['rankPlusColor']]}+`)
-	}
+	if ("rankPlusColor" in playerInfo["player"]) currRank = currRank.replace(/\+/g, `${colors[playerInfo['player']['rankPlusColor']]}+`)
 	return currRank
 }
 export let chatIncrement = 3457
@@ -204,9 +216,7 @@ export const partyPlayers = ([players]) => {
     if (!players || !players.length) return
     ChatLib.command(`p ${players[0]}`)
     if (players.length == 1) return
-    setTimeout(() => {
-        ChatLib.command(`p ${players.splice(1).join(" ")}`)
-    }, 500);
+    setTimeout(() => ChatLib.command(`p ${players.splice(1).join(" ")}`), 500);
 }
 
 export const setEnchanted = (slot) => Player.getOpenedInventory()?.getStackInSlot(slot)?.itemStack?.func_77966_a(net.minecraft.enchantment.Enchantment.field_180314_l, 1)

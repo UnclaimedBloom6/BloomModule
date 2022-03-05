@@ -16,9 +16,9 @@ const reset = () => {
 
 const splits = {
     "7": {
-        "[BOSS] Necron: FINE! LET'S MOVE TO SOMEWHERE ELSE!!": "&aPhase 1",
-        "[BOSS] Necron: CRAP!! IT BROKE THE FLOOR!": "&bPhase 2",
-        "[BOSS] Necron: THAT'S IT YOU HAVE DONE IT!": "&cPhase 3",
+        "[BOSS] Storm: Pathetic Maxor, just like expected.": "&aPhase 1",
+        "[BOSS] Goldor: Who dares trespass into my domain?": "&bPhase 2",
+        "[BOSS] Necron: You went further than any human before, congratulations.": "&cPhase 3",
         "                             > EXTRA STATS <": "&4Phase 4",
     },
     "6": {

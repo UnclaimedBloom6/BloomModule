@@ -185,7 +185,7 @@ class Config {
         category: "Dungeons",
         subcategory: "Cooldown"
     })
-    dungeonCooldown = false
+    dungeonCooldown = false;
 
     @ButtonProperty({
         name: "Move",
@@ -217,7 +217,7 @@ class Config {
         category: "Solvers",
         subcategory: "Terminals"
     })
-    zeroPingTerminals = true
+    zeroPingTerminals = true;
 
     @SwitchProperty({
         name: "Terminal Solvers",
@@ -225,7 +225,7 @@ class Config {
         category: "Solvers",
         subcategory: "Terminals"
     })
-    terminalSolvers = false
+    terminalSolvers = false;
 
     @SwitchProperty({
         name: "Maze Helper",
@@ -233,7 +233,7 @@ class Config {
         category: "Solvers",
         subcategory: "Terminals"
     })
-    mazeHelper = true
+    mazeHelper = true;
 
     @SwitchProperty({
         name: "Hide Terminal Tooltips",
@@ -241,7 +241,7 @@ class Config {
         category: "Solvers",
         subcategory: "Terminals"
     })
-    hideTerminalTooltips = true
+    hideTerminalTooltips = true;
 
     // ---------------------------------------------------------------
     // Gui

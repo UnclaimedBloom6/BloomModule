@@ -77,12 +77,13 @@ export const hidePartyStuff = (ms) => {
 register("chat", event => {
 	let formatted = ChatLib.getChatMessage(event, true)
 	let unformatted = ChatLib.removeFormatting(formatted)
-	if (!hidePartyListStart || !hidePartyListDuration) { return }
+	if (!hidePartyListStart || !hidePartyListDuration) return
 	if (new Date().getTime() - hidePartyListStart < hidePartyListDuration && hidePartyListStart) {
-		if (formatted == "&9&m-----------------------------&r") { cancel(event) }
-		if (/Party Members|Leader|Moderators:.+/.test(unformatted)) { cancel(event) }
-		if (/.+ &r&ehas disbanded the party!&r/.test(formatted)) { cancel(event) }
-		if (/.+ &r&einvited &r.+ &r&eto the party! They have &r&c60 &r&eseconds to accept.&r/.test(formatted)) { cancel(event) }
+		if (formatted == "&9&m-----------------------------&r") cancel(event)
+		if (formatted == "&9&m-----------------------------------------------------&r") cancel(event)
+		if (/Party Members|Leader|Moderators:.+/.test(unformatted)) cancel(event)
+		if (/.+ &r&ehas disbanded the party!&r/.test(formatted)) cancel(event)
+		if (/.+ &r&einvited &r.+ &r&eto the party! They have &r&c60 &r&eseconds to accept.&r/.test(formatted)) cancel(event)
 	}
 })
 register("tick", () => {
@@ -122,7 +123,6 @@ export const getRecentProfile = (profiles, uuid) => profiles.profiles.map(a => [
 // }
 export const getSecs = (ms) => !ms ? "0s" : Math.floor(ms/10)/100 + "s"
 export const getTime = (ms) => !ms ? "?" : Math.floor(ms/60000) !== 0 ? `${Math.floor(ms/60000)}m ${Math.floor(ms/1000)%60}s` : `${Math.floor(ms/1000)%60}s`
-
 export const calcSkillLevel = (skill, xp) => {
     if (!xp || !skill) return 0
     let level = 0
@@ -135,7 +135,7 @@ export const calcSkillLevel = (skill, xp) => {
             return Math.floor((50 + (xp - progression[50])/200000000) * 100)/100
         }
         level = progression.filter(a => a < xp).length
-        return Math.floor((level + (xp - progression[level]) / (progression[level + 1] - progression[level])) * 100) / 100
+        return Math.floor((level-1 + (xp - progression[level-1]) / (progression[level] - progression[level-1])) * 100) / 100
     }
 
     if (Object.keys(maxLevels).includes(skill)) {

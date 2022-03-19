@@ -68,7 +68,7 @@ class Party {
                 let match = formatted.match(/^&eParty .+: &r(.+)/)
                 let players = match[1].split(new RegExp("&r&a ● &r|&r&c ● &r| &r&a●&r| &r&c●&r"))
                 for (i in players) {
-                    if (players[i].replace(new RegExp(" ", "g"), "") !== "") { this.addMember(players[i]) }
+                    if (players[i].replace(new RegExp(" ", "g"), "") !== "") this.addMember(players[i])
                 }
             }
             // You make a party in party finder
@@ -97,7 +97,7 @@ class Party {
             // Party leader left
             let match = formatted.match(/&eThe party was transferred to &r(.+) &r&ebecause &r(.+) &r&eleft&r/)
             if (match) {
-                if (stripRank(ChatLib.removeFormatting(match[2])) == Player.getName()) { this.disbandParty() }
+                if (stripRank(ChatLib.removeFormatting(match[2])) == Player.getName()) this.disbandParty()
                 else {
                     this.makeLeader(match[1])
                     this.removeMember(match[2])

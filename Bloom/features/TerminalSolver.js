@@ -23,7 +23,10 @@ class TerminalSolver {
             "Change all to same color!",
             "Click the button on time!"
         ]
-        
+        const noZeroPing = [
+            "Change all to same color!",
+            "Click the button on time!"
+        ]
         const getInvItemsTo = (endIndex) => Array.from(Array(endIndex).keys()).filter(a => Player.getOpenedInventory().getStackInSlot(a))
         const filterPanesWithMeta = (array, meta) => array.filter(a => Player.getOpenedInventory().getStackInSlot(a).getRegistryName() == "minecraft:stained_glass_pane" && Player.getOpenedInventory().getStackInSlot(a).getMetadata() == meta) 
         const filterPanesWithoutMeta = (array, meta) => array.filter(a => Player.getOpenedInventory().getStackInSlot(a).getRegistryName() == "minecraft:stained_glass_pane" && Player.getOpenedInventory().getStackInSlot(a).getMetadata() !== meta) 
@@ -42,7 +45,7 @@ class TerminalSolver {
             if (!inv) return
             let invName = inv.getName()
             this.inTerm = windowNames.some(a => inv.getName().startsWith(a))
-            if (this.inTerm && this.correctSlots.length && Config.zeroPingTerminals) return
+            if (this.inTerm && this.correctSlots.length && Config.zeroPingTerminals && !noZeroPing.includes(invName)) return
             if (invName == "Correct all the panes!") {
                 this.correctSlots = filterPanesWithMeta(getInvItemsTo(45), 14)
             }
@@ -83,7 +86,7 @@ class TerminalSolver {
         })
         
         const getSlotCorner = (slot) => {
-            // From AlonAddons
+            // From AlonAddons // Antonio
             let x = slot % 9;
             let y = Math.floor(slot / 9);
             let renderX = Renderer.screen.getWidth() / 2 + ((x - 4) * 18);
@@ -99,7 +102,6 @@ class TerminalSolver {
             let xy = getSlotCorner(slot)
             Renderer.translate(0, 0, 260);
             Renderer.drawString(text, xy[0] - 3, xy[1] - 3)
-            // Renderer.drawRect(rgba ? Renderer.color(rgba[0], rgba[1], rgba[2], rgba[3]) : Renderer.color(0, 255, 0, 255), renderX - 8, renderY - 8, 16, 16);
         }
         
         register("guiRender", () => {
@@ -107,11 +109,11 @@ class TerminalSolver {
             let invName = Player.getOpenedInventory().getName()
             if (invName == "Click in order!" && Config.terminalSolvers) this.correctSlots.slice(0, 3).map((a, b, c) => highlightSlot(a, [0, 255 - (c.indexOf(a)*75), 255 - (c.indexOf(a)*75), 255]))
             if (["What starts with: '", "Select all the "].some(a => invName.includes(a)) && Config.terminalSolvers) this.correctSlots.map(a => highlightSlot(a))
-            // if (invName == "Navigate the maze!" && Config.mazeHelper) this.correctSlots.map(a => highlightSlot(a, [255, 150, 150, 255]))
             if (invName == "Navigate the maze!" && Config.mazeHelper && Config.zeroPingTerminals) highlightSlot(this.correctSlots[0], [255, 150, 150, 255])
             if (invName == "Change all to same color!") new Set(this.correctSlots).map(a => {
                 let toClick = this.correctSlots.filter(b => b == a).length
-                drawTextOnSlot(a, `${toClick <= 2 ? "&f&l" + toClick : "&0&l" + (colorOrder.length-toClick)}`)
+                if (!Config.colorsRightClick) drawTextOnSlot(a, `&f&l${toClick}`)
+                else drawTextOnSlot(a, `${toClick <= 2 ? "&f&l" + toClick : "&0&l" + (colorOrder.length-toClick)}`)
             })
         })
         

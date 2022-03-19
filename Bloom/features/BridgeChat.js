@@ -19,7 +19,7 @@ request({
     register("chat", (event) => {
         let formatted = ChatLib.getChatMessage(event)
         let unformatted = ChatLib.removeFormatting(formatted)
-        let match = unformatted.match(/Guild > (.+): (.+) > (.+)/)
+        let match = unformatted.match(/^Guild > (.+): (.+) > (.+)/)
         if (!match) return
         if (match[1].includes(bridgeBot)) {
             cancel(event)

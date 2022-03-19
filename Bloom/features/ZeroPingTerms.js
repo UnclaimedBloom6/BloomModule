@@ -54,20 +54,19 @@ class ZeroPingTerms {
                 action = setPaneToGreen
                 this.greenPanes.push(slot)
             }
-            // This doesn't work properly.
+            // The rest of this terminal doesn't work properly.
             if (invName == "Change all to same color!") {
-                return
+            //     // return
             //     if (!meta) return
-            //     action = null
+                action = null
             //     let amount = TerminalSolver.correctSlots.filter(a => a == slot).length
             //     let backwards = colorOrder.length-amount
                 
             //     if (amount <= 2) finalClick = 0
             //     else finalClick = 1
                 
-            //     incrementPane(slot, meta, finalClick == 0 ? false : true)
-            //     this.paneMetas[slot] = inv.getStackInSlot(slot)?.getMetadata()
-            //     // ChatLib.chat(`Clicking ${finalClick}`)
+                incrementPane(slot, meta, false)
+                this.paneMetas[slot] = inv.getStackInSlot(slot)?.getMetadata()
 
             //     if (finalClick == 1 && backwards == 1) toRemove = 4
             //     else if (finalClick == 1) {

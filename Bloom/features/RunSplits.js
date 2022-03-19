@@ -6,6 +6,7 @@ let lastSplit = null
 let splitIndex = 0
 let splitMsg = ""
 let currentSplit = ""
+let splitFloor = "F7"
 
 const reset = () => {
     lastSplit = null
@@ -15,11 +16,20 @@ const reset = () => {
 }
 
 const splits = {
-    "7": {
-        "[BOSS] Storm: Pathetic Maxor, just like expected.": "&aPhase 1",
-        "[BOSS] Goldor: Who dares trespass into my domain?": "&bPhase 2",
-        "[BOSS] Necron: You went further than any human before, congratulations.": "&cPhase 3",
-        "                             > EXTRA STATS <": "&4Phase 4",
+    "F7": {
+        "[BOSS] Storm: Pathetic Maxor, just like expected.": "&aMaxor",
+        "[BOSS] Goldor: Who dares trespass into my domain?": "&bStorm",
+        "[BOSS] Goldor: You have done it, you destroyed the factory…": "&eTerminals",
+        "[BOSS] Necron: You went further than any human before, congratulations.": "&7Goldor",
+        "                             > EXTRA STATS <": "&4Necron",
+    },
+    "M7": {
+        "[BOSS] Storm: Pathetic Maxor, just like expected.": "&aMaxor",
+        "[BOSS] Goldor: Who dares trespass into my domain?": "&bStorm",
+        "[BOSS] Goldor: You have done it, you destroyed the factory…": "&eTerminals",
+        "[BOSS] Necron: You went further than any human before, congratulations.": "&7Goldor",
+        "[BOSS] Necron: All this, for nothing...": "&cNecron",
+        "                             > EXTRA STATS <": "&4Wither King",
     },
     "6": {
         "[BOSS] Sadan: ENOUGH!": "&6Terracottas",
@@ -51,12 +61,12 @@ const splits = {
 }
 
 register("chat", (event) => {
-    if (!Dungeon.inDungeon || splitIndex == Object.keys(splits[Dungeon.floorInt]).length) return
+    if (!Dungeon.inDungeon || splitIndex == Object.keys(splits[splitFloor]).length) return
 
     let formatted = ChatLib.getChatMessage(event)
     let unformatted = ChatLib.removeFormatting(formatted)
-    if (unformatted == Object.keys(splits[Dungeon.floorInt])[splitIndex]) {
-        splitMsg += `${splits[Dungeon.floorInt][Object.keys(splits[Dungeon.floorInt])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}\n`
+    if (unformatted == Object.keys(splits[splitFloor])[splitIndex]) {
+        splitMsg += `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}\n`
         splitIndex++
         lastSplit = new Date().getTime()
     }
@@ -66,11 +76,11 @@ register("chat", (event) => {
 
 register("renderOverlay", () => {
     if (!Config.runSplitsMoveGui.isOpen() && (!Config.runSplits || !Dungeon.inDungeon || !Dungeon.bossEntry)) return
-    if (splitIndex == Object.keys(splits[Dungeon.floorInt]).length) {
+    if (splitIndex == Object.keys(splits[splitFloor]).length) {
         currentSplit = ""
     }
     else {
-        currentSplit = `${splits[Dungeon.floorInt][Object.keys(splits[Dungeon.floorInt])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}`
+        currentSplit = `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}`
     }
     
     Renderer.drawString(`&6&lRun Splits\n` +
@@ -82,6 +92,10 @@ register("renderOverlay", () => {
 })
 
 register("tick", () => {
+    if (Dungeon.floor == "M7") splitFloor = "M7"
+    else if (Dungeon.floor == "F7") splitFloor = "F7"
+    else splitFloor = Dungeon.floorInt
+
     if (!lastSplit && Dungeon.bossEntry) {
         lastSplit = Dungeon.bossEntry
     }

@@ -243,6 +243,14 @@ class Config {
     })
     hideTerminalTooltips = true;
 
+    @SwitchProperty({
+        name: "Show Right Click",
+        description: "Shows how many right clicks are needed instead of left clicks on the new colors terminal.\n&cNOTE: Zero ping will still middle click since right clicking was buggy. I'd only recommend using this if you aren't using zero ping.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    colorsRightClick = false
+
     // ---------------------------------------------------------------
     // Gui
 

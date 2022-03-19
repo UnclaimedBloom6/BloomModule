@@ -1,12 +1,11 @@
 {
-    "latestVersion": "3.2.1",
+    "latestVersion": "3.2.2",
     "changelog": [
-        "Added run splits for new F7.",
-        "Added solver for new \"Change all to same color!\" terminal (0 ping doesnt work for it).",
-        "Added support for catacombs levels up to 120 in the /ds command.",
-        "Added some extra info to the /ds command related to higher catacombs players.",
-        "Added spaces between the boss names in custom end info on F7.",
-        "Still working on 0 ping for the new terminal, no ETA. No idea why it doesn't work currently."
+        "Fixed longer party message breaks not being detected.",
+        "Fixed /ds command not showing correct cata level sometimes.",
+        "Added /pb <floor> command (Shows pbs of all players in the party for the specified floor).",
+        "Added option to show right clicks for the new color terminal.",
+        "Some tiny code cleanups."
     ],
     "author": "UnclaimedBloom6"
 }

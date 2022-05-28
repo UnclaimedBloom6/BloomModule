@@ -1,6 +1,5 @@
-import { addPartyCompletion } from "../utils/TabCompletion"
+import Party from "../../BloomCore/Party"
 import { prefix } from "../utils/Utils"
-import Party from "../utils/Party"
 
 export const dontRp = register("command", player => {
     if (!player) return ChatLib.chat(`${prefix} &c/dontrp <player>`)
@@ -15,5 +14,3 @@ export const dontRp = register("command", player => {
     ChatLib.chat(`${prefix} &aAuto Reparty won't invite &c${player} &anext time!`)
     Party.excludePlayers.push(player)
 }).setName("dontrp")
-
-addPartyCompletion(dontRp)

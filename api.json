@@ -1,11 +1,22 @@
 {
-    "latestVersion": "3.2.2",
+    "latestVersion": "4.0.0",
     "changelog": [
-        "Fixed longer party message breaks not being detected.",
-        "Fixed /ds command not showing correct cata level sometimes.",
-        "Added /pb <floor> command (Shows pbs of all players in the party for the specified floor).",
-        "Added option to show right clicks for the new color terminal.",
-        "Some tiny code cleanups."
+        "Module now requires BloomCore",
+        "Removed CustomTabCompletions",
+        "Added name history command",
+        "Added /dontrp command",
+        "Added stacks overlay for crimson/terror armor",
+        "Added Gyro radius display",
+        "Added cake year overlay",
+        "Added toggle sprint",
+        "Added mastery Dojo helper",
+        "Added speed display",
+        "Added spirit leap names",
+        "Added more messages to useless message filter",
+        "Changed FC bridge chat to FPF bridge chat",
+        "Custom end info now shows class XP, cata XP and bits gained",
+        "Fixed custom end info breaking when run failed",
+        "Improved some code readability"
     ],
     "author": "UnclaimedBloom6"
 }

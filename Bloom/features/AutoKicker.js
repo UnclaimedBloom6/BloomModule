@@ -1,15 +1,18 @@
+import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/Utils/APIWrappers"
+import { bcData, hidePartySpam } from "../../BloomCore/Utils/Utils"
 import Config from "../Config"
-import Party from "../utils/Party"
-import { prefix, data, getHypixelPlayer, getMojangInfo, hidePartyStuff } from "../utils/Utils"
+import { prefix } from "../utils/Utils"
+import Party from "../../BloomCore/Party"
 
 let recentKicks = [] // [[player, timestamp],...]
 
 register("chat", (player, classs) => {
-    if (!Config.autoKicker || !data.apiKey || Party.leader !== Player.getName()) return
+    if (!Config.autoKicker || !bcData.apiKey || Party.leader !== Player.getName()) return
+    if (Config.autoKickEveryone) return ChatLib.command(`p kick ${player}`)
     // Auto kick if recently kicked
     if (Config.akRecentKick) {
         if (recentKicks.map(a => a[0]).includes(player)) {
-            hidePartyStuff(500)
+            hidePartySpam(500)
             ChatLib.command(`p kick ${player}`)
             ChatLib.chat(`${prefix} &cKicked &a${player} &cbecause they were recently kicked.`)
             for (let i = 0; i < recentKicks.length; i++) {
@@ -23,20 +26,18 @@ register("chat", (player, classs) => {
     }
     // Kick for being bad class
     if (Config.akKickClasses && Config.akClasses.split(", ").includes(classs)) {
-        hidePartyStuff(500)
+        hidePartySpam(500)
         ChatLib.command(`p kick ${player}`)
         ChatLib.chat(`${prefix} &cKicked &b${player} &cfor being &b${classs} &cclass.`)
         return
     }
     // Kick for low secrets
     getMojangInfo(player).then(mojangInfo => {
-        mojangInfo = JSON.parse(mojangInfo)
         let uuid = mojangInfo.id
-        getHypixelPlayer(uuid).then(playerInfo => {
-            playerInfo = JSON.parse(playerInfo)
+        getHypixelPlayer(uuid, bcData.apiKey).then(playerInfo => {
             let secrets = playerInfo.player.achievements.skyblock_treasure_hunter
             if (secrets < parseInt(Config.akSecretMin)) {
-                hidePartyStuff(500)
+                hidePartySpam(500)
                 ChatLib.command(`p kick ${player}`)
                 ChatLib.chat(`${prefix} &cKicked &b${player} &cdue to low secrets!`)
                 recentKicks.push([player, new Date().getTime()])

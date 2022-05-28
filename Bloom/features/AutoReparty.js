@@ -1,5 +1,5 @@
+import Party from "../../BloomCore/Party";
 import Config from "../Config";
-import Party from "../utils/Party";
 
 register("chat", (event) => {
     if (Party.leader !== Player.getName() || !Config.autoReparty) return

@@ -3,9 +3,6 @@
 
 import Config from "./Config"
 
-import Dungeon from "./utils/Dungeon"
-import Party from "./utils/Party"
-
 import { skillsCommand } from "./commands/SkillsCommand"
 import { dontRp } from "./commands/DontRP"
 import { myKey } from "./commands/MyKey"
@@ -15,7 +12,11 @@ import { scammerCommand } from "./commands/ScammerCheckCommand"
 import { repartyCommand } from "./commands/RepartyCommand"
 import { pingCommand } from "./commands/PingCommand"
 import { bloomCommand } from "./commands/BloomCommand"
+import { nameHistoryCommand } from "./commands/NameHistoryCommand"
+import { dcCommand } from "./commands/DcCommand"
 
+
+import "./features/StacksTracker"
 import "./features/AutoDSParty"
 import "./features/AutoKicker"
 import "./features/AutoReparty"
@@ -39,3 +40,8 @@ import "./features/ZeroPingTerms"
 import "./utils/UpdateChecker"
 import "./utils/FirstInstall"
 import "./commands/PBCommand"
+import "./features/SpiritLeapNames"
+import "./features/CakeNumbers"
+import "./features/Mastery"
+import "./features/GyroRadius"
+import "./features/ToggleSprint"

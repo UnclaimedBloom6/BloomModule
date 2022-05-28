@@ -1,11 +1,11 @@
-import Party from "../utils/Party"
+import Party from "../../BloomCore/Party"
 import { prefix } from "../utils/Utils"
 
 let commands = {
     "d": "warp dungeon_hub",
     "dung": "warp dungeon_hub",
     "go": "g online",
-    "ai": "p settings allinvite",
+    "/ai": "p settings allinvite",
     "f1": "joindungeon catacombs 1",
     "f2": "joindungeon catacombs 2",
     "f3": "joindungeon catacombs 3",
@@ -70,7 +70,3 @@ register("command", () => {
     let a = Object.keys(Party.members).filter(a => a !== Player.getName())
     ChatLib.command(`p transfer ${a[Math.floor(Math.random() * a.length)]}`)
 }).setName("ptr")
-
-register("command", () => {
-    new Message(new TextComponent(`${prefix} &aIllegalMap`).setClick("run_command", `/ct copy https://github.com/UnclaimedBloom6/IllegalMap`).setHover("show_text", "&aClick!")).chat()
-}).setName("links")

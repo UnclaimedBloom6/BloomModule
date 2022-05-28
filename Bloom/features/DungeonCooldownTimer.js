@@ -1,6 +1,7 @@
+import Dungeon from "../../BloomCore/Dungeons/Dungeon"
+import { stripRank } from "../../BloomCore/Utils/Utils"
 import Config from "../Config"
-import Dungeon from "../utils/Dungeon"
-import { prefix, data, stripRank } from "../utils/Utils"
+import { prefix, data } from "../utils/Utils"
 
 register("dragged", (dx, dy, x, y) => {
     if (Config.cooldownMoveGui.isOpen()) {
@@ -38,10 +39,9 @@ register("renderOverlay", () => {
 
 register("step", () => {
     for (let i of Object.keys(data.dungeonWarps)) {
-        if (getWarpTime(i) < 0) {
-            delete data.dungeonWarps[i]
-            data.save()
-        }
+        if (getWarpTime(i) >= 0) continue
+        delete data.dungeonWarps[i]
+        data.save()
     }
 })
 

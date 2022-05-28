@@ -13,13 +13,17 @@ const uselessMsgs = [
     /This ability is on cooldown for 1s\./,
     /You do not have the key for this door!/,
     /The Stormy .+ struck you for .+ damage!/,
-    /Please wait a few seconds between refreshing!/
+    /Please wait a few seconds between refreshing!/,
+    /This chest has already been searched!/,
+    /You cannot move the silverfish in that direction!/,
+    /You cannot hit the silverfish while it's moving!/,
+    /Your Kill Combo has expired! You reached a .+ Kill Combo!/,
+    /Your active Potion Effects have been paused and stored. They will be restored when you leave Dungeons! You are not allowed to use existing Potion Effects while in Dungeons\./,
+    /.+ has obtained Blood Key!/,
+    /The Flamethrower hit you for .+ damage!/,
+    /.+ found a Wither Essence! Everyone gains an extra essence!/
 ]
 register("chat", (message, event) => {
     if (!Config.blockUselessMessages) return
-    uselessMsgs.forEach(msg => {
-        if (message.removeFormatting().match(msg)) {
-            cancel(event)
-        }
-    })
+    if (uselessMsgs.some(a => message.match(a))) cancel(event)
 }).setCriteria("${message}")

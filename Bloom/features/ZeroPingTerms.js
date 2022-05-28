@@ -1,13 +1,16 @@
-import { clickSlot, colorOrder, isEnchanted, paneMetas, setEnchanted, setPaneToGreen } from "../Utils/Utils"
+import { clickSlot, colorOrder, isEnchanted, prefix, setEnchanted, setPaneToGreen } from "../Utils/Utils"
 import Config from "../Config"
 import TerminalSolver from "./TerminalSolver"
+import Dungeon from "../../BloomCore/Dungeons/Dungeon"
+// import { S30PacketWindowItems } from "../../BloomCore/Utils/Utils"
 
-class ZeroPingTerms {
+export default new class ZeroPingTerms {
     constructor() {
         this.windowId = null
         this.enchantedSlots = []
         this.greenPanes = []
         this.paneMetas = {}
+        this.lastClick = null
         const incrementPane = (slot, meta, reverse) => Player.getOpenedInventory().getStackInSlot(slot).setDamage(colorOrder[(colorOrder.length+colorOrder.indexOf(meta)+(reverse ? -1 : 1))%colorOrder.length])
         const removeSlot = (slot, amount) => {
             let removed = 0
@@ -56,28 +59,16 @@ class ZeroPingTerms {
             }
             // The rest of this terminal doesn't work properly.
             if (invName == "Change all to same color!") {
-            //     // return
-            //     if (!meta) return
                 action = null
-            //     let amount = TerminalSolver.correctSlots.filter(a => a == slot).length
-            //     let backwards = colorOrder.length-amount
-                
-            //     if (amount <= 2) finalClick = 0
-            //     else finalClick = 1
-                
                 incrementPane(slot, meta, false)
                 this.paneMetas[slot] = inv.getStackInSlot(slot)?.getMetadata()
 
-            //     if (finalClick == 1 && backwards == 1) toRemove = 4
-            //     else if (finalClick == 1) {
-            //         toRemove = 0
-            //         TerminalSolver.correctSlots.push(slot)
-            //     }
             }
 
             removeSlot(slot, toRemove)
             if (event) cancel(event)
             clickSlot(slot, this.windowId, finalClick)
+            this.lastClick = new Date().getTime()
             try {
                 if (action) action(slot)
             }
@@ -105,7 +96,38 @@ class ZeroPingTerms {
             this.greenPanes = []
             this.enchantedSlots = []
             this.paneMetas = {}
-    })
+
+            this.lastPacketItems = null
+            this.lastWindowId = null
+            this.lastWindowPacket = null
+        })
+
+        // No workey ):
+        // register("packetReceived", (packet) => {
+        //     if (!Dungeon.inDungeon || !TerminalSolver.inTerm || !Config.zeroPingTerminals) return
+        //     if (!(packet instanceof S30PacketWindowItems)) return
+        //     this.lastPacketItems = packet.func_148910_d() // getItemStacks()
+        //     this.lastWindowId = packet.func_148911_c() // getWindowId()
+        //     this.lastWindowPacket = new Date().getTime()
+        // })
+
+        // register("tick", () => {
+        //     if (!this.lastWindowPacket || new Date().getTime() - this.lastWindowPacket < 500 || new Date().getTime() - this.lastClick < 500) return
+        //     let currentContainer = Player.getOpenedInventory().container
+        //     // if (this.lastPacketItems.length > currentContainer.)
+        //     this.x = []
+        //     this.greenPanes = []
+        //     this.paneMetas = {}
+        //     // ChatLib.chat(`${this.lastPacketItems}`)
+        //     // currentContainer.func_75131_a(new Array(this.lastPacketItems.length).fill(null))
+        //     currentContainer.func_75131_a(this.lastPacketItems)
+        //     TerminalSolver.solve()
+        //     // ChatLib.chat(`${prefix} &a&lUPDATED ITEMS`)
+
+        //     this.windowId = this.lastWindowId
+        //     this.lastPacketItems = null
+        //     this.lastWindowId = null
+        //     this.lastWindowPacket = null
+        // })
     }
 }
-export default new ZeroPingTerms()

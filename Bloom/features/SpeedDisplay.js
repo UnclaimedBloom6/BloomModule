@@ -1,28 +1,18 @@
-import { data, getTabList } from "../utils/Utils"
+import { data } from "../utils/Utils"
 import Config from "../Config"
+import MyPlayer from "../../BloomCore/MyPlayer"
 
-let speed = 100
-register("tick", () => {
-    let lines = getTabList()
-    for (let i = 0; i < Object.keys(lines).length; i++) {
-        let match = lines[i].match(/ Speed: ✦(\d+)/)
-        if (match) {
-            speed = parseInt(match[1])
-        }
-    }
-})
 
 register("renderOverlay", () => {
-    if (!Config.speedDisplay) { return }
+    if (!Config.speedDisplay) return
     Renderer.translate(data.speedDisplay.x, data.speedDisplay.y)
     Renderer.scale(1.5)
-    Renderer.drawStringWithShadow(`&f✦${speed}`, 0, 0)
+    Renderer.drawStringWithShadow(`&f✦${MyPlayer.speed}`, 0, 0)
 })
 
 register("dragged", (dx, dy, x, y) => {
-    if (Config.speedMoveGui.isOpen()) {
-        data.speedDisplay.x = x
-        data.speedDisplay.y = y
-        data.save()
-    }
+    if (!Config.speedMoveGui.isOpen()) return
+    data.speedDisplay.x = x
+    data.speedDisplay.y = y
+    data.save()
 })

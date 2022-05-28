@@ -1,4 +1,4 @@
-import Dungeon from "../utils/Dungeon";
+import Dungeon from "../../BloomCore/Dungeons/Dungeon";
 import Config from "../Config";
 import { data, getSecs } from "../utils/Utils";
 
@@ -61,7 +61,7 @@ const splits = {
 }
 
 register("chat", (event) => {
-    if (!Dungeon.inDungeon || splitIndex == Object.keys(splits[splitFloor]).length) return
+    if (!Dungeon.inDungeon || !splitFloor || splitIndex == Object.keys(splits[splitFloor]).length) return
 
     let formatted = ChatLib.getChatMessage(event)
     let unformatted = ChatLib.removeFormatting(formatted)
@@ -70,8 +70,6 @@ register("chat", (event) => {
         splitIndex++
         lastSplit = new Date().getTime()
     }
-    
-
 })
 
 register("renderOverlay", () => {
@@ -94,7 +92,7 @@ register("renderOverlay", () => {
 register("tick", () => {
     if (Dungeon.floor == "M7") splitFloor = "M7"
     else if (Dungeon.floor == "F7") splitFloor = "F7"
-    else splitFloor = Dungeon.floorInt
+    else splitFloor = Dungeon.floorNumber
 
     if (!lastSplit && Dungeon.bossEntry) {
         lastSplit = Dungeon.bossEntry

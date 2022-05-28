@@ -1,19 +1,19 @@
 import Config from "../Config"
-import { data, prefix } from "../utils/Utils"
-import request from "../../requestV2"
+import { prefix } from "../utils/Utils"
+import { getApiKeyInfo } from "../../BloomCore/Utils/APIWrappers"
+import { bcData } from "../../BloomCore/Utils/Utils"
 
 export const bloomCommand = register("command", (...args) => {
-    if (!args || !args[0]) {
-        if (!args || !args[0])  return Config.openGUI()
-    }
+    if (!args || !args[0]) return Config.openGUI()
     if (args[0] == "setkey") {
         if (!args[1]) return ChatLib.chat(`${prefix} &c/bl setkey <key>`)
+        let key = args[1]
         new Message(`${prefix} &aChecking API key...`).setChatLineId(857684765).chat()
-        request(`https://api.hypixel.net/key?key=${args[1]}`).then(stuff => {
-            data.apiKey = args[1]
-            data.save()
+        getApiKeyInfo(key).then(keyInfo => {
+            bcData.apiKey = key
+            bcData.save()
             ChatLib.editChat(857684765, new Message(`${prefix} &aAPI Key set successfully!`))
-        }).catch(error => { ChatLib.editChat(857684765, new Message(`${prefix} &cError: Invalid API key.`)) })
+        }).catch(e => ChatLib.editChat(857684765, new Message(`${prefix} &cError: Invalid API key.`)))
     }
     if (args[0] == "help") {
         let messages = [

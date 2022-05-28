@@ -1,12 +1,12 @@
-import Party from "../utils/Party"
-import { addPartyCompletion } from "../utils/TabCompletion"
-import { hidePartyStuff, partyPlayers, prefix } from "../utils/Utils"
+import Party from "../../BloomCore/Party"
+import { hidePartySpam, partyPlayers } from "../../BloomCore/Utils/Utils"
+import { prefix } from "../utils/Utils"
 
 let lastReparty
 export const repartyCommand = register("command", ...args => {
 	new Thread(() => {
         args = !args ? [] : args
-        hidePartyStuff(3000)
+        hidePartySpam(3000)
         ChatLib.command("pl")
         Thread.sleep(500)
         if (Object.keys(!Party.members).length) return ChatLib.chat(`${prefix} &cYou are not in a party!`)
@@ -21,11 +21,9 @@ export const repartyCommand = register("command", ...args => {
     }).start()
 }).setName("/rp")
 
-addPartyCompletion(repartyCommand)
-
 register("command", (...players) => {
     ChatLib.chat(`${prefix} &aPartying players!`)
-    hidePartyStuff(2000)
+    hidePartySpam(2000)
     partyPlayers([players])
 }).setName("partyplayers")
 

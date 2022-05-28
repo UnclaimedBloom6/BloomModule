@@ -1,14 +1,13 @@
-import { addAllPlayersCompletion } from "../utils/TabCompletion"
-import { getMojangInfo, prefix } from "../utils/Utils"
+import { prefix } from "../utils/Utils"
 import request from "../../requestV2"
+import { getMojangInfo } from "../../BloomCore/Utils/APIWrappers"
 
 export const scammerCommand = register("command", (player) => {
 	if (!player) player = Player.getName()
 	new Message(`${prefix} &aChecking if ${player} is a scammer...`).setChatLineId(468576858).chat()
 	getMojangInfo(player).then(mojangInfo => {
-		mojangInfo = JSON.parse(mojangInfo)
-		player = mojangInfo.name
-		let uuid = mojangInfo.id
+        if (!mojangInfo) return ChatLib.chat(`${prefix} &cError: That is not a real player!`)
+        let [player, uuid] = [mojangInfo.name, mojangInfo.id]
 		ChatLib.editChat(468576858, new Message(`${prefix} &aGetting SBS data...`).setChatLineId(468576858))
 		request("https://raw.githubusercontent.com/skyblockz/pricecheckbot/master/scammer.json").then(scammerData => {
 			scammerData = JSON.parse(scammerData)
@@ -33,5 +32,3 @@ export const scammerCommand = register("command", (player) => {
 		ChatLib.clearChat(468576858)
 	})
 }).setName("check")
-
-addAllPlayersCompletion(scammerCommand)

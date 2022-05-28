@@ -21,13 +21,14 @@ Here you go you fk noob
 #### General / QoL
 - Chat Editor
   - Replace parts of some messages - eg "ez" bypass, '/=' -> ≠.
+<img src="https://i.imgur.com/gmVN9ry.png" width=50%>
 
-<img src="https://i.imgur.com/gmVN9ry.png">
 - Hide Lightning
 
 - Block Usemess/Spammy Messages
 
-- FC Bridge Chat Formatter
+- FPF Bridge Chat
+<img src="https://i.imgur.com/vPqNutW.png" width=50%>
 
 - Auto Transfer
   - Please do not use this.
@@ -38,6 +39,34 @@ Here you go you fk noob
 
 - Auto Reparty
   - Automatically reparty after a dungeon has ended.
+
+- Speed Display Overlay
+  - Same as SBA's except it goes past 500.
+  <img src="https://i.imgur.com/M8d5uPq.png" width=10%>
+
+- Gyro Range
+  - Renders a circle showing the area where mobs will be pulled in.
+  <img src="https://i.imgur.com/P25BL6W.png" width=60%>
+
+- Mastery Helper
+  - Shows how long left until the wool block disappears in the Mastery Dojo minigame
+  - Shows which wool will despawn next
+
+- Stacks Display
+  - Shows how many stacks you have on your crimson/terror armor.
+  <div class="row">
+    <img src="https://i.imgur.com/zTUzmBc.png" width=14%>
+    <img src="https://i.imgur.com/RIXAxzY.png">
+  </div>
+
+- Toggle Sprint
+  - Just makes you automatically sprint lol
+  - Customizable and togglable sprint text overlay
+  <img src="https://i.imgur.com/5IJ8TCc.png" width=30%>
+
+- Cake Numbers
+  - Shows new year cake year in your cake bag
+  <img src="https://i.imgur.com/6fmIhh6.png" width=40%>
 
 #### Dungeons
 - Zero Ping Terminals
@@ -50,7 +79,7 @@ Here you go you fk noob
 
 - Crystal Timer
   - Show how long it took you to grab the crystal in Floor 7 Phase 1.
-<img src="https://i.imgur.com/v0jbALN.png">
+<img src="https://i.imgur.com/v0jbALN.png" width=50%>
 
 - Custom End Info
   - Change how the information at the end of a dungeon is displayed, including showing your secrets found.
@@ -58,20 +87,20 @@ Here you go you fk noob
 
 - Run Overview Overlay
   - Wither doors, Blood Open time (Supports 0 second br), Boss Entry.
-<img src="https://i.imgur.com/5CFX0cl.png">
+<img src="https://i.imgur.com/5CFX0cl.png" width=30%>
 
 - Run Splits Overlay
-<img src="https://i.imgur.com/fNeofeu.png">
+<img src="https://i.imgur.com/fNeofeu.png" width=30%>
 
-- Three Weirdos Solver
-  - Idiot-proof three weirdos solver that deletes incorrect chests.
+- Spirit Leap Names
+  - Shows player's full names under their heads in the spirit leap and ghost leap gui
+  - Names are slanted to show the entire username - not cut off like SBE for example.
 
 #### GUI
 - Party List Overlay
   - Overlay of all party members and shows who's leader.
+  <img src="https://i.imgur.com/RRbmjeX.png" width=30%>
 
-- Speed Display Overlay
-  - Same as SBA's except it goes past 500.
 
 #### Party Finder
 - Auto Kick
@@ -112,6 +141,9 @@ Here you go you fk noob
   - Shows stats about your API key including total uses, queries the past minute and the owner.
 <img src="https://i.imgur.com/uyckpCS.png">
 
+- /nh \<player>
+  - Name History command
+
 #### Misc Commands
 - /d - Dungeon Hub
 - /go - /g online
@@ -128,3 +160,4 @@ Here you go you fk noob
 - /ptr - Transfer the party to a random player
 - /dontrp \<player> - Don't reparty this player if Auto Reparty is enabled.
 - /ping - Show your current ping (Roughly).
+- /dontrp \<player> - Auto reparty won't invite this player back

@@ -13,7 +13,7 @@ import {
 
 @Vigilant("Bloom", "Bloom", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ["General", "Dungeons", "Gui", "Party Finder"];
+        const categories = ["General", "Dungeons", "Solvers", "Gui", "Party Finder"];
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -42,10 +42,12 @@ class Config {
     }
 
     speedMoveGui = new Gui()
+    stackTrackerGui = new Gui()
     partyOverlayMoveGui = new Gui()
     runSplitsMoveGui = new Gui()
     cooldownMoveGui = new Gui()
     runOverviewMoveGui = new Gui()
+    toggleSprintMove = new Gui()
 
     // ---------------------------------------------------------------
     // General
@@ -96,7 +98,7 @@ class Config {
     // Reparty
     @SwitchProperty({
         name: "Auto Reparty",
-        description: "Automatically reparty after the dungeon boss has been defeated if you are the party leader.\n&cNOTE: If another mod hides boss messages this will not work.",
+        description: "Automatically reparty after the dungeon boss has been defeated if you are the party leader.\n&eNOTE: If another mod hides boss messages this will not work.",
         category: "General",
         subcategory: "Reparty"
     })
@@ -113,8 +115,8 @@ class Config {
 
     // Bridge Chat
     @SwitchProperty({
-        name: "FC Bridge Chat",
-        description: "Makes FC bridge chat look nicer. Automatically gets bridge bot's username.\n\n&2Guild > &6Noob674 &2[Discord]&f: You're mom xd xdlmao",
+        name: "Bridge Chat",
+        description: "Bridge chat for VROOM (Purged from FC because not fat enough sadface).\n\n&2Guild > &6UnclaimedBloom6 &2[Bridge]&f: mom joke\n&2Guild > &dStats&f: UnClaiMbelOoom6 big cool 4576",
         category: "General",
         subcategory: "Messages"
     })
@@ -128,6 +130,49 @@ class Config {
         subcategory: "Party"
     })
     autoTransfer = false;
+
+    @SwitchProperty({
+        name: "Gyro Radius",
+        description: "Renders a circle where the gyro will suck in mods.",
+        category: "General",
+        subcategory: "Gyro"
+    })
+    gyroCircle = false;
+
+    @SwitchProperty({
+        name: "Toggle Sprint",
+        description: "Automatically Sprint",
+        category: "General",
+        subcategory: "Toggle Sprint"
+    })
+    toggleSprint = false;
+
+    @SwitchProperty({
+        name: "Toggle Sprint Overlay",
+        description: "Renders text on your screen when toggle sprint is enabled.",
+        category: "General",
+        subcategory: "Toggle Sprint"
+    })
+    toggleSprintOverlay = false;
+
+    @ButtonProperty({
+        name: "Move Toggle Sprint",
+        description: "Move",
+        category: "General",
+        subcategory: "Toggle Sprint"
+    })
+    MoveToggleSprint() {
+         this.toggleSprintMove.open()
+    };
+
+    @TextProperty({
+        name: "Sprinting Enabled Text",
+        category: "The text to be showed when toggle sprint is enabled",
+        category: "General",
+        subcategory: "Toggle Sprint",
+        placeholder: "Sprinting Enabled"
+    })
+    toggleSprintText = "";
 
     // ------------------------------------------
     // Dungeons
@@ -206,6 +251,14 @@ class Config {
     })
     crystalTimer = false;
 
+    @SwitchProperty({
+        name: "Spirit Leap Names",
+        description: "Show player's usernames underneath their heads in the spirit leap and ghost teleport gui (Like SBE's but shows the full name).",
+        category: "Dungeons",
+        subcategory: "Spirit Leap"
+    })
+    spiritLeapNames = false;
+
     // ---------------------------------------------------------------
     // Solvers
 
@@ -245,11 +298,19 @@ class Config {
 
     @SwitchProperty({
         name: "Show Right Click",
-        description: "Shows how many right clicks are needed instead of left clicks on the new colors terminal.\n&cNOTE: Zero ping will still middle click since right clicking was buggy. I'd only recommend using this if you aren't using zero ping.",
+        description: "Shows how many right clicks are needed instead of left clicks on the new colors terminal.\n&eNOTE: Zero ping will still middle click since right clicking was buggy. I'd only recommend using this if you aren't using zero ping.",
         category: "Solvers",
         subcategory: "Terminals"
     })
     colorsRightClick = false
+
+    @SwitchProperty({
+        name: "Mastery",
+        description: "Show the amount of time left before the wool blocks disappear in the Dojo Mastery minigame. Text color changes from red -> yellow -> green depending on the wool color (Green wool = red text).",
+        category: "Solvers",
+        subcategory: "Dojo"
+    })
+    dojoMastery = false
 
     // ---------------------------------------------------------------
     // Gui
@@ -266,10 +327,30 @@ class Config {
         name: "Move",
         description: "Move the speed display",
         category: "Gui",
-        subcategory: "Speed Display"
+        subcategory: "Speed Display",
+        placeholder: "Move"
     })
     MoveSpeedDisplay() {
         this.speedMoveGui.open()
+    };
+
+    @SwitchProperty({
+        name: "Stack Tracker",
+        description: "Renders the number of stacks you currently have on armor pieces like Crimson, Terror etc.",
+        category: "Gui",
+        subcategory: "Stack Tracker"
+    })
+    stackTracker = false;
+    
+    @ButtonProperty({
+        name: "Move",
+        description: "Move Stack Tracker",
+        category: "Gui",
+        subcategory: "Stack Tracker",
+        placeholder: "Move"
+    })
+    MoveStackTracker() {
+        this.stackTrackerGui.open()
     };
 
     @SwitchProperty({
@@ -290,6 +371,14 @@ class Config {
     MovePartyOverlay() {
         this.partyOverlayMoveGui.open()
     };
+    
+    @SwitchProperty({
+        name: "Cake Numbers",
+        description: "Show which year a new year cake is without having to hover over it.",
+        category: "Gui",
+        subcategory: "New Year Cakes"
+    })
+    cakeNumbers = false
 
     // ---------------------------------------------------------------
     // Auto Kicker
@@ -309,6 +398,14 @@ class Config {
         subcategory: "Auto Kicker"
     })
     autoKicker = false;
+
+    @SwitchProperty({
+        name: "Kick Everyone",
+        description: "Automatically kicks anyone who joins the party.",
+        category: "Party Finder",
+        subcategory: "Auto Kicker"
+    })
+    autoKickEveryone = false;
 
     @TextProperty({
         name: "Minimum Secrets",

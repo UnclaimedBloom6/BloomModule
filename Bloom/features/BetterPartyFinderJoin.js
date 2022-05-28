@@ -1,12 +1,10 @@
+import { stripRank } from "../../BloomCore/Utils/Utils";
 import Config from "../Config";
-import { stripRank } from "../utils/Utils";
 
 register("chat", (player, event) => {
     let formatted = ChatLib.getChatMessage(event, true)
     let match = formatted.match(/&dDungeon Finder &r&f> &r(.+) &r&ejoined the dungeon group! \(&r&b(.+) Level (\d+)&r&e\)&r/)
-    let playerF = match[1]
-    let classs = match[2]
-    let level = match[3]
+    let [msg, playerF, classs, level] = match
     if (Config.betterPFMessage) {
         cancel(event)
         let msg = new Message(new TextComponent(`&d&lPF > ${playerF} &8| &b${classs} ${level}`))
@@ -21,3 +19,23 @@ register("chat", (player, event) => {
         ChatLib.command(`ds ${stripRank(ChatLib.removeFormatting(player))}`, true)
     }
 }).setCriteria("Dungeon Finder > ${player} joined the dungeon group! (${*} Level ${*})")
+
+const messageReplacements = {
+    "Dungeon Finder > Your party has been queued in the dungeon finder!": "&d&lPF > &aParty Queued.",
+    "Dungeon Finder > Your group has been de-listed!": "&d&lPF > &aParty Delisted.."
+}
+
+register("chat", (message, event) => {
+    if (!Config.betterPFMessage) return
+    if (Object.keys(messageReplacements).some(a => a == message)) {
+        cancel(event)
+        ChatLib.chat(messageReplacements[message])
+    }
+}).setCriteria("${message}")
+
+register("chat", (player, clazz, level, e) => {
+    if (!Config.betterPFMessage) return
+    player = ChatLib.getChatMessage(e).split(" ")[3] // &dDungeon Finder &r&f> &r&ak1deuk &r&eset their class to &r&bBerserk Level 30&r&e!&r
+    cancel(e)
+    ChatLib.chat(`&d&lPF > &r${player} &echanged to &b${clazz} ${level}&e!`)
+}).setCriteria("Dungeon Finder > ${player} set their class to ${clazz} Level ${level}!")

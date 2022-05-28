@@ -1,4 +1,4 @@
-import { stripRank } from "../utils/Utils";
+import { stripRank } from "../../BloomCore/Utils/Utils";
 import Config from "../Config";
 
 register("chat", (p1, p2) => {

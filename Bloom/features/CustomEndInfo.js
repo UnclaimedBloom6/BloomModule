@@ -1,102 +1,115 @@
-import Dungeon from "../utils/Dungeon";
+import Dungeon from "../../BloomCore/Dungeons/Dungeon";
+import { fn } from "../../BloomCore/Utils/Utils";
 import Config from "../Config";
 
-const reset = () => {
-    dungeonType = null
-    floor = null
-    bossKilled = null
-    time = null
-    timePB = "&d&l"
-    scorePB = "&d&l"
-    score = null
-    scoreLetter = null
-    cataXP = null
-    secretsFound = null
+const toDelete = [
+    /▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬/,
+    /Deaths: \d+/,
+    /Total Damage as .+: [\d.,]+/,
+    /Ally Healing: [\d,.]+/,
+    /\+0 Experience \(No Class Milestone Reached\)/
+]
+
+class Data {
+    constructor() {
+        this.reset()
+    }
+    reset() {
+        this.score = null
+        this.floor = null
+        this.scoreLetter = null
+        this.bossKilled = null
+        this.time = null
+        this.bitsFound = null
+        this.cataXP = null
+        this.classXP = [] // [[xp, class], [xp, class]...]
+        this.classStat = null
+        this.enemiesKilled = null
+        this.deaths = null
+        this.secretsFound = null
+        this.timePB = false
+        this.scorePB = false
+    }
 }
-let dungeonType = null
-let floor = null
-let bossKilled = null
-let time = null
-let timePB = "&d&l"
-let scorePB = "&d&l"
-let score = null
-let scoreLetter = null
-let cataXP = null
-let secretsFound = null
 
-register("chat", (event) => {
-    if (!Dungeon.inDungeon || !Config.customEndInfo) return
-    let formatted = ChatLib.getChatMessage(event, true)
-    let unformatted = formatted.removeFormatting()
-    let noSpaces = unformatted.replace(/ /g, "").replace("Stats", "")
+let endData = new Data()
 
-    let voidMsgs = [
-        /&r&a&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬&r/,
-        /TheCatacombs-Floor(.+)Stats/,
-        /TotalDamageas.+:.+/,
-        /Enemies Killed:.+/,
-        /Deaths:.+/,
-        /\+\d+Bits/,
-        /AllyHealing:(.+)/
-    ]
-    voidMsgs.forEach(msg => {
-        if (unformatted.match(msg) || formatted.match(msg) || noSpaces.match(msg)) cancel(event)
-    })
+const testMessage = (eventToCancel, message, regex, defaultValue, type) => {
+    let match = message.match(regex)
+    if (!match) return defaultValue
+    cancel(eventToCancel)
+    let val = match[1]
+    return type == "int" ? parseInt(val) : type == "float" ? parseFloat(val) : val
+}
+const centre = (text) => ChatLib.getCenteredText(text)
+register("chat", (e) => {
+    if (!Config.customEndInfo || !Dungeon.inDungeon) return
+    let formatted = ChatLib.getChatMessage(e)
+    let msg = formatted.removeFormatting()
+    while (msg[0] == " ") msg = msg.slice(1)
+    let noCommas = msg.replace(/,/g, "")
 
-    if (/^TheCatacombs-Floor(.{1,3})$/.test(noSpaces)) {
-        floor = noSpaces.replace("Stats", "").match(/TheCatacombs-Floor(.{1,3})$/)[1]
-        dungeonType = "The Catacombs"
-        cancel(event)
-    }
-    if (/^MasterModeCatacombs-Floor(.{1,3})$/.test(noSpaces)) {
-        floor = noSpaces.match(/MasterModeCatacombs-Floor(.{1,3})$/)[1]
-        dungeonType = "Master Mode"
-        cancel(event)
-    }
-    if (/^TeamScore:\d+\(.+/.test(noSpaces)) {
-        if (noSpaces.includes("(NEWRECORD!)")) {
-            scorePB = " &d&l(NEW RECORD!)"
-            noSpaces = noSpaces.replace("(NEWRECORD!)", "")
+    if (toDelete.some(a => msg.match(a))) return cancel(e)
+
+    if (msg.startsWith("Team Score: ")) {
+        let match = msg.match(/Team Score: (\d+) \((.{1,2})\)/)
+        let [m, score, letter] = match
+        endData.score = score
+        endData.scoreLetter = letter
+        if (letter.includes("(NEW RECORD)")) {
+            endData.scorePB = true
         }
-        score = noSpaces.match(/TeamScore:(\d+)\((.+)\)/)[1]
-        scoreLetter = noSpaces.match(/TeamScore:(\d+)\((.+)\)/)[2]
-        cancel(event)
+        cancel(e)
     }
-    if (/☠Defeated(.+)in(.+)/.test(noSpaces)) {
-        bossKilled = noSpaces.match(/☠Defeated(.+)in(.+)/)[1].replace("The", "The ").replace(/,/g, ", ").replace("and", " and ")
-        time = noSpaces.match(/☠Defeated(.+)in(.+)/)[2]
-        if (time.includes("(NEWRECORD!)")) {
-            timePB = " &d&l(NEW RECORD!)"
-            time = time.replace("(NEWRECORD!)", "")
+
+    if (msg.startsWith("☠ Defeated ")) {
+        let match = msg.match(/☠ Defeated (.+) in (.+s)/)
+        let [m, boss, time] = match
+        endData.time = time
+        endData.bossKilled = boss
+        if (time.includes("(NEW RECORD)")) {
+            endData.timePB = true
         }
-        time = time.replace("00m", "").replace("m", "m ").replace(new RegExp(/^0/), "")
-        cancel(event)
+        cancel(e)
     }
-    if (/\+(.+)CatacombsExperience/.test(noSpaces)) {
-        cataXP = noSpaces.match(/\+(.+)CatacombsExperience/)[1]
-        cancel(event)
+    let typematch = msg.match(/([The Catacombs|Master Mode]+) - Floor (\w{1,3})/)
+    if (typematch) {
+        endData.floor = typematch[2]
+        cancel(e)
     }
-    if (/\+[\d,.]+.+Experience/.test(noSpaces)) cancel(event)
-    if (unformatted == "                             > EXTRA STATS <") {
+
+    endData.bitsFound = testMessage(e, msg, /\+(\d+) Bits/, endData.bitsFound, "int")
+    endData.cataXP = testMessage(e, noCommas, /\+([\d.]+) Catacombs Experience/, endData.cataXP, "float")
+    let classXPMatch = noCommas.match(/\+([\d.]+) ([Mage|Archer|Tank|Berserk|Healer]+) Experienc.+/)
+    if (classXPMatch) {
+        let [m, xp, classs] = classXPMatch
+        endData.classXP.push([parseFloat(xp), classs])
+        cancel(e)
+    }
+    endData.enemiesKilled = testMessage(e, msg, /Enemies Killed: (\d+)/, endData.enemiesKilled, "int")
+    endData.secretsFound = testMessage(e, msg, /Secrets Found: (\d+)/, endData.secretsFound, "int")
+
+    if (msg == "> EXTRA STATS <") {
+        cancel(e)
         ChatLib.command("showextrastats")
-        cancel(event)   
-    }   
-    if (/^SecretsFound:(\d+)/.test(noSpaces)) {
-        secretsFound = noSpaces.match(/SecretsFound:(\d+)/)[1]
-        cancel(event)
-
-        let msg = bossKilled && time ? `&aDefeated &c${bossKilled} &ain: &e${time}${timePB}` : `&c&lFAILED - &e${Dungeon.time}`
-
+    }
+    let secretMatch = msg.match(/Secrets Found: (\d+)/)
+    if (secretMatch) {
+        endData.secretsFound = parseInt(secretMatch[1])
+        let comp = endData.bossKilled ? `&aDefeated &c${endData.bossKilled} &ain &e${endData.time.replace(/^0/, "")}${endData.timePB ? " &d&l(NEW RECORD)" : ""}` : `&c&lFAILED &a- &e${Dungeon.time}`
+        let compHover = ""
+        if (endData.bitsFound) compHover += `&b+${endData.bitsFound} Bits\n`
+        compHover += `&3+${fn(endData.cataXP)} Catacombs XP\n`
+        compHover += endData.classXP.map(a => `&3+${fn(a[0])} ${a[1]} XP`).join("\n")
         ChatLib.chat(`&a&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`)
-        ChatLib.chat(ChatLib.getCenteredText(`&c${dungeonType} - &eFloor ${floor}`))
-        ChatLib.chat(`&a&d&b&d&e&k&b`)
-        new Message(new TextComponent(ChatLib.getCenteredText(msg)).setHover("show_text", `&8+&3${cataXP} Catacombs Experience`)).chat()
-        ChatLib.chat(ChatLib.getCenteredText(`&aScore: &6${score} &a(&b${scoreLetter}&a)${scorePB}`))
-        ChatLib.chat(ChatLib.getCenteredText(`&fSecrets Found: &b${secretsFound}`))
+        ChatLib.chat(centre(`&c${Dungeon.dungeonType} - &eFloor ${endData.floor}`))
+        ChatLib.chat("&c&c&c&d&e&f&c")
+        ChatLib.chat(new TextComponent(centre(comp)).setHover("show_text", compHover))
+        ChatLib.chat(centre(`&aScore: &6${endData.score} &a(&b${endData.scoreLetter}&a)${endData.scorePB ? " &d&l(NEW RECORD)" : ""}`))
+        ChatLib.chat(centre(`&fSecrets Found: &b${endData.secretsFound}`))
         ChatLib.chat(`&r&r&r&r&r&r&r`)
         ChatLib.chat(`&a&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`)
-        
-        reset()
     }
 })
-register("worldLoad", () => reset())
+
+register("worldUnload", () => endData.reset())

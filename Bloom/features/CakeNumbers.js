@@ -5,14 +5,14 @@ register("guiRender", () => {
     if (!Config.cakeNumbers) return
     let inv = Player.getOpenedInventory()
     if (!inv || inv.getName() !== "New Year Cake Bag") return
-    let cakes = inv.getItems().map((a, i) => a?.getName()?.removeFormatting() == "New Year Cake" ? i : null).filter(a => a !== null)
+    let cakes = inv.getItems().map((a, i) => a?.getName()?.removeFormatting()?.startsWith("New Year Cake") ? i : null).filter(a => a !== null)
     cakes.map(a => {
         let [x, y] = getSlotCenter(a)
         let item = inv.getStackInSlot(a)
-        let year = getMatchFromLines(/for the (\d+)/, item.getLore(), "int")
-        if (!year) return
+        let match = item.getName().removeFormatting().match(/New Year Cake \(Year (\d+)\)/)
+        if (!match) return
+        let year = match[1]
         Renderer.retainTransforms(true)
-        // Renderer.drawRect(Renderer.color(0, 0, 0, 200), -8, -8, 16, 16)
         let cakeStr = `&e&l${year}`
         Renderer.translate(x, y+2, 300)
         Renderer.scale(0.8, 0.8)

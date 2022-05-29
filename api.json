@@ -1,22 +1,8 @@
 {
-    "latestVersion": "4.0.0",
+    "latestVersion": "4.0.1",
     "changelog": [
-        "Module now requires BloomCore",
-        "Removed CustomTabCompletions",
-        "Added name history command",
-        "Added /dontrp command",
-        "Added stacks overlay for crimson/terror armor",
-        "Added Gyro radius display",
-        "Added cake year overlay",
-        "Added toggle sprint",
-        "Added mastery Dojo helper",
-        "Added speed display",
-        "Added spirit leap names",
-        "Added more messages to useless message filter",
-        "Changed FC bridge chat to FPF bridge chat",
-        "Custom end info now shows class XP, cata XP and bits gained",
-        "Fixed custom end info breaking when run failed",
-        "Improved some code readability"
+        "Fixed run splits error",
+        "Made API key checker actually work when using /bl setkey"
     ],
     "author": "UnclaimedBloom6"
 }

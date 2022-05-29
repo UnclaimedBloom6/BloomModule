@@ -92,7 +92,7 @@ register("renderOverlay", () => {
 register("tick", () => {
     if (Dungeon.floor == "M7") splitFloor = "M7"
     else if (Dungeon.floor == "F7") splitFloor = "F7"
-    else splitFloor = Dungeon.floorNumber
+    else splitFloor = Dungeon.floorNumber || splitFloor
 
     if (!lastSplit && Dungeon.bossEntry) {
         lastSplit = Dungeon.bossEntry

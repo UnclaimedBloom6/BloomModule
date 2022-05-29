@@ -10,6 +10,7 @@ export const bloomCommand = register("command", (...args) => {
         let key = args[1]
         new Message(`${prefix} &aChecking API key...`).setChatLineId(857684765).chat()
         getApiKeyInfo(key).then(keyInfo => {
+            if (!keyInfo.success) return ChatLib.editChat(857684765, new Message(`${prefix} &cError: Invalid API key.`))
             bcData.apiKey = key
             bcData.save()
             ChatLib.editChat(857684765, new Message(`${prefix} &aAPI Key set successfully!`))

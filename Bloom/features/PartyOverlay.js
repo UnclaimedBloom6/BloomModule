@@ -4,7 +4,6 @@ import Party from "../../BloomCore/Party"
 
 register("dragged", (dx, dy, x, y, btn) => {
     if (!Config.partyOverlayMoveGui.isOpen()) return
-    ChatLib.chat("aaaaaa")
     data.party.x = x
     data.party.y = y
     data.save()

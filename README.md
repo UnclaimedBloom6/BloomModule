@@ -5,6 +5,8 @@ Here you go you fk noob
 
 ### For versions without Zero Ping Terminals, run "/ct import Bloom" in-game.
 
+If you find a bug, want to share suggestions etc then join my Discord server: https://discord.gg/pykzREcAuZ
+
 ## Installation
 
 ### NOTE: ChatTriggers must be installed.

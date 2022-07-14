@@ -1,8 +1,6 @@
 /// <reference types="../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Config from "./Config"
-
 import { skillsCommand } from "./commands/SkillsCommand"
 import { dontRp } from "./commands/DontRP"
 import { myKey } from "./commands/MyKey"
@@ -14,7 +12,7 @@ import { pingCommand } from "./commands/PingCommand"
 import { bloomCommand } from "./commands/BloomCommand"
 import { nameHistoryCommand } from "./commands/NameHistoryCommand"
 import { dcCommand } from "./commands/DcCommand"
-
+import { slayerCommand } from "./commands/SlayerCommand"
 
 import "./features/StacksTracker"
 import "./features/AutoDSParty"
@@ -45,3 +43,7 @@ import "./features/CakeNumbers"
 import "./features/Mastery"
 import "./features/GyroRadius"
 import "./features/ToggleSprint"
+import "./features/BlazeTimer"
+import "./features/LividSolver"
+import "./features/PlayerLogs"
+import "./features/BlazeSolver"

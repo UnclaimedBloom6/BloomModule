@@ -26,7 +26,7 @@ export const dcCommand = register("command", (player1, player2) => {
             let p2CataXP = p2Profile.members[p2UUID].dungeons.dungeon_types.catacombs.experience
             let p2Rank = getRank(p2Stats)
             let diff = Math.abs(p1CataXP - p2CataXP)
-            ChatLib.chat(`${prefix} &6${fn(parseInt(diff))} &aCata XP from ${p1Rank} ${p1Name} &a(${colorCataLevel(calcSkillLevel("catacombs", p1CataXP))}&a) to ${p2Rank} ${p2Name} &a(${colorCataLevel(calcSkillLevel("catacombs", p2CataXP))}&a).`)
+            ChatLib.chat(`&6${fn(parseInt(diff))} &aCata XP from ${p1Rank} ${p1Name} &a(${colorCataLevel(calcSkillLevel("catacombs", p1CataXP))}&a) to ${p2Rank} ${p2Name} &a(${colorCataLevel(calcSkillLevel("catacombs", p2CataXP))}&a).`)
         }).catch(e => ChatLib.chat(e))
     }).catch(e => ChatLib.chat(`${prefix} &cInvalid Player`))
 }).setName("dc")

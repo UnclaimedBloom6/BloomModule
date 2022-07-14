@@ -23,7 +23,7 @@ const windowNames = [
     "Click the button on time!"
 ]
 const noZeroPing = [
-    "Change all to same color!",
+    // "Change all to same color!",
     "Click the button on time!"
 ]
 const getInvItemsTo = (endIndex) => Array.from(Array(endIndex).keys()).filter(a => Player.getOpenedInventory().getStackInSlot(a))

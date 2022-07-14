@@ -61,6 +61,7 @@ const splits = {
 }
 
 register("chat", (event) => {
+    if (!splits[splitFloor]) return
     if (!Dungeon.inDungeon || !splitFloor || splitIndex == Object.keys(splits[splitFloor]).length) return
 
     let formatted = ChatLib.getChatMessage(event)
@@ -92,7 +93,7 @@ register("renderOverlay", () => {
 register("tick", () => {
     if (Dungeon.floor == "M7") splitFloor = "M7"
     else if (Dungeon.floor == "F7") splitFloor = "F7"
-    else splitFloor = Dungeon.floorNumber || splitFloor
+    else splitFloor = Dungeon.floorNumber?.toString() || splitFloor
 
     if (!lastSplit && Dungeon.bossEntry) {
         lastSplit = Dungeon.bossEntry
@@ -100,11 +101,10 @@ register("tick", () => {
 })
 
 register("dragged", (dx, dy, x, y) => {
-    if (Config.runSplitsMoveGui.isOpen()) {
-        data.runSplits.x = x
-        data.runSplits.y = y
-        data.save()
-    }
+    if (!Config.runSplitsMoveGui.isOpen()) return
+    data.runSplits.x = x
+    data.runSplits.y = y
+    data.save()
 })
 
 register("worldLoad", () => reset())

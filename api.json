@@ -1,8 +1,19 @@
 {
-    "latestVersion": "4.0.1",
+    "latestVersion": "4.1.0",
     "changelog": [
-        "Fixed run splits error",
-        "Made API key checker actually work when using /bl setkey"
+        "Added blaze solver",
+        "Added blaze timer",
+        "Fixed an error with the /ds command",
+        "Added //slayer command",
+        "Changed /skills to //skills to avoid conflict with other mods",
+        "Added dungeon player logging (Experimental)",
+        "Changed Bridge chat to work with One 4 All",
+        "Fixed custom end info being triggered when players sent certain message in chat",
+        "Added Livid solver",
+        "Fixed run overview being tab indented",
+        "Fixed null error with run splits",
+        "Speed display no longer shows outside of Skyblock",
+        ""
     ],
     "author": "UnclaimedBloom6"
 }

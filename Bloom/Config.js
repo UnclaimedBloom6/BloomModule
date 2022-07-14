@@ -27,7 +27,8 @@ class Config {
             "&7/ds <player> &8- Dungeon Stats.\n" +
             "&7/mem <player> &8- Guild Stats.\n" +
             "&7/check <player> &8- Check if scammer.\n" +
-            "&7/skills <player> &8- Show a player's skills.\n" +
+            "&7//skills <player> &8- Show a player's skills.\n" +
+            "&7//slayer <player> &8- Show a player's slayer stats.\n" +
             "&7/mykey &8- Show stats about your API key.\n" +
             "\n" +
             "&7//rp [...exclude] &8- Reparty (Add names to not reparty those players).\n" +
@@ -36,6 +37,9 @@ class Config {
             "&7/lsb &8- Warp to lobby then back to Skyblock.\n" +
             "&7/ld &8- Warp to lobby, Skyblock then Dungeon Hub.\n" +
             "&7/colors &8-Show all of the formatting codes.\n" +
+            "&7/dc <player1> <player2> &8-Show the cata XP difference between two players.\n" +
+            "&7/pb <floor number> &8-Show the S+ PB's of the whole party on a floor.\n" +
+            "&7/nh <player> &8-Show a player's username history.\n" +
             "\n\n" +
             "&6UnclaimedBloom6 is very cool and cool"
         )
@@ -259,6 +263,22 @@ class Config {
     })
     spiritLeapNames = false;
 
+    @SwitchProperty({
+        name: "Blaze Timer",
+        description: "Shows how long it took you to complete blaze puzzle.\nNormal time begins when the first blaze is killed, true time (hover over message) begins when the blazes have spawned.",
+        category: "Dungeons",
+        subcategory: "Blaze"
+    })
+    blazeTimer = false;
+
+    @SwitchProperty({
+        name: "Player Logging",
+        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\nUse &b/plogs <player> [floor] &7to show info about past runs with a certain player.",
+        category: "Dungeons",
+        subcategory: "Player Logs"
+    })
+    playerLogging = false;
+
     // ---------------------------------------------------------------
     // Solvers
 
@@ -311,6 +331,22 @@ class Config {
         subcategory: "Dojo"
     })
     dojoMastery = false
+
+    @SwitchProperty({
+        name: "Livid Solver",
+        description: "Draws a box around the correct Livid in Floor 5.",
+        category: "Solvers",
+        subcategory: "Livid"
+    })
+    lividSolver = false
+
+    @SwitchProperty({
+        name: "Blaze Solver",
+        description: "Blaze Solver!",
+        category: "Solvers",
+        subcategory: "Blaze Solver"
+    })
+    blazeSolver = false;
 
     // ---------------------------------------------------------------
     // Gui

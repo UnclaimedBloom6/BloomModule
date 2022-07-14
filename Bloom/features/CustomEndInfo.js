@@ -93,7 +93,7 @@ register("chat", (e) => {
         cancel(e)
         ChatLib.command("showextrastats")
     }
-    let secretMatch = msg.match(/Secrets Found: (\d+)/)
+    let secretMatch = msg.match(/^Secrets Found: (\d+)/)
     if (secretMatch) {
         endData.secretsFound = parseInt(secretMatch[1])
         let comp = endData.bossKilled ? `&aDefeated &c${endData.bossKilled} &ain &e${endData.time.replace(/^0/, "")}${endData.timePB ? " &d&l(NEW RECORD)" : ""}` : `&c&lFAILED &a- &e${Dungeon.time}`

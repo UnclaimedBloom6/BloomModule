@@ -7,7 +7,7 @@ import { prefix } from "../utils/Utils";
 export const skillsCommand = register("command", (player) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (!player) player = Player.getName()
-    new Message(`${prefix} &aGetting skills for ${player}...`).setChatLineId(65443).chat()
+    let msg = new Message(`${prefix} &aGetting skills for ${player}...`).chat()
     getMojangInfo(player).then(mojangInfo => {
         let [player, uuid] = [mojangInfo.name, mojangInfo.id]
         Promise.all([
@@ -43,7 +43,7 @@ export const skillsCommand = register("command", (player) => {
 
                 if (skill !== Object.keys(skills).reverse()[0]) hoverStr += "\n\n" // Don't add a new line if it is the last skill
             }
-            ChatLib.editChat(65443, new Message(new TextComponent(`${prefix} &aSkills for ${rank} ${player} &7(Hover)`).setHover("show_text", hoverStr)))
+            new Message(new TextComponent(`${prefix} &aSkills for ${rank} ${player} &7(Hover)`).setHover("show_text", hoverStr)).chat()
         })
     })
-}).setName("skills")
+}).setName("/skills")

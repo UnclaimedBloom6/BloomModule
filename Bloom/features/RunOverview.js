@@ -9,6 +9,8 @@ register("dragged", (dx, dy, x, y) => {
     data.save()
 })
 
+let maxWidth = 0
+
 register("renderOverlay", () => {
     if (!Config.runOverviewMoveGui.isOpen() && (!Config.runOverview || !Dungeon.inDungeon)) return
 
@@ -17,13 +19,19 @@ register("renderOverlay", () => {
     let bossEntry = !Dungeon.bossEntry && Dungeon.runStarted ? "?" : getTime(Dungeon.bossEntry - Dungeon.runStarted)
     // Renderer.drawString(`runStarted: ${Dungeon.runStarted}\nbloodOpen: ${Dungeon.bloodOpened}\nwatcherDone: ${Dungeon.watcherCleared}\nbossEntry: ${Dungeon.bossEntry}\nrunEnded: ${Dungeon.runEnded}`, 500, 200)
 
-    Renderer.drawString(`
-        &6&lRun Overview
-        &8Wither Doors: &7${Dungeon.openedWitherDoors}
-        &4Blood Open: ${bloodOpened}
-        &cWatcher Clear: ${watcherCleared}
-        &aBoss Entry: ${bossEntry}`,
-        data.runOverview.x,
-        data.runOverview.y
-    )
+    let msg = [
+        `&6&lRun Overview`,
+        `&8Wither Doors: &7${Dungeon.openedWitherDoors}`,
+        `&4Blood Open: ${bloodOpened}`,
+        `&cWatcher Clear: ${watcherCleared}`,
+        `&aBoss Entry: ${bossEntry}`
+    ]
+    // let width = msg.map(a => Renderer.getStringWidth(a)).sort((a, b) => b-a)[0]
+    // if (width > maxWidth) maxWidth = width
+    Renderer.translate(data.runOverview.x, data.runOverview.y)
+    // Renderer.retainTransforms(true)
+    // let l = msg.length
+    // Renderer.drawRect(Renderer.color(0, 0, 0, 179), 0, 0, maxWidth+1, 7*l + (l-1)*2 + 2)
+    Renderer.drawString(msg.join("\n"), 0, 0)
+    // Renderer.retainTransforms(false)
 })

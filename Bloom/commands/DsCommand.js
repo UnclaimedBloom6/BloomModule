@@ -3,7 +3,7 @@ import { catacombs } from "../../BloomCore/Skills/catacombs"
 import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/Utils/APIWrappers"
 import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../BloomCore/Utils/Utils"
 import Promise from "../../PromiseV2"
-import { prefix, chatIncrement } from "../utils/Utils"
+import { prefix } from "../utils/Utils"
 
 let lastDsCommand = null
 export const dsCommand = register("command", (player) => {
@@ -12,14 +12,10 @@ export const dsCommand = register("command", (player) => {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)
         return Object.keys(Party.members).filter(a => a !== Player.getName()).map(a => ChatLib.command(`ds ${a}`, true))
     }
-    let progress = false
+    let message = null
 	if (!player) player = Player.getName()
-	let currentChat
 	if (!lastDsCommand || new Date().getTime() - lastDsCommand > 1000) {
-		progress = true
-		chatIncrement++
-		currentChat = chatIncrement
-		new Message(`${prefix} &aGetting Info for ${player}...`).setChatLineId(currentChat).chat()
+		message = new Message(`${prefix} &aGetting Dungeon Stats for ${player}...`).chat()
 		lastDsCommand = new Date().getTime()
 	}
 	getMojangInfo(player).then(mojangInfo => {
@@ -29,15 +25,13 @@ export const dsCommand = register("command", (player) => {
             getRecentProfile(uuid, null, bcData.apiKey)
         ]).then(values => {
             let [playerInfo, sbProfile] = values
+            if (!playerInfo) return ChatLib.chat(`${prefix} &cCouldn't get player info for ${player}`)
+            if (!sbProfile) return ChatLib.chat(`${prefix} &cCouldn't get ${player}'s Skyblock profile!`)
+            
             let playerName = playerInfo.player.displayname
             let nameFormatted = `${getRank(playerInfo)} ${playerName}&r`
-            if (progress) ChatLib.editChat(currentChat, new Message(`${prefix} &aGetting Dungeon Stats...`).setChatLineId(currentChat))
-            if (!sbProfile) {
-                ChatLib.clearChat(currentChat)
-                return ChatLib.chat(`${prefix} &cPlayer has no Skyblock profiles!`)
-            }
             if (!Object.keys(sbProfile.members[uuid].dungeons.dungeon_types.catacombs).length) {
-                ChatLib.clearChat(currentChat)
+                ChatLib.clearChat(6457654)
                 return ChatLib.chat(`${prefix} &c${playerName} has never entered the Catacombs!`)
             }
             let profileName = sbProfile["cute_name"]
@@ -76,8 +70,8 @@ export const dsCommand = register("command", (player) => {
                 let classXP = parseInt(dung["player_classes"][classs]["experience"])
                 let classLvl = calcSkillLevel(classs, classXP)
                 classLvls.push(classLvl)
-                let xpCurr = parseInt(classXP - catacombs[parseInt(classLvl)])
-                let xpNext = catacombs[parseInt(classLvl)+1] - catacombs[parseInt(classLvl)] || 0
+                let xpCurr = classLvl >= 50 ? (classXP - catacombs[50])%2e8 : parseInt(classXP - catacombs[parseInt(classLvl)])
+                let xpNext = classLvl >= 50 ? 2e8 : catacombs[parseInt(classLvl)+1] - catacombs[parseInt(classLvl)] || 0
                 nameHover += `\n${classs == selectedClass ? "&a" : "&c"}${classWithSymbols[classs]} - &e${prettify(classLvl)}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)`
                 
             })
@@ -104,7 +98,7 @@ export const dsCommand = register("command", (player) => {
                 `&aProgress: &6${fn(cataXP - catacombs[cataLow])}&a/&6${fn(xpNext)}\n` +
                 (cataLevel < 50 ? `&eRemaining: &6${fn(parseInt(catacombs[cataLow+1] - cataXP) || 0)}\n` : "") +
                 `&dPercent To 50: &6${percentTo50}%`
-            if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%200000000)}&c/&6200,000,000`
+            if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%2e8)}&c/&6200,000,000`
             let compHover = getCompHover() + `\n&a${fn(totalNormal)}`
             compHover += totalMaster == 0 ? "" :  ` &8| &c${fn(totalMaster)}`
             compHover += `\n&aTotal: &e${fn(totalNormal + totalMaster)}`
@@ -124,7 +118,6 @@ export const dsCommand = register("command", (player) => {
             }
             let sPlusHover = `&cS+ Runs${getTimes("fastest_time_s_plus")}`
             let sHover = `&cS Runs${getTimes("fastest_time_s")}`
-            if (progress) ChatLib.clearChat(currentChat)
             new Message(
                 new TextComponent(`${nameFormatted}`).setHover("show_text", nameHover).setClick("open_url", `https://sky.shiiyu.moe/stats/${playerName}`), ` &8| `,
                 new TextComponent(`&c${cataLevelStr}`).setHover("show_text", cataHover), ` &8| `,
@@ -133,9 +126,8 @@ export const dsCommand = register("command", (player) => {
                 new TextComponent(`&cS+`).setHover("show_text", sPlusHover), ` &8| `,
                 new TextComponent(`&cS`).setHover("show_text", sHover)
             ).chat()
-        }).catch(e => `${prefix} &cError getting Dungeon Stats for ${player}`)
+        }).catch(e => `${prefix} &cError getting Dungeon Stats for ${player}: ${e}`)
     }).catch(error => {
-        if (progress) ChatLib.clearChat(currentChat)
-        ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}`)
+        ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${error}`)
     })
 }).setName("ds")

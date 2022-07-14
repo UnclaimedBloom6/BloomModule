@@ -3,7 +3,7 @@ import Config from "../Config"
 register("chat", (e) => {
     if (!Config.bridgeChat) return
     let msg = ChatLib.getChatMessage(e).removeFormatting()
-    let match = msg.match(/Guild >.+\[BOT\]: ([^:.]+): (.+)/)
+    let match = msg.match(/Guild > \[MVP\+{1,2}\] NecronBridge: ([^:]+): (.+)/)
     if (!match) return
     let [m, player, message] = match
     cancel(e)

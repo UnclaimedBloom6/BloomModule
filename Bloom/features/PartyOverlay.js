@@ -10,7 +10,8 @@ register("dragged", (dx, dy, x, y, btn) => {
 })
 
 register("renderOverlay", () => {
-    if (!Config.partyOverlayMoveGui.isOpen() && (Config.partyOverlay && !Object.keys(Party.members).length)) return
+    if (!Config.partyOverlayMoveGui.isOpen() && !Config.partyOverlay) return
+    if (!Object.keys(Party.members).length) return
     let str = `&cParty (&6${Object.keys(Party.members).length}&c)`
     Object.keys(Party.members).forEach(member => {
         if (member == Party.leader) str += `\n&6♔ &r${Party.members[member]}`

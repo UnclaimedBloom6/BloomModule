@@ -5,7 +5,7 @@ import Skyblock from "../../BloomCore/Skyblock"
 
 
 register("renderOverlay", () => {
-    if (!Config.speedDisplay && !Skyblock.inSkyblock) return
+    if (!Config.speedDisplay || !Skyblock.inSkyblock) return
     Renderer.translate(data.speedDisplay.x, data.speedDisplay.y)
     Renderer.scale(1.5)
     Renderer.drawStringWithShadow(`&f✦${MyPlayer.speed}`, 0, 0)

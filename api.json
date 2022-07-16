@@ -1,19 +1,9 @@
 {
-    "latestVersion": "4.1.0",
+    "latestVersion": "4.1.1",
     "changelog": [
-        "Added blaze solver",
-        "Added blaze timer",
-        "Fixed an error with the /ds command",
-        "Added //slayer command",
-        "Changed /skills to //skills to avoid conflict with other mods",
-        "Added dungeon player logging (Experimental)",
-        "Changed Bridge chat to work with One 4 All",
-        "Fixed custom end info being triggered when players sent certain message in chat",
-        "Added Livid solver",
-        "Fixed run overview being tab indented",
-        "Fixed null error with run splits",
-        "Speed display no longer shows outside of Skyblock",
-        ""
+        "Fixed bridge bot username",
+        "Fixed party overlay and speed overlay always showing",
+        "Added Trivia solver (Dungeon Puzzle)"
     ],
     "author": "UnclaimedBloom6"
 }

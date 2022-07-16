@@ -348,6 +348,14 @@ class Config {
     })
     blazeSolver = false;
 
+    @SwitchProperty({
+        name: "Trivia Solver",
+        description: "Quiz puzzle",
+        category: "Solvers",
+        subcategory: "Trivia"
+    })
+    triviaSolver = false;
+
     // ---------------------------------------------------------------
     // Gui
 

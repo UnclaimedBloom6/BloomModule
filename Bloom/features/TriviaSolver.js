@@ -18,7 +18,7 @@ register("chat", event => {
     let unformatted = message.removeFormatting().trim()
     if (unformatted.match(/\[STATUE\] Oruo the Omniscient: .+/)) return solutions = []
     if (Object.keys(triviaData).includes(unformatted)) return solutions = triviaData[unformatted]
-    if (unformatted == "What SkyBlock year is it?") return solutions = [Math.floor((new Date().getTime()/1000 - 1560276000) / 446400 + 1)] // From Danker's Skyblock Mod
+    if (unformatted == "What SkyBlock year is it?") return solutions = [`Year ${Math.floor((new Date().getTime()/1000 - 1560276000) / 446400 + 1)}`] // Calculation from Danker's Skyblock Mod
     let match = unformatted.match(/[ⓐⓑⓒ] (.+)/)
     if (!match) return
     let [m, ans] = match

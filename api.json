@@ -5,5 +5,6 @@
         "Fixed party overlay and speed overlay always showing",
         "Added Trivia solver (Dungeon Puzzle)"
     ],
-    "author": "UnclaimedBloom6"
+    "author": "UnclaimedBloom6",
+    "bridgeRegex": "Guild > \[MVP\+{1,2}\] NecronBridge \[\w+\]: ([^:]+): (.+)"
 }

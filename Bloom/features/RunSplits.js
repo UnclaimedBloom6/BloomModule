@@ -1,4 +1,4 @@
-import Dungeon from "../../BloomCore/Dungeons/Dungeon";
+import Dungeon from "../../BloomCore/dungeons/Dungeon";
 import Config from "../Config";
 import { data, getSecs } from "../utils/Utils";
 
@@ -19,14 +19,14 @@ const splits = {
     "F7": {
         "[BOSS] Storm: Pathetic Maxor, just like expected.": "&aMaxor",
         "[BOSS] Goldor: Who dares trespass into my domain?": "&bStorm",
-        "[BOSS] Goldor: You have done it, you destroyed the factory…": "&eTerminals",
+        "The Core entrance is opening!": "&eTerminals",
         "[BOSS] Necron: You went further than any human before, congratulations.": "&7Goldor",
         "                             > EXTRA STATS <": "&4Necron",
     },
     "M7": {
         "[BOSS] Storm: Pathetic Maxor, just like expected.": "&aMaxor",
         "[BOSS] Goldor: Who dares trespass into my domain?": "&bStorm",
-        "[BOSS] Goldor: You have done it, you destroyed the factory…": "&eTerminals",
+        "The Core entrance is opening!": "&eTerminals",
         "[BOSS] Necron: You went further than any human before, congratulations.": "&7Goldor",
         "[BOSS] Necron: All this, for nothing...": "&cNecron",
         "                             > EXTRA STATS <": "&4Wither King",

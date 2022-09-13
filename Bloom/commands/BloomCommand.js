@@ -1,7 +1,7 @@
 import Config from "../Config"
 import { prefix } from "../utils/Utils"
-import { getApiKeyInfo } from "../../BloomCore/Utils/APIWrappers"
-import { bcData } from "../../BloomCore/Utils/Utils"
+import { getApiKeyInfo } from "../../BloomCore/utils/APIWrappers"
+import { bcData } from "../../BloomCore/utils/Utils"
 
 export const bloomCommand = register("command", (...args) => {
     if (!args || !args[0]) return Config.openGUI()

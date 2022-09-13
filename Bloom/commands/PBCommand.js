@@ -1,7 +1,7 @@
-import { getMojangInfo, getRecentProfile } from "../../BloomCore/Utils/APIWrappers"
+import { getMojangInfo, getRecentProfile } from "../../BloomCore/utils/APIWrappers"
 import Party from "../../BloomCore/Party"
 import { prefix } from "../utils/Utils"
-import { bcData, convertToPBTime } from "../../BloomCore/Utils/Utils"
+import { bcData, convertToPBTime } from "../../BloomCore/utils/Utils"
 
 register("command", (floor) => {
     if (!floor) return ChatLib.chat(`${prefix} &c/pb <floor> - Gets the pbs of everyone in your party for a floor. Use /ds p for more stats.`)

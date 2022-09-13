@@ -1,4 +1,5 @@
 import Party from "../../BloomCore/Party"
+import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import { prefix } from "../utils/Utils"
 
 let commands = {
@@ -23,14 +24,15 @@ let commands = {
     "va": "viewauction",
     "pko": "p kickoffline",
     "pd": "p disband",
-    "pt": "p transfer",
-    "pk": "p kick"
 }
 Object.keys(commands).forEach(cmd => {
     register("command", (...args) => {
         ChatLib.command(`${commands[cmd]} ${args.join(" ")}`)
     }).setName(cmd)
 })
+
+register("command", (player) => ChatLib.command(`p kick ${player}`)).setTabCompletions(args => getTabCompletion(args, {party: true})).setName("pk")
+register("command", (player) => ChatLib.command(`p transfer ${player}`)).setTabCompletions(args => getTabCompletion(args, {party: true})).setName("pt")
 
 // Colors command
 register("command", () => {

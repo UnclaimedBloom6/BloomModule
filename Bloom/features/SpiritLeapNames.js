@@ -1,4 +1,4 @@
-import { getSlotCenter } from "../../BloomCore/Utils/Utils"
+import { getSlotCenter } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 const invNames = [

@@ -1,7 +1,8 @@
 import Party from "../../BloomCore/Party"
-import { catacombs } from "../../BloomCore/Skills/catacombs"
-import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/Utils/APIWrappers"
-import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../BloomCore/Utils/Utils"
+import { catacombs } from "../../BloomCore/skills/catacombs"
+import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/utils/APIWrappers"
+import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../BloomCore/utils/Utils"
+import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 
@@ -130,4 +131,4 @@ export const dsCommand = register("command", (player) => {
     }).catch(error => {
         ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${error}`)
     })
-}).setName("ds")
+}).setTabCompletions(args => getTabCompletion(args, {party: true, world: true})).setName("ds")

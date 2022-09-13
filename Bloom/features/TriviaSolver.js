@@ -1,6 +1,6 @@
 import request from "../../requestV2"
-import Dungeon from "../../BloomCore/Dungeons/Dungeon"
-import { EntityArmorStand } from "../../BloomCore/Utils/Utils"
+import Dungeon from "../../BloomCore/dungeons/Dungeon"
+import { EntityArmorStand } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 let triviaData = null
@@ -13,7 +13,7 @@ request({
 
 let solutions = []
 register("chat", event => {
-    if (!Dungeon.inDungeon || !Config.triviaSolver) return
+    if (!Dungeon.inDungeon || !Config.triviaSolver || !triviaData) return
     let message = ChatLib.getChatMessage(event)
     let unformatted = message.removeFormatting().trim()
     if (unformatted.match(/\[STATUE\] Oruo the Omniscient: .+/)) return solutions = []

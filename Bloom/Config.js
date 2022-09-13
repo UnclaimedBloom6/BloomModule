@@ -52,6 +52,7 @@ class Config {
     cooldownMoveGui = new Gui()
     runOverviewMoveGui = new Gui()
     toggleSprintMove = new Gui()
+    chMapMoveGui = new Gui()
 
     // ---------------------------------------------------------------
     // General
@@ -273,7 +274,7 @@ class Config {
 
     @SwitchProperty({
         name: "Player Logging",
-        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\nUse &b/plogs <player> [floor] &7to show info about past runs with a certain player.",
+        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\nUse &b/plogs <f:player> <f:floor> &7to show info about past runs with a certain player. More functionality coming in future updates.\n&cRequires API key to be set (/bl setkey <key>).",
         category: "Dungeons",
         subcategory: "Player Logs"
     })
@@ -283,33 +284,123 @@ class Config {
     // Solvers
 
     @SwitchProperty({
-        name: "Zero Ping Terminals",
+        name: "&a&lZero Ping Terminals",
         description: "Removes the delay caused by ping when clicking on terminals, making it feel like you have zero ping.\n\n" +
         "&8- Originally created by Alon1396 in the AlonAddons module\n\n" +
         "&cWARNING: Currently, the chances of getting banned for this is virtually 0, however if Hypixel's anticheat updates to try and prevent exploiting terminals then this could cause false bans. Use at own risk.",
         category: "Solvers",
         subcategory: "Terminals"
     })
-    zeroPingTerminals = true;
+    zeroPingTerminals = false;
 
     @SwitchProperty({
-        name: "Terminal Solvers",
-        description: "Enable terminal solvers",
+        name: "&6Terminal Solvers",
+        description: "Toggle all terminal solvers.",
         category: "Solvers",
         subcategory: "Terminals"
     })
     terminalSolvers = false;
 
+    // ----- Spam -----
+
     @SwitchProperty({
-        name: "Maze Helper",
-        description: "Shows the next maze pane that should be clicked when using Zero Ping Terminals.",
+        name: "Colors Solver",
+        description: "Toggle the terminal solver for the colors terminal (Select all the ____  items).",
         category: "Solvers",
         subcategory: "Terminals"
     })
-    mazeHelper = true;
+    colorsSolver = false;
 
     @SwitchProperty({
-        name: "Hide Terminal Tooltips",
+        name: "Zero Ping Colors",
+        description: "Toggle zero ping being used for the colors terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    colorsZeroPing = false;
+
+    // --
+
+    @SwitchProperty({
+        name: "Starts With Solver",
+        description: "Toggle the terminal solver for the 'starts with' terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    startsWithSolver = false;
+
+    @SwitchProperty({
+        name: "Zero Ping Starts With",
+        description: "Toggle zero ping being used for the 'starts with' terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    startsWithZeroPing = false;
+
+    // --
+
+    @SwitchProperty({
+        name: "Numbers Solver",
+        description: "Toggle the terminal solver for the numbers terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    numbersSolver = false;
+
+    @SwitchProperty({
+        name: "Zero Ping Numbers",
+        description: "Toggle zero ping being used for the numbers terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    numbersZeroPing = false;
+
+    // --
+
+    @SwitchProperty({
+        name: "Red Green Solver",
+        description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    redGreenSolver = false;
+
+    @SwitchProperty({
+        name: "Zero Ping Red Green",
+        description: "Toggle zero ping being used for the red green terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    redGreenZeroPing = false;
+
+    // --
+
+    @SwitchProperty({
+        name: "Rubix Solver",
+        description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    rubixSolver = false;
+
+    @SwitchProperty({
+        name: "Zero Ping Rubix",
+        description: "Toggle zero ping being used for the rubix terminal (Make all the same color).",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    rubixZeroPing = false;
+
+    // @SwitchProperty({
+    //     name: "Maze Helper",
+    //     description: "Shows the next maze pane that should be clicked when using Zero Ping Terminals.",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // mazeHelper = true;
+
+    @SwitchProperty({
+        name: "&cHide Terminal Tooltips",
         description: "Hides the tooltips when hovering over items in terminals.",
         category: "Solvers",
         subcategory: "Terminals"
@@ -317,7 +408,7 @@ class Config {
     hideTerminalTooltips = true;
 
     @SwitchProperty({
-        name: "Show Right Click",
+        name: "&cShow Right Click",
         description: "Shows how many right clicks are needed instead of left clicks on the new colors terminal.\n&eNOTE: Zero ping will still middle click since right clicking was buggy. I'd only recommend using this if you aren't using zero ping.",
         category: "Solvers",
         subcategory: "Terminals"
@@ -355,6 +446,14 @@ class Config {
         subcategory: "Trivia"
     })
     triviaSolver = false;
+
+    @SwitchProperty({
+        name: "Teleport Maze Solver",
+        description: "tp maze solver!",
+        category: "Solvers",
+        subcategory: "Teleport Maze"
+    })
+    tpMazeSolver = false;
 
     // ---------------------------------------------------------------
     // Gui
@@ -422,7 +521,26 @@ class Config {
         category: "Gui",
         subcategory: "New Year Cakes"
     })
-    cakeNumbers = false
+    cakeNumbers = false;
+
+    @SwitchProperty({
+        name: "Crystal Hollows Map",
+        description: "Shows where all of the main areas of the Crystal Hollows are as well as your own head.",
+        category: "Gui",
+        subcategory: "Crystal Hollows"
+    })
+    chMap = false;
+    
+    @ButtonProperty({
+        name: "Move CH Map",
+        description: "Move the crystal hollows map and change its size.",
+        category: "Gui",
+        subcategory: "Crystal Hollows",
+        placeholder: "Move"
+    })
+    MoveCHMap() {
+        this.chMapMoveGui.open()
+    };
 
     // ---------------------------------------------------------------
     // Auto Kicker

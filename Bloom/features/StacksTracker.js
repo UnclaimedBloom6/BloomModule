@@ -1,11 +1,6 @@
 import Config from "../Config"
 import { data } from "../utils/Utils"
 
-if (!data.stackTracker) {
-    data.stackTracker = {"x": 0, "y": 0}
-    data.save()
-}
-
 let stackIcons = [5968, 8273]
 let stacks = 0
 let stackChar = "ᝐ"

@@ -1,14 +1,13 @@
-import Dungeon from "../../BloomCore/Dungeons/Dungeon"
-import { stripRank } from "../../BloomCore/Utils/Utils"
+import Dungeon from "../../BloomCore/dungeons/Dungeon"
+import { stripRank } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { prefix, data } from "../utils/Utils"
 
 register("dragged", (dx, dy, x, y) => {
-    if (Config.cooldownMoveGui.isOpen()) {
-        data.dungeonWarpCooldown.x = x
-        data.dungeonWarpCooldown.y = y
-        data.save()
-    }
+    if (!Config.cooldownMoveGui.isOpen()) return
+    data.dungeonWarpCooldown.x = x
+    data.dungeonWarpCooldown.y = y
+    data.save()
 })
 
 if (!data.dungeonWarps) {

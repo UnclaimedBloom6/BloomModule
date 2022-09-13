@@ -1,4 +1,4 @@
-import { hidePartySpam } from "../../BloomCore/Utils/Utils"
+import { hidePartySpam } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 register("chat", (player, classs, level) => {

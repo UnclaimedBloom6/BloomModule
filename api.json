@@ -1,9 +1,14 @@
 {
-    "latestVersion": "4.1.1",
+    "latestVersion": "4.1.2",
     "changelog": [
-        "Fixed bridge bot username",
-        "Fixed party overlay and speed overlay always showing",
-        "Added Trivia solver (Dungeon Puzzle)"
+        "Bridge bot now grabs guild chat regex from API",
+        "Lower-cased all sub-folders",
+        "Added tab completion for /ds, /pk and /pt commands",
+        "Added toggles for individual terminals",
+        "Added crystal hollows map",
+        "Optimized some rendering stuff",
+        "Added teleport maze solver",
+        "Added fail-safe for if trivia solver fails to fetch solutions from API"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

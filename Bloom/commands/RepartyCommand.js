@@ -1,5 +1,5 @@
 import Party from "../../BloomCore/Party"
-import { hidePartySpam, partyPlayers } from "../../BloomCore/Utils/Utils"
+import { hidePartySpam, partyPlayers } from "../../BloomCore/utils/Utils"
 import { prefix } from "../utils/Utils"
 
 let lastReparty

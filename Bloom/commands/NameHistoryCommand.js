@@ -1,5 +1,5 @@
 import { prefix } from "../utils/Utils"
-import { getMojangInfo, getNameHistory } from "../../BloomCore/Utils/APIWrappers"
+import { getMojangInfo, getNameHistory } from "../../BloomCore/utils/APIWrappers"
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 

@@ -1,5 +1,5 @@
-import Dungeon from "../../BloomCore/Dungeons/Dungeon";
-import { fn } from "../../BloomCore/Utils/Utils";
+import Dungeon from "../../BloomCore/dungeons/Dungeon";
+import { fn } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 
 const toDelete = [

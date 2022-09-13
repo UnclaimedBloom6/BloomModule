@@ -1,5 +1,5 @@
-import { getApiKeyInfo, getMojangInfo } from "../../BloomCore/Utils/APIWrappers"
-import { bcData, fn } from "../../BloomCore/Utils/Utils"
+import { getApiKeyInfo, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
+import { bcData, fn } from "../../BloomCore/utils/Utils"
 import { prefix } from "../utils/Utils"
 
 export const myKey = register("command", () => {

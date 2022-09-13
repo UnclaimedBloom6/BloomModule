@@ -1,6 +1,6 @@
 import { prefix } from "../utils/Utils"
 import request from "../../requestV2"
-import { getMojangInfo } from "../../BloomCore/Utils/APIWrappers"
+import { getMojangInfo } from "../../BloomCore/utils/APIWrappers"
 
 export const scammerCommand = register("command", (player) => {
 	if (!player) player = Player.getName()

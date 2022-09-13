@@ -1,5 +1,5 @@
-import Dungeon from "../../BloomCore/Dungeons/Dungeon"
-import { EntityArmorStand, getDistance2D } from "../../BloomCore/Utils/Utils"
+import Dungeon from "../../BloomCore/dungeons/Dungeon"
+import { EntityArmorStand, getDistance2D } from "../../BloomCore/utils/Utils"
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 

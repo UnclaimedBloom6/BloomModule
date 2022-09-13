@@ -1,4 +1,4 @@
-import { getScoreboard, removeUnicode } from "../../BloomCore/Utils/Utils"
+import { getScoreboard, removeUnicode } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 let scanned = false

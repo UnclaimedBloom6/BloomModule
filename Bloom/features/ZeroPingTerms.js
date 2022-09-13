@@ -1,8 +1,8 @@
-import { clickSlot, colorOrder, isEnchanted, prefix, setEnchanted, setPaneToGreen } from "../Utils/Utils"
+import { colorOrder, isEnchanted, setEnchanted, setPaneToGreen } from "../Utils/Utils"
 import Config from "../Config"
 import TerminalSolver from "./TerminalSolver"
-import Dungeon from "../../BloomCore/Dungeons/Dungeon"
-// import { S30PacketWindowItems } from "../../BloomCore/Utils/Utils"
+import Dungeon from "../../BloomCore/dungeons/Dungeon"
+import { clickSlot, S30PacketWindowItems } from "../../BloomCore/utils/Utils"
 
 export default new class ZeroPingTerms {
     constructor() {
@@ -11,7 +11,7 @@ export default new class ZeroPingTerms {
         this.greenPanes = []
         this.paneMetas = {}
         this.lastClick = null
-        const incrementPane = (slot, meta, reverse) => Player.getOpenedInventory().getStackInSlot(slot).setDamage(colorOrder[(colorOrder.length+colorOrder.indexOf(meta)+(reverse ? -1 : 1))%colorOrder.length])
+        const incrementPane = (slot, meta, reverse) => Player.getContainer().getStackInSlot(slot).setDamage(colorOrder[(colorOrder.length+colorOrder.indexOf(meta)+(reverse ? -1 : 1))%colorOrder.length])
         const removeSlot = (slot, amount) => {
             let removed = 0
             for (let i = 0; i < TerminalSolver.correctSlots.length; i++) {
@@ -23,22 +23,22 @@ export default new class ZeroPingTerms {
                 }
             }
         }
-        this.doStuff = (gui, event, button) => {
+        this.doStuff = (gui, event) => {
             let correct = TerminalSolver.correctSlots
-            if (!correct.length || !TerminalSolver.inTerm) return
+            if (!correct.length || !TerminalSolver.terminal) return
 
             let slot = gui ? gui.getSlotUnderMouse()?.field_75222_d : correct[0]
             if (slot == null) return event ? cancel(event) : null
 
             if (!correct.includes(slot)) return cancel(event)
 
-            let meta = Player.getOpenedInventory()?.getStackInSlot(slot)?.getMetadata()
+            let meta = Player.getContainer()?.getStackInSlot(slot)?.getMetadata()
             let finalClick = 2
 
-            let wi = Player.getPlayer().field_71070_bA.field_75152_c
+            let wi = Player.getContainer().getWindowId()
             if (this.windowId < wi) this.windowId = wi
 
-            let inv = Player.getOpenedInventory()
+            let inv = Player.getContainer()
             let invName = inv.getName()
 
             let action = (slot) => setEnchanted(slot)
@@ -76,58 +76,59 @@ export default new class ZeroPingTerms {
             this.windowId++
         }
         register("guiMouseClick", (mx, my, btn, gui, event) => {
-            if (!Config.zeroPingTerminals || !TerminalSolver.inTerm || !Config.terminalSolvers || ![0, 1].includes(btn) || !TerminalSolver.correctSlots.length) return
+            if (!Config.zeroPingTerminals || !TerminalSolver.terminal || !Config.terminalSolvers || btn || !TerminalSolver.correctSlots.length) return
+            if (TerminalSolver.terminal == "NUMBERS" && !Config.numbersZeroPing) return
+            if (TerminalSolver.terminal == "COLORS" && !Config.colorsZeroPing) return
+            if (TerminalSolver.terminal == "STARTSWITH" && !Config.startsWithZeroPing) return
+            if (TerminalSolver.terminal == "RUBIX" && !Config.rubixZeroPing) return
+            if (TerminalSolver.terminal == "REDGREEN" && !Config.redGreenZeroPing) return
             this.doStuff(gui, event, btn)
         })
 
         register("guiRender", () => {
-            if (!TerminalSolver.inTerm) return
+            if (!TerminalSolver.terminal) return
             // Index out of range error that I cba making an actual fix for
             try { 
                 this.greenPanes.map(a => setPaneToGreen(a))
                 this.enchantedSlots.filter(a => !isEnchanted(a)).map(a => setEnchanted(a))
-                Object.keys(this.paneMetas).map(a => Player.getOpenedInventory().getStackInSlot(a).setDamage(this.paneMetas[a]))
+                Object.keys(this.paneMetas).map(a => Player.getContainer().getStackInSlot(a).setDamage(this.paneMetas[a]))
             }
             catch(e) {}
         })
         register("tick", () => {
-            if (TerminalSolver.inTerm) return
-            this.windowId = null
+            if (TerminalSolver.terminal) return
             this.greenPanes = []
             this.enchantedSlots = []
             this.paneMetas = {}
+            this.windowId = null
 
-            this.lastPacketItems = null
-            this.lastWindowId = null
-            this.lastWindowPacket = null
+            this.packet = null
+            this.lastPacketReceived = null
         })
 
-        // No workey ):
-        // register("packetReceived", (packet) => {
-        //     if (!Dungeon.inDungeon || !TerminalSolver.inTerm || !Config.zeroPingTerminals) return
-        //     if (!(packet instanceof S30PacketWindowItems)) return
-        //     this.lastPacketItems = packet.func_148910_d() // getItemStacks()
-        //     this.lastWindowId = packet.func_148911_c() // getWindowId()
-        //     this.lastWindowPacket = new Date().getTime()
-        // })
+        // Tries to fix when the client's and server's window ids get unsyncedd
+        register("packetReceived", (packet) => {
+            if (!Dungeon.inDungeon || !TerminalSolver.terminal || !Config.zeroPingTerminals) return
+            this.packet = packet
+            this.lastPacketReceived = new Date().getTime()
+        }).setPacketClass(S30PacketWindowItems)
 
-        // register("tick", () => {
-        //     if (!this.lastWindowPacket || new Date().getTime() - this.lastWindowPacket < 500 || new Date().getTime() - this.lastClick < 500) return
-        //     let currentContainer = Player.getOpenedInventory().container
-        //     // if (this.lastPacketItems.length > currentContainer.)
-        //     this.x = []
-        //     this.greenPanes = []
-        //     this.paneMetas = {}
-        //     // ChatLib.chat(`${this.lastPacketItems}`)
-        //     // currentContainer.func_75131_a(new Array(this.lastPacketItems.length).fill(null))
-        //     currentContainer.func_75131_a(this.lastPacketItems)
-        //     TerminalSolver.solve()
-        //     // ChatLib.chat(`${prefix} &a&lUPDATED ITEMS`)
+        register("tick", () => {
+            if (!TerminalSolver.terminal) return
+            if (!this.lastPacketReceived || new Date().getTime() - this.lastPacketReceived < 500 || new Date().getTime() - this.lastClick < 500 || !Client.isInGui()) return
 
-        //     this.windowId = this.lastWindowId
-        //     this.lastPacketItems = null
-        //     this.lastWindowId = null
-        //     this.lastWindowPacket = null
-        // })
+            this.windowId = null
+            this.greenPanes = []
+            this.paneMetas = {}
+
+            // Re-Send the window packet
+            Client.scheduleTask(() => Client.getMinecraft().func_147114_u().func_147241_a(this.packet))
+
+            TerminalSolver.solve()
+
+            this.packet = null
+            this.lastPacketReceived = null
+        })
     }
 }
+

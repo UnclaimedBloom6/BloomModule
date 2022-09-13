@@ -1,6 +1,6 @@
 import { maxLevels, normalSkill } from "../../BloomCore/Skills/normal";
-import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/Utils/APIWrappers";
-import { bcData, calcSkillLevel, fn, getRank, title } from "../../BloomCore/Utils/Utils";
+import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/utils/APIWrappers";
+import { bcData, calcSkillLevel, fn, getRank, title } from "../../BloomCore/utils/Utils";
 import Promise from "../../PromiseV2";
 import { prefix } from "../utils/Utils";
 

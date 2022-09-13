@@ -1,5 +1,5 @@
-import { getGuildInfo, getHypixelPlayer, getMojangInfo } from "../../BloomCore/Utils/APIWrappers"
-import { bcData, fn, getRank, monthsShort } from "../../BloomCore/Utils/Utils"
+import { getGuildInfo, getHypixelPlayer, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
+import { bcData, fn, getRank, monthsShort } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 

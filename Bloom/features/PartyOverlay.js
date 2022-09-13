@@ -9,14 +9,19 @@ register("dragged", (dx, dy, x, y, btn) => {
     data.save()
 })
 
-register("renderOverlay", () => {
-    if (!Config.partyOverlayMoveGui.isOpen() && !Config.partyOverlay) return
-    if (!Object.keys(Party.members).length) return
-    let str = `&cParty (&6${Object.keys(Party.members).length}&c)`
+let partyStr = null
+register("tick", () => {
+    if (!Config.partyOverlayMoveGui.isOpen() && !Config.partyOverlay) return partyStr = null
+    if (!Object.keys(Party.members).length) return partyStr = null
+    partyStr = `&cParty (&6${Object.keys(Party.members).length}&c)`
     Object.keys(Party.members).forEach(member => {
-        if (member == Party.leader) str += `\n&6♔ &r${Party.members[member]}`
-        else if (Party.excludePlayers.includes(member)) str += `\n&c✘ &r${Party.members[member]}`
-        else str += `\n${Party.members[member]}`
+        if (member == Party.leader) partyStr += `\n&6♔ &r${Party.members[member]}`
+        else if (Party.excludePlayers.includes(member)) partyStr += `\n&c✘ &r${Party.members[member]}`
+        else partyStr += `\n${Party.members[member]}`
     })
-    Renderer.drawString(str, data.party.x, data.party.y)
+})
+
+register("renderOverlay", () => {
+    if (!partyStr) return
+    Renderer.drawString(partyStr, data.party.x, data.party.y)
 })

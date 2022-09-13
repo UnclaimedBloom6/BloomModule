@@ -1,4 +1,4 @@
-import { getMatchFromLines, getSlotCenter } from "../../BloomCore/Utils/Utils"
+import { getMatchFromLines, getSlotCenter } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 register("guiRender", () => {

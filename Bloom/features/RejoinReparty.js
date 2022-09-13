@@ -1,4 +1,4 @@
-import { stripRank } from "../../BloomCore/Utils/Utils"
+import { stripRank } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 let lastDisbandedPlayer

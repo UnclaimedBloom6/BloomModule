@@ -1,5 +1,5 @@
-import Dungeon from "../../BloomCore/Dungeons/Dungeon"
-import { EntityArmorStand, getDistance3D } from "../../BloomCore/Utils/Utils"
+import Dungeon from "../../BloomCore/dungeons/Dungeon"
+import { EntityArmorStand, getDistance3D } from "../../BloomCore/utils/Utils"
 import { prefix } from "../utils/Utils"
 import Config from "../Config"
 

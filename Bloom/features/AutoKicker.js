@@ -1,5 +1,5 @@
-import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/Utils/APIWrappers"
-import { bcData, hidePartySpam } from "../../BloomCore/Utils/Utils"
+import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
+import { bcData, hidePartySpam } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { prefix } from "../utils/Utils"
 import Party from "../../BloomCore/Party"

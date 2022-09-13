@@ -16,7 +16,7 @@ const defaultIcon = new Image("greenMarker.png", "../../BloomCore/assets/blueMar
 let head = null
 getHead(Player.getName(), true).then(h => head = h)
 register("renderOverlay", () => {
-    if (Skyblock.area !== "Crystal Hollows" && (!Config.chMap || !Config.chMapMoveGui.isOpen())) return
+    if (Skyblock.area !== "Crystal Hollows" || (!Config.chMap && !Config.chMapMoveGui.isOpen())) return
     let w = h = 150 * data.chMap.scale
     let x = data.chMap.x
     let y = data.chMap.y

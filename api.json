@@ -1,14 +1,7 @@
 {
-    "latestVersion": "4.1.2",
+    "latestVersion": "4.1.3",
     "changelog": [
-        "Bridge bot now grabs guild chat regex from API",
-        "Lower-cased all sub-folders",
-        "Added tab completion for /ds, /pk and /pt commands",
-        "Added toggles for individual terminals",
-        "Added crystal hollows map",
-        "Optimized some rendering stuff",
-        "Added teleport maze solver",
-        "Added fail-safe for if trivia solver fails to fetch solutions from API"
+        "Fixed crystal hollows toggle not working."
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

@@ -2,7 +2,7 @@ import { colorOrder, isEnchanted, setEnchanted, setPaneToGreen } from "../Utils/
 import Config from "../Config"
 import TerminalSolver from "./TerminalSolver"
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { clickSlot, S30PacketWindowItems } from "../../BloomCore/utils/Utils"
+import { clickSlot, S30PacketWindowItems, sendWindowClick } from "../../BloomCore/utils/Utils"
 
 export default new class ZeroPingTerms {
     constructor() {
@@ -33,8 +33,6 @@ export default new class ZeroPingTerms {
             if (!correct.includes(slot)) return cancel(event)
 
             let meta = Player.getContainer()?.getStackInSlot(slot)?.getMetadata()
-            let finalClick = 2
-
             let wi = Player.getContainer().getWindowId()
             if (this.windowId < wi) this.windowId = wi
 
@@ -60,6 +58,7 @@ export default new class ZeroPingTerms {
             // The rest of this terminal doesn't work properly.
             if (invName == "Change all to same color!") {
                 action = null
+                if (!inv.getStackInSlot(slot)) return
                 incrementPane(slot, meta, false)
                 this.paneMetas[slot] = inv.getStackInSlot(slot)?.getMetadata()
 
@@ -67,7 +66,7 @@ export default new class ZeroPingTerms {
 
             removeSlot(slot, toRemove)
             if (event) cancel(event)
-            clickSlot(slot, this.windowId, finalClick)
+            sendWindowClick(this.windowId, slot, 0)
             this.lastClick = new Date().getTime()
             try {
                 if (action) action(slot)

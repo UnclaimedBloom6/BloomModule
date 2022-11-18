@@ -49,9 +49,9 @@ export const dsCommand = register("command", (player) => {
     
             const prettify = (level) => level == 120 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
             
-            let cataXP = parseInt(cata["experience"])
+            let cataXP = Math.floor(cata["experience"])
             let cataLevel = calcSkillLevel("catacombs", cataXP)
-            let cataLevelInt = parseInt(cataLevel)
+            let cataLevelInt = Math.floor(cataLevel)
             let cataLevelStr = prettify(cataLevel)
             let cataLow = cataLevel > 50 ? 50 : cataLevelInt
             
@@ -131,4 +131,4 @@ export const dsCommand = register("command", (player) => {
     }).catch(error => {
         ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${error}`)
     })
-}).setTabCompletions(args => getTabCompletion(args, {party: true, world: true})).setName("ds")
+}).setName("ds")

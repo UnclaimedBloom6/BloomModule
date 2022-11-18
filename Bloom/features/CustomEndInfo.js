@@ -3,11 +3,11 @@ import { fn } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 
 const toDelete = [
-    /▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬/,
-    /Deaths: \d+/,
-    /Total Damage as .+: [\d.,]+/,
-    /Ally Healing: [\d,.]+/,
-    /\+0 Experience \(No Class Milestone Reached\)/
+    /^▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬$/,
+    /^Deaths: \d+$/,
+    /^Total Damage as .+: [\d.,]+$/,
+    /^Ally Healing: [\d,.]+$/,
+    /^\+0 Experience \(No Class Milestone Reached\)$/
 ]
 
 class Data {

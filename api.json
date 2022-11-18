@@ -1,7 +1,15 @@
 {
-    "latestVersion": "4.1.3",
+    "latestVersion": "4.1.4",
     "changelog": [
-        "Fixed crystal hollows toggle not working."
+        "Revamped livid solver",
+        "Option to make livid solver hide incorrect livids",
+        "Made reparty delay slightly longer",
+        "Added RNG Meter feature for Dungeons",
+        "Added some extra messages to block useless messages feature",
+        "Fixed custom end info false positives",
+        "Added more functionality to player logging",
+        "Can now see the top 10 players you've played with and total unqiue players",
+        "Changed zero ping terminals to use packet left clicks instead of middle clicks"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

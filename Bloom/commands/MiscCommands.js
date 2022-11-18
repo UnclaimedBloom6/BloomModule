@@ -24,6 +24,7 @@ let commands = {
     "va": "viewauction",
     "pko": "p kickoffline",
     "pd": "p disband",
+    "/ai": "p settings allinvite"
 }
 Object.keys(commands).forEach(cmd => {
     register("command", (...args) => {
@@ -31,8 +32,8 @@ Object.keys(commands).forEach(cmd => {
     }).setName(cmd)
 })
 
-register("command", (player) => ChatLib.command(`p kick ${player}`)).setTabCompletions(args => getTabCompletion(args, {party: true})).setName("pk")
-register("command", (player) => ChatLib.command(`p transfer ${player}`)).setTabCompletions(args => getTabCompletion(args, {party: true})).setName("pt")
+register("command", (player) => ChatLib.command(`p kick ${player}`)).setName("pk")
+register("command", (player) => ChatLib.command(`p transfer ${player}`)).setName("pt")
 
 // Colors command
 register("command", () => {

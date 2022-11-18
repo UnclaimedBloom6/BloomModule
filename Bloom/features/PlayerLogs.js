@@ -1,7 +1,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
 import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
-import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue } from "../../BloomCore/utils/Utils"
+import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue, sortObject } from "../../BloomCore/utils/Utils"
 import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import Promise from "../../PromiseV2"
 import Config from "../Config"
@@ -10,6 +10,14 @@ import { prefix } from "../utils/Utils"
 let score = null
 let time = null
 let wasSuccessful = false // So that it won't count failed runs
+
+const classes = {
+    "T": "Tank",
+    "M": "Mage",
+    "A": "Archer",
+    "H": "Healer",
+    "B": "Berserker"
+}
 
 // Dungeon.partyInfo = {
 //     "UnclaimedBloom6": {
@@ -23,10 +31,7 @@ register("chat", (e) => {
     if (!Config.playerLogging || !Dungeon.inDungeon) return
     let msg = ChatLib.getChatMessage(e).removeFormatting().trim()
     if (msg == "[NPC] Mort: Here, I found this map when I first entered the dungeon.") {
-        Dungeon.partyInfo = Dungeon.party.reduce((a, b) => {
-            a[b] = {}
-            return a
-        }, {})
+        Dungeon.partyInfo = Dungeon.party.reduce((a, b) => (a[b] = {}, a), {})
         for (let p of Object.keys(Dungeon.partyInfo)) {
             let player = p
             getMojangInfo(player).then(mi => {
@@ -69,10 +74,12 @@ register("chat", (e) => {
                 let uuid = v.player.uuid
                 let player = v.player.displayname
                 let secretDiff = v.player.achievements.skyblock_treasure_hunter - Dungeon.partyInfo[player].secrets
+                let clazz = Dungeon.classes[player]
+                if (!clazz) ChatLib.chat(`No Class for ${player}`)
                 data.p[uuid] = {
                     "s": secretDiff,
                     "d": Dungeon.partyInfo[player].deaths,
-                    "c": Dungeon.classes[player][0]
+                    "c": clazz ? clazz[0] : "U"
                 }
             })
             // ChatLib.chat(JSON.stringify(data, "", 4))
@@ -86,6 +93,7 @@ register("chat", (e) => {
 register("chat", (thing) => {
     if (!Config.playerLogging || !Dungeon.inDungeon || !Dungeon.time || !Dungeon.partyInfo) return
     let match = thing.match(/(\w+) (.+) and became a ghost./)
+    if (!match) return
     let [m, player, reason] = match
     if (player == "You") player = Player.getName()
     if (!Object.keys(Dungeon.partyInfo).includes(player)) return
@@ -156,14 +164,44 @@ const handleLogs = (logs, options) => {
     // ChatLib.chat(`Your Average Secrets: ${getAverageSecrets(logs, Player.getUUID().replace(/-/g, ""))}`)
 }
 
+const handleLogsNoOptions = (logs) => {
+    let floorsRan = sortObject(logs.reduce((a, b) => {
+        if (!a[b.f]) a[b.f] = 0
+        a[b.f]++
+        return a
+    }, {}))
+    let floorsStr = Object.keys(floorsRan).reduce((a, b) => a += `\n${b.startsWith("M") ? "&c" : "&a"}${b}&f: &a${fn(floorsRan[b])}`, "&eFloors Ran")
+
+    let players = sortObject(logs.reduce((a, b) => {
+        Object.keys(b.p).forEach(p => {
+            if (!a[p]) a[p] = 0
+            a[p]++
+        })
+        return a
+    }, {}))
+    delete players[Player.getUUID().replace(/-/g, "")]
+    Promise.all(Object.keys(players).slice(0, 10).map(a => getHypixelPlayer(a, bcData.apiKey))).then(values => {
+        ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
+        new TextComponent(`&aRuns Logged: &b&l${fn(logs.length)} &7(Hover)`).setHover("show_text", floorsStr).chat()
+        
+        let playerStr = values.reduce((a, b) => a += b ? `\n${getRank(b)} ${b.player.displayname}&e: ${players[b.player.uuid]}` : "\nUnknown Player", "&eTop 10 Players")
+        new TextComponent(`&aUnique Players: &b${Object.keys(players).length} &7(Hover)`).setHover("show_text", playerStr).chat()
+        ChatLib.chat("")
+        ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
+    })
+
+}
+
 register("command", (...args) => {
-    if (!args || !args.length || !args[0]) {
+    if (!FileLib.exists("Bloom", "data/playerLogs.json")) return ChatLib.chat(`${prefix} &cNo runs logged!`)
+    let logs = JSON.parse(FileLib.read("Bloom", "data/playerLogs.json"))
+    if (!args || !args.length || !args[0]) return handleLogsNoOptions(logs)
+    if (args[0] == "help") {
         ChatLib.chat(`&c/plogs <p:player1,player2,...> <f:floor>`)
         return
     }
     let options = {}
 
-    let logs = JSON.parse(FileLib.read("Bloom", "data/playerLogs.json"))
     let floor = args.find(a => a.startsWith("f:"))
     if (floor) {
         floor = floor.slice(2).toUpperCase()

@@ -53,6 +53,7 @@ class Config {
     runOverviewMoveGui = new Gui()
     toggleSprintMove = new Gui()
     chMapMoveGui = new Gui()
+    rngMeterMoveGui = new Gui()
 
     // ---------------------------------------------------------------
     // General
@@ -271,14 +272,48 @@ class Config {
         subcategory: "Blaze"
     })
     blazeTimer = false;
-
+    
     @SwitchProperty({
         name: "Player Logging",
-        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\nUse &b/plogs <f:player> <f:floor> &7to show info about past runs with a certain player. More functionality coming in future updates.\n&cRequires API key to be set (/bl setkey <key>).",
+        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\nUse &b/plogs <p:player> <f:floor> &7to show info about past runs with a certain player. More functionality coming in future updates.\n&cRequires API key to be set (/bl setkey <key>).",
         category: "Dungeons",
         subcategory: "Player Logs"
     })
     playerLogging = false;
+    
+    @SwitchProperty({
+        name: "&dRNG Meter",
+        description: "Tracks your current RNG meter progress and displays it on the screen during a Dungeon.",
+        category: "Dungeons",
+        subcategory: "RNG Meter"
+    })
+    rngMeter = false;
+
+    @SwitchProperty({
+        name: "&dPost-Run Only",
+        description: "Only render the RNG Meter after the dungeon run has ended.",
+        category: "Dungeons",
+        subcategory: "RNG Meter"
+    })
+    rngMeterPostRun = true;
+
+    @SwitchProperty({
+        name: "&dBackground",
+        description: "Render a transparent black background behind the gui to make it stand out.",
+        category: "Dungeons",
+        subcategory: "RNG Meter"
+    })
+    rngMeterBackground = true;
+
+    @ButtonProperty({
+        name: "&dMove RNG Meter Gui",
+        description: "Move the RNG meter gui.",
+        category: "Dungeons",
+        subcategory: "RNG Meter"
+    })
+    MoveRNGMeterGui() {
+        this.rngMeterMoveGui.open()
+    }
 
     // ---------------------------------------------------------------
     // Solvers
@@ -300,6 +335,14 @@ class Config {
         subcategory: "Terminals"
     })
     terminalSolvers = false;
+
+    // @SwitchProperty({
+    //     name: "Tic Tac Toe Solver",
+    //     description: "yeah",
+    //     category: "Solvers",
+    //     subcategory: "Puzzles"
+    // })
+    // tttSolver = false;
 
     // ----- Spam -----
 
@@ -430,6 +473,14 @@ class Config {
         subcategory: "Livid"
     })
     lividSolver = false
+
+    @SwitchProperty({
+        name: "Hide Wrong Livids",
+        description: "Stops incorrect livids from rendering in the floor 5 boss fight. Requires livid solver to be enabled.",
+        category: "Solvers",
+        subcategory: "Livid"
+    })
+    hideWrongLivids = false
 
     @SwitchProperty({
         name: "Blaze Solver",

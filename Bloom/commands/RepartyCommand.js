@@ -16,7 +16,7 @@ export const repartyCommand = register("command", ...args => {
         toRp.map(a => rpMsg.addTextComponent(new TextComponent(a == toRp[toRp.length-1] ? `${Party.members[a]}` : `${Party.members[a]}&a, `).setHover("show_text", "&aClick to invite!").setClick("run_command", `/p ${a}`)))
         rpMsg.addTextComponent("&a!").addTextComponent(new TextComponent(` &d[Retry]`).setHover("show_text", "&dParty players again").setClick("run_command", `/partyplayers ${toRp.join(" ")}`)).chat()
         ChatLib.command("p disband")
-        Thread.sleep(250)
+        Thread.sleep(500)
         partyPlayers([toRp])
     }).start()
 }).setName("/rp")

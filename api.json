@@ -1,15 +1,7 @@
 {
-    "latestVersion": "4.1.4",
+    "latestVersion": "4.1.5",
     "changelog": [
-        "Revamped livid solver",
-        "Option to make livid solver hide incorrect livids",
-        "Made reparty delay slightly longer",
-        "Added RNG Meter feature for Dungeons",
-        "Added some extra messages to block useless messages feature",
-        "Fixed custom end info false positives",
-        "Added more functionality to player logging",
-        "Can now see the top 10 players you've played with and total unqiue players",
-        "Changed zero ping terminals to use packet left clicks instead of middle clicks"
+        "Fixed scale not being in default PogData object for RNG Meter"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

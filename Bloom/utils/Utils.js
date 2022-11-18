@@ -45,6 +45,7 @@ export const data = new PogObject("Bloom", {
     "rngMeter": {
         "x": 0,
         "y": 0,
+        "scale": 1,
         "data": {}
     }
 }, "data/data.json")

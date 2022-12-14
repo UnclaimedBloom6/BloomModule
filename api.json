@@ -1,7 +1,8 @@
 {
-    "latestVersion": "4.1.5",
+    "latestVersion": "4.1.6",
     "changelog": [
-        "Fixed scale not being in default PogData object for RNG Meter"
+        "Added extra info to player logs viewing.",
+        "Added profile id argument to /ds command which allows to viewing of left profiles."
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

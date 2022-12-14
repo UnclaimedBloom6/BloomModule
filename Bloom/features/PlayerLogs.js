@@ -120,22 +120,68 @@ const getAverageSecrets = (logs, uuid) => {
 // Total secrets a player has found in all of the logs
 const getTotalSecrets = (logs, uuid) => logs.filter(a => Object.keys(a.p).includes(uuid)).reduce((a, b) => a + b.p[uuid].s, 0)
 
+const printPlayerShit = (players, logs) => {
+    players.forEach(p => {
+        let totalSecrets = getTotalSecrets(logs, p.uuid)
+        let avgSecrets = getAverageSecrets(logs, p.uuid)
 
-// let options = {
-//     "floor": "F5",
-//     "players": [
-//         {
-//             "uuid": "307005e7f5474f46b258c9a8b84276c4",
-//             "name": "UnclaimedBloom6",
-//             "rank": "&6[MVP&0++&6]"
-//         },
-//         {
-//             "uuid": "cec63b61e6194c0a8209da248551cfd8",
-//             "name": "Hosted",
-//             "rank": "&b[MVP&9+&b]"
-//         }
-//     ]
-// }
+        let hoverString = `${p.rank} ${p.name}\n`
+        
+        let classData = logs.reduce((a, b) => {
+            let thisRun = b.p[p.uuid]
+            let clazz = thisRun.c
+            a[clazz].timesPlayed++
+            a[clazz].totalSecrets += thisRun.s
+            a[clazz].string = `\n&b${classes[clazz]}: &r${fn(a[clazz].timesPlayed)}`
+            return a
+        }, Object.keys(classes).reduce((a, b) => (a[b] = {timesPlayed: 0, totalSecrets: 0, string: `\n&b${classes[b]}: &r0`}, a), {}))
+
+        let maxClassWidth = Math.max(...Object.keys(classData).map(a => Renderer.getStringWidth(classData[a].string)))
+        hoverString += Object.keys(classData).sort((a, b) => classData[b].timesPlayed - classData[a].timesPlayed).reduce((a, b) => {
+            let secretsPerRun = Math.floor(classData[b].totalSecrets / classData[b].timesPlayed*100)/100 || 0
+            a += classData[b].string
+            if (secretsPerRun) {
+                a += " ".repeat(Math.floor((maxClassWidth - Renderer.getStringWidth(classData[b].string))/3))
+                a += ` &a(&b${secretsPerRun} &esecrets/run&a)`
+            }
+            return a
+        }, "&eClasses Played:")
+
+        // Death Shit
+        let deaths = logs.reduce((a, b) => {
+            b.p[p.uuid].d.forEach(death => {
+                if (!(death in a)) a[death] = 0
+                a[death]++
+            })
+            return a
+        }, {})
+        let totalDeaths = Object.values(deaths).reduce((a, b) => a+b)
+        let uniqueDeaths = Object.keys(deaths).length
+        let mostFrequentDeaths = Object.keys(deaths).sort((a, b) => deaths[b] - deaths[a]).slice(0, 5)
+        let deathsTitle = `\n\n&eTotal Deaths: &c${fn(totalDeaths)} &e(&c${Math.floor(totalDeaths/logs.length*100)/100} &ePer Run)`
+        hoverString += mostFrequentDeaths.reduce((a, b, i) => {
+            let inBoss = b.split(" ")[0] == "(Boss)"
+            a += `\n&b#${i+1} &e(&c${deaths[b]}&e): &r${b.slice(7)} ${inBoss ? "&c(Boss)" : "&b(Clear)"}`
+            return a
+        }, deathsTitle)
+        if (uniqueDeaths > 5) hoverString += `\n    &e... ${uniqueDeaths-5} more`
+
+        // Printing and stuff
+        // ChatLib.chat(JSON.stringify(classCounts, null, 4))
+        new TextComponent(`${p.rank} ${p.name}&f's Average Secrets: &b${avgSecrets} &a(&b${fn(totalSecrets)}&a Total)`).setHover("show_text", hoverString).chat()
+    })
+}
+
+const printUserCriteria = (options) => {
+    let floor = options.floor
+    let players = options.players
+    let message = "&aShowing runs logged with "
+    if (!players) message += "Any Players"
+    else message += players.map(a => `${a.rank} ${a.name}`).join("&r, ") + "&a on "
+    message += floor ? floor : "any floor."
+    ChatLib.chat(message)
+}
+
 const handleLogs = (logs, options) => {
     let floor = options.floor
     let players = options.players
@@ -146,20 +192,16 @@ const handleLogs = (logs, options) => {
     if (!logs.length) return ChatLib.chat(`${prefix} &cNo logs with the given criteria!`)
 
     ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
-    
+    printUserCriteria(options)
     ChatLib.chat(`&aRuns Logged: &b&l${fn(logs.length)}${floor ? " &a(&e" + floor + "&a)" : ""}`)
     ChatLib.chat("")
     
     ChatLib.chat(`Average Run Time: ${convertToPBTime(logs.map(a => a.t).reduce((a, b) => a+b) / logs.length * 1000)}`)
     ChatLib.chat(`Average Score: ${Math.floor(logs.map(a => a.s).reduce((a, b) => a+b) / logs.length)}`)
     ChatLib.chat("")
-    if (players) {
-        players.forEach(p => {
-            let totalSecrets = getTotalSecrets(logs, p.uuid)
-            let avgSecrets = getAverageSecrets(logs, p.uuid)
-            ChatLib.chat(`${p.rank} ${p.name}&f's Average Secrets: &b${avgSecrets} &a(&b${fn(totalSecrets)}&a Total)`)
-        })
-    }
+
+    if (players) printPlayerShit(players, logs)
+
     ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
     // ChatLib.chat(`Your Average Secrets: ${getAverageSecrets(logs, Player.getUUID().replace(/-/g, ""))}`)
 }
@@ -182,22 +224,76 @@ const handleLogsNoOptions = (logs) => {
     delete players[Player.getUUID().replace(/-/g, "")]
     Promise.all(Object.keys(players).slice(0, 10).map(a => getHypixelPlayer(a, bcData.apiKey))).then(values => {
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
+        ChatLib.chat(`&aShowing all runs logged with no filters.`)
+
+        // Floors
         new TextComponent(`&aRuns Logged: &b&l${fn(logs.length)} &7(Hover)`).setHover("show_text", floorsStr).chat()
         
+        // Unique players
         let playerStr = values.reduce((a, b) => a += b ? `\n${getRank(b)} ${b.player.displayname}&e: ${players[b.player.uuid]}` : "\nUnknown Player", "&eTop 10 Players")
         new TextComponent(`&aUnique Players: &b${Object.keys(players).length} &7(Hover)`).setHover("show_text", playerStr).chat()
+
+        // Class shit
+        let classHover = "&eClass Statistics"
+        classHover += "\n&7This is counting every player\n&7in every run. Eg a 4m 1a\n&7party would add 4 mages\n&7and one archer to the total."
+        let classData = logs.reduce((a, b) => {
+            Object.keys(b.p).forEach(player => {
+                let playerData = b.p[player]
+                let clazz = playerData.c
+                if (clazz == "U") return
+                if (!(clazz in a)) a[clazz] = {
+                    timesPlayed: 0,
+                    totalSecrets: 0,
+                    deaths: 0
+                }
+                a[clazz].timesPlayed++
+                a[clazz].totalSecrets += playerData.s
+                a[clazz].deaths += playerData.d.length
+            })
+            return a
+        }, {})
+        classData = Object.keys(classData).sort((a, b) => classData[b].timesPlayed - classData[a].timesPlayed).reduce((a, b) => (a[b] = classData[b], a), {})
+
+        Object.keys(classData).forEach(clazz => {
+            let secretsPerRun = Math.floor(classData[clazz].totalSecrets / classData[clazz].timesPlayed*100)/100
+            let deathsPerRun = Math.floor(classData[clazz].deaths / classData[clazz].timesPlayed*100)/100
+            classHover += `\n&e${classes[clazz]}:`
+            classHover += `\n  &aTotal: &r${fn(classData[clazz].timesPlayed)}`
+            classHover += `\n  &aSecrets/run: &b${secretsPerRun}`
+            classHover += `\n  &aDeaths/run: &c${deathsPerRun}`
+        })
+
+        new TextComponent(`&eClass Statistics &7(Hover)`).setHover("show_text", classHover).chat()
+
         ChatLib.chat("")
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
-    })
+    }).catch(e => ChatLib.chat(e))
 
 }
+
+// Example options to filter dungeon runs
+// const options = {
+//     "floor": "F5",
+//     "players": [
+//         {
+//             "uuid": "307005e7f5474f46b258c9a8b84276c4",
+//             "name": "UnclaimedBloom6",
+//             "rank": "&6[MVP&0++&6]"
+//         },
+//         {
+//             "uuid": "cec63b61e6194c0a8209da248551cfd8",
+//             "name": "Hosted",
+//             "rank": "&b[MVP&9+&b]"
+//         }
+//     ]
+// }
 
 register("command", (...args) => {
     if (!FileLib.exists("Bloom", "data/playerLogs.json")) return ChatLib.chat(`${prefix} &cNo runs logged!`)
     let logs = JSON.parse(FileLib.read("Bloom", "data/playerLogs.json"))
     if (!args || !args.length || !args[0]) return handleLogsNoOptions(logs)
     if (args[0] == "help") {
-        ChatLib.chat(`&c/plogs <p:player1,player2,...> <f:floor>`)
+        ChatLib.chat(`&c/plogs [p:player1,player2,...] [f:floor]`)
         return
     }
     let options = {}
@@ -237,7 +333,7 @@ register("command", (...args) => {
                 options.players = players
                 // ChatLib.chat(JSON.stringify(players, null, 4))
                 handleLogs(logs, options)
-            })
+            }).catch(e => ChatLib.chat(e))
 
         }).catch(e => ChatLib.chat(`&c${e}`))
     }
@@ -245,4 +341,3 @@ register("command", (...args) => {
         handleLogs(logs, options)
     }
 }).setName("plogs")
-

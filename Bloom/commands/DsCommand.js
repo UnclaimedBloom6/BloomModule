@@ -1,13 +1,13 @@
 import Party from "../../BloomCore/Party"
 import { catacombs } from "../../BloomCore/skills/catacombs"
-import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/utils/APIWrappers"
+import { getHypixelPlayer, getMojangInfo, getProfileByID, getRecentProfile } from "../../BloomCore/utils/APIWrappers"
 import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../BloomCore/utils/Utils"
 import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 
 let lastDsCommand = null
-export const dsCommand = register("command", (player) => {
+export const dsCommand = register("command", (player, profileid=null) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)
@@ -23,7 +23,7 @@ export const dsCommand = register("command", (player) => {
         let [player, uuid] = [mojangInfo.name, mojangInfo.id]
         Promise.all([
             getHypixelPlayer(uuid, bcData.apiKey),
-            getRecentProfile(uuid, null, bcData.apiKey)
+            !profileid ? getRecentProfile(uuid, null, bcData.apiKey) : getProfileByID(profileid, bcData.apiKey)
         ]).then(values => {
             let [playerInfo, sbProfile] = values
             if (!playerInfo) return ChatLib.chat(`${prefix} &cCouldn't get player info for ${player}`)

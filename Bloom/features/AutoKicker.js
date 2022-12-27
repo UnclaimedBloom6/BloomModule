@@ -44,7 +44,7 @@ register("chat", (player, classs) => {
             }
         })
     })
-}).setCriteria("Dungeon Finder > ${player} joined the dungeon group! (${classs} Level ${*})")
+}).setCriteria("Party Finder > ${player} joined the dungeon group! (${classs} Level ${*})")
 
 // Update the recently kicked list
 register("tick", () => {

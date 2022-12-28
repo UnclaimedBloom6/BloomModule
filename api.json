@@ -1,8 +1,8 @@
 {
-    "latestVersion": "4.1.6",
+    "latestVersion": "4.1.7",
     "changelog": [
-        "Added extra info to player logs viewing.",
-        "Added profile id argument to /ds command which allows to viewing of left profiles."
+        "Added Kuudra command to see completions.",
+        "Changed \"Dungeon Finder\" to \"Party Finder\"."
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

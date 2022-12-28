@@ -336,14 +336,6 @@ class Config {
     })
     terminalSolvers = false;
 
-    // @SwitchProperty({
-    //     name: "Tic Tac Toe Solver",
-    //     description: "yeah",
-    //     category: "Solvers",
-    //     subcategory: "Puzzles"
-    // })
-    // tttSolver = false;
-
     // ----- Spam -----
 
     @SwitchProperty({

@@ -3,7 +3,7 @@ import Config from "../Config";
 
 register("chat", (player, event) => {
     let formatted = ChatLib.getChatMessage(event, true)
-    let match = formatted.match(/&dDungeon Finder &r&f> &r(.+) &r&ejoined the dungeon group! \(&r&b(.+) Level (\d+)&r&e\)&r/)
+    let match = formatted.match(/&dParty Finder &r&f> &r(.+) &r&ejoined the dungeon group! \(&r&b(.+) Level (\d+)&r&e\)&r/)
     let [msg, playerF, classs, level] = match
     if (Config.betterPFMessage) {
         cancel(event)
@@ -18,11 +18,11 @@ register("chat", (player, event) => {
     if (Config.autoDS && stripRank(ChatLib.removeFormatting(player)) !== Player.getName()) {
         ChatLib.command(`ds ${stripRank(ChatLib.removeFormatting(player))}`, true)
     }
-}).setCriteria("Dungeon Finder > ${player} joined the dungeon group! (${*} Level ${*})")
+}).setCriteria("Party Finder > ${player} joined the dungeon group! (${*} Level ${*})")
 
 const messageReplacements = {
-    "Dungeon Finder > Your party has been queued in the dungeon finder!": "&d&lPF > &aParty Queued.",
-    "Dungeon Finder > Your group has been de-listed!": "&d&lPF > &aParty Delisted.."
+    "Party Finder > Your party has been queued in the dungeon finder!": "&d&lPF > &aParty Queued.",
+    "Party Finder > Your group has been de-listed!": "&d&lPF > &aParty Delisted.."
 }
 
 register("chat", (message, event) => {
@@ -35,7 +35,7 @@ register("chat", (message, event) => {
 
 register("chat", (player, clazz, level, e) => {
     if (!Config.betterPFMessage) return
-    player = ChatLib.getChatMessage(e).split(" ")[3] // &dDungeon Finder &r&f> &r&ak1deuk &r&eset their class to &r&bBerserk Level 30&r&e!&r
+    player = ChatLib.getChatMessage(e).split(" ")[3] // &dParty Finder &r&f> &r&ak1deuk &r&eset their class to &r&bBerserk Level 30&r&e!&r
     cancel(e)
     ChatLib.chat(`&d&lPF > &r${player} &echanged to &b${clazz} ${level}&e!`)
-}).setCriteria("Dungeon Finder > ${player} set their class to ${clazz} Level ${level}!")
+}).setCriteria("Party Finder > ${player} set their class to ${clazz} Level ${level}!")

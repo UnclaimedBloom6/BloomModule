@@ -13,6 +13,7 @@ import { bloomCommand } from "./commands/BloomCommand"
 import { nameHistoryCommand } from "./commands/NameHistoryCommand"
 import { dcCommand } from "./commands/DcCommand"
 import { slayerCommand } from "./commands/SlayerCommand"
+import { kuudraCommand } from "./commands/KuudraCommand"
 
 import "./features/StacksTracker"
 import "./features/AutoDSParty"

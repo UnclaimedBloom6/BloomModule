@@ -1,7 +1,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
 import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
-import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue, sortObject } from "../../BloomCore/utils/Utils"
+import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue, sortObjectByValues } from "../../BloomCore/utils/Utils"
 import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import Promise from "../../PromiseV2"
 import Config from "../Config"
@@ -207,20 +207,20 @@ const handleLogs = (logs, options) => {
 }
 
 const handleLogsNoOptions = (logs) => {
-    let floorsRan = sortObject(logs.reduce((a, b) => {
+    let floorsRan = sortObjectByValues(logs.reduce((a, b) => {
         if (!a[b.f]) a[b.f] = 0
         a[b.f]++
         return a
-    }, {}))
+    }, {}), true)
     let floorsStr = Object.keys(floorsRan).reduce((a, b) => a += `\n${b.startsWith("M") ? "&c" : "&a"}${b}&f: &a${fn(floorsRan[b])}`, "&eFloors Ran")
 
-    let players = sortObject(logs.reduce((a, b) => {
+    let players = sortObjectByValues(logs.reduce((a, b) => {
         Object.keys(b.p).forEach(p => {
             if (!a[p]) a[p] = 0
             a[p]++
         })
         return a
-    }, {}))
+    }, {}), true)
     delete players[Player.getUUID().replace(/-/g, "")]
     Promise.all(Object.keys(players).slice(0, 10).map(a => getHypixelPlayer(a, bcData.apiKey))).then(values => {
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
@@ -258,7 +258,7 @@ const handleLogsNoOptions = (logs) => {
             let secretsPerRun = Math.floor(classData[clazz].totalSecrets / classData[clazz].timesPlayed*100)/100
             let deathsPerRun = Math.floor(classData[clazz].deaths / classData[clazz].timesPlayed*100)/100
             classHover += `\n&e${classes[clazz]}:`
-            classHover += `\n  &aTotal: &r${fn(classData[clazz].timesPlayed)}`
+            classHover += `\n  &aTotal Secrets: &r${fn(classData[clazz].timesPlayed)}`
             classHover += `\n  &aSecrets/run: &b${secretsPerRun}`
             classHover += `\n  &aDeaths/run: &c${deathsPerRun}`
         })

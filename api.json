@@ -1,8 +1,9 @@
 {
-    "latestVersion": "4.1.7",
+    "latestVersion": "4.1.8",
     "changelog": [
-        "Added Kuudra command to see completions.",
-        "Changed \"Dungeon Finder\" to \"Party Finder\"."
+        "Fixed breaking change with BloomCore",
+        "Added collection to Kuudra command",
+        "Fixed sorting being reversed in player logging"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

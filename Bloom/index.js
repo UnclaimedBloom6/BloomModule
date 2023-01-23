@@ -53,4 +53,6 @@ import "./features/TeleportMazeSolver"
 import "./features/CrystalHollowsMap"
 import "./features/TTTSolver"
 import "./features/RngMeter"
+import "./features/CreeperBeamsSolver"
+import "./features/TerminalSplits"
 

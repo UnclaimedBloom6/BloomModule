@@ -12,4 +12,4 @@ export const dontRp = register("command", player => {
     if (!Object.keys(Party.members).includes(player)) return ChatLib.chat(`${prefix} &c${player} is not in the Party!`)
     ChatLib.chat(`${prefix} &aAuto Reparty won't invite &c${player} &anext time!`)
     Party.excludePlayers.push(player)
-})
+}).setName("dontrp")

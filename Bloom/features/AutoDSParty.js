@@ -9,4 +9,4 @@ register("chat", (player, classs, level) => {
         Thread.sleep(750)
         ChatLib.command("ds p", true)
     }).start()
-}).setChatCriteria("Dungeon Finder > ${player} joined the dungeon group! (${classs} Level ${*})")
+}).setChatCriteria("Party Finder > ${player} joined the dungeon group! (${classs} Level ${*})")

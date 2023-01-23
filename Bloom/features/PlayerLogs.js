@@ -126,7 +126,6 @@ const printPlayerShit = (players, logs) => {
         let avgSecrets = getAverageSecrets(logs, p.uuid)
 
         let hoverString = `${p.rank} ${p.name}\n`
-        
         let classData = logs.reduce((a, b) => {
             let thisRun = b.p[p.uuid]
             let clazz = thisRun.c
@@ -135,7 +134,7 @@ const printPlayerShit = (players, logs) => {
             a[clazz].string = `\n&b${classes[clazz]}: &r${fn(a[clazz].timesPlayed)}`
             return a
         }, Object.keys(classes).reduce((a, b) => (a[b] = {timesPlayed: 0, totalSecrets: 0, string: `\n&b${classes[b]}: &r0`}, a), {}))
-
+        
         let maxClassWidth = Math.max(...Object.keys(classData).map(a => Renderer.getStringWidth(classData[a].string)))
         hoverString += Object.keys(classData).sort((a, b) => classData[b].timesPlayed - classData[a].timesPlayed).reduce((a, b) => {
             let secretsPerRun = Math.floor(classData[b].totalSecrets / classData[b].timesPlayed*100)/100 || 0
@@ -146,7 +145,7 @@ const printPlayerShit = (players, logs) => {
             }
             return a
         }, "&eClasses Played:")
-
+        
         // Death Shit
         let deaths = logs.reduce((a, b) => {
             b.p[p.uuid].d.forEach(death => {
@@ -155,7 +154,7 @@ const printPlayerShit = (players, logs) => {
             })
             return a
         }, {})
-        let totalDeaths = Object.values(deaths).reduce((a, b) => a+b)
+        let totalDeaths = Object.values(deaths).reduce((a, b) => a+b, 0)
         let uniqueDeaths = Object.keys(deaths).length
         let mostFrequentDeaths = Object.keys(deaths).sort((a, b) => deaths[b] - deaths[a]).slice(0, 5)
         let deathsTitle = `\n\n&eTotal Deaths: &c${fn(totalDeaths)} &e(&c${Math.floor(totalDeaths/logs.length*100)/100} &ePer Run)`

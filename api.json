@@ -1,9 +1,11 @@
 {
-    "latestVersion": "4.1.8",
+    "latestVersion": "4.1.9",
     "changelog": [
-        "Fixed breaking change with BloomCore",
-        "Added collection to Kuudra command",
-        "Fixed sorting being reversed in player logging"
+        "Fixed AutoKick",
+        "Fixed the /dontrp command not existing",
+        "Fixed an error in the player logging \"TypeError: Reduce of empty...\"",
+        "Fixed auto /ds party not working",
+        "Added Terminal Splits feature"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

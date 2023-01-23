@@ -315,6 +315,14 @@ class Config {
         this.rngMeterMoveGui.open()
     }
 
+    @SwitchProperty({
+        name: "Terminal Splits",
+        description: "Prints in chat how long each section of the terminal phase took.",
+        category: "Dungeons",
+        subcategory: "Terminals"
+    })
+    terminalSplits = false;
+
     // ---------------------------------------------------------------
     // Solvers
 

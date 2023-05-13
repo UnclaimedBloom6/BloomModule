@@ -1,22 +1,21 @@
 import Party from "../../BloomCore/Party";
 import Config from "../Config";
 
-register("chat", (event) => {
-    if (Party.leader !== Player.getName() || !Config.autoReparty) return
-    let formatted = ChatLib.getChatMessage(event, true)
-    let bossDeadMessages = [
-        /&r&c\[BOSS\] Bonzo&r&f: Alright, maybe I'm just weak after all\.\.&r/,
-        /&r&c\[BOSS\] Scarf&r&f: Whatever\.\.\.&r/,
-        /&r&c\[BOSS\] The Professor&r&f: What?! My Guardian power is unbeatable!&r/,
-        /&r&r&r                      &r&c☠ &r&eDefeated &r&cThorn &r&ein &r.+&r/,
-        /&r&c\[BOSS\] .+ Livid&r&f: Impossible! How did you figure out which one I was\?!&r/,
-        /&r&c\[BOSS\] Sadan&r&f: NOOOOOOOOO!!! THIS IS IMPOSSIBLE!!&r/,
-        /&r&4\[BOSS\] Necron&r&c: &r&cAll this, for nothing\.\.\.&r/
-    ]
-    bossDeadMessages.forEach(regex => {
-        if (formatted.match(regex)) {
-            ChatLib.command(`/rp ${Party.excludePlayers.join(" ")}`, true)
-            Party.excludePlayers = []
-        }
-    })
+const bossDeadMessages = [
+    /\[BOSS\] Bonzo: Alright, maybe I'm just weak after all\.\./,
+    /\[BOSS\] Scarf: Whatever\.\.\./,
+    /\[BOSS\] The Professor: What\?! My Guardian power is unbeatable!/,
+    /                      ☠ Defeated Thorn in .+/,
+    /\[BOSS\] .+ Livid: Impossible! How did you figure out which one I was\?!/,
+    /\[BOSS\] Sadan: NOOOOOOOOO!!! THIS IS IMPOSSIBLE!!/,
+    /\[BOSS\] Necron: All this, for nothing\.\.\./
+]
+
+bossDeadMessages.forEach(msg => {
+    register("chat", () => {
+        if (Party.leader !== Player.getName() || !Config.autoReparty) return
+        // Players after the rp command won't be repartied
+        ChatLib.command(`/rp ${Party.excludePlayers.join(" ")}`, true)
+        Party.excludePlayers = []
+    }).setCriteria(msg)
 })

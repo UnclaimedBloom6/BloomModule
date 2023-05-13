@@ -11,7 +11,7 @@ let blazes = []
 let blazeType = null // null=unknown
 
 const gethp = (blazeStand) => {
-    const match = blazeStand.getName().removeFormatting().match(/\[Lv15\] Blaze \d+\/(\d+)/)
+    const match = blazeStand.getName().removeFormatting().match(/^\[Lv\d+\] Blaze \d+\/(\w+)❤$/)
     if (!match) return null
     return parseInt(match[1])
 }

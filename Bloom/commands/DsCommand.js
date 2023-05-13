@@ -2,23 +2,30 @@ import Party from "../../BloomCore/Party"
 import { catacombs } from "../../BloomCore/skills/catacombs"
 import { getHypixelPlayer, getMojangInfo, getProfileByID, getRecentProfile } from "../../BloomCore/utils/APIWrappers"
 import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../BloomCore/utils/Utils"
-import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 
-let lastDsCommand = null
+// let toDelete = []
+// register("step", () => {
+//     toDelete.forEach(d => ChatLib.clearChat(d))
+//     toDelete = []
+// })
+
+// let chatIncrement = 69
+
 export const dsCommand = register("command", (player, profileid=null) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)
-        return Object.keys(Party.members).filter(a => a !== Player.getName()).map(a => ChatLib.command(`ds ${a}`, true))
+        Object.keys(Party.members).filter(a => a !== Player.getName()).forEach(a => ChatLib.command(`ds ${a}`, true))
+        return
     }
-    let message = null
 	if (!player) player = Player.getName()
-	if (!lastDsCommand || new Date().getTime() - lastDsCommand > 1000) {
-		message = new Message(`${prefix} &aGetting Dungeon Stats for ${player}...`).chat()
-		lastDsCommand = new Date().getTime()
-	}
+    // let lineID = chatIncrement++
+
+    // let message = new Message(`${prefix} &aGetting Dungeon Stats for ${player}...`).setChatLineId(lineID)
+    // message.chat()
+
 	getMojangInfo(player).then(mojangInfo => {
         let [player, uuid] = [mojangInfo.name, mojangInfo.id]
         Promise.all([
@@ -26,15 +33,13 @@ export const dsCommand = register("command", (player, profileid=null) => {
             !profileid ? getRecentProfile(uuid, null, bcData.apiKey) : getProfileByID(profileid, bcData.apiKey)
         ]).then(values => {
             let [playerInfo, sbProfile] = values
+
             if (!playerInfo) return ChatLib.chat(`${prefix} &cCouldn't get player info for ${player}`)
             if (!sbProfile) return ChatLib.chat(`${prefix} &cCouldn't get ${player}'s Skyblock profile!`)
             
             let playerName = playerInfo.player.displayname
             let nameFormatted = `${getRank(playerInfo)} ${playerName}&r`
-            if (!Object.keys(sbProfile.members[uuid].dungeons.dungeon_types.catacombs).length) {
-                ChatLib.clearChat(6457654)
-                return ChatLib.chat(`${prefix} &c${playerName} has never entered the Catacombs!`)
-            }
+            if (!Object.keys(sbProfile.members[uuid].dungeons.dungeon_types.catacombs).length) return ChatLib.chat(`${prefix} &c${playerName} has never entered the Catacombs!`)
             let profileName = sbProfile["cute_name"]
             let secretsFound = playerInfo.player.achievements.skyblock_treasure_hunter
             secretsFound = !secretsFound ? 0 : secretsFound
@@ -119,6 +124,9 @@ export const dsCommand = register("command", (player, profileid=null) => {
             }
             let sPlusHover = `&cS+ Runs${getTimes("fastest_time_s_plus")}`
             let sHover = `&cS Runs${getTimes("fastest_time_s")}`
+            
+            // toDelete.push(lineID)
+
             new Message(
                 new TextComponent(`${nameFormatted}`).setHover("show_text", nameHover).setClick("open_url", `https://sky.shiiyu.moe/stats/${playerName}`), ` &8| `,
                 new TextComponent(`&c${cataLevelStr}`).setHover("show_text", cataHover), ` &8| `,
@@ -127,6 +135,7 @@ export const dsCommand = register("command", (player, profileid=null) => {
                 new TextComponent(`&cS+`).setHover("show_text", sPlusHover), ` &8| `,
                 new TextComponent(`&cS`).setHover("show_text", sHover)
             ).chat()
+
         }).catch(e => `${prefix} &cError getting Dungeon Stats for ${player}: ${e}`)
     }).catch(error => {
         ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${error}`)

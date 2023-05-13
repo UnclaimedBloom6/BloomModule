@@ -8,7 +8,8 @@ import {
     @SwitchProperty,
     @TextProperty,
     @Vigilant,
-    @SliderProperty
+    @SliderProperty,
+    @NumberProperty,
 } from '../Vigilance/index';
 
 @Vigilant("Bloom", "Bloom", {
@@ -43,6 +44,7 @@ class Config {
             "\n\n" +
             "&6UnclaimedBloom6 is very cool and cool"
         )
+
     }
 
     speedMoveGui = new Gui()
@@ -275,7 +277,12 @@ class Config {
     
     @SwitchProperty({
         name: "Player Logging",
-        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\nUse &b/plogs <p:player> <f:floor> &7to show info about past runs with a certain player. More functionality coming in future updates.\n&cRequires API key to be set (/bl setkey <key>).",
+        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\n" +
+        "Use &b/plogs [p:player] [f:floor] [t:1d, 10h, 7d etc] &7to show info about past runs with specific players, floors, and/or within the last x amount of time.\n" +
+        "&aExample: &b/plogs p:UnclaimedBloom6 f:f5 t:7d &awould show all runs logged with UnclaimedBloom6 on Floor 5 within the last 7 days.\n\n" +
+        "More functionality coming in future updates.\n\n" +
+        "&cRequires API key to be set (/bl setkey <key>). Runs can not be logged if the API key is not set or the API key is invalid." +
+        "&cMORT MESSAGES MUST BE ENABLED",
         category: "Dungeons",
         subcategory: "Player Logs"
     })
@@ -304,6 +311,24 @@ class Config {
         subcategory: "RNG Meter"
     })
     rngMeterBackground = true;
+    
+    @SwitchProperty({
+        name: "&dWarn when close",
+        description: "Warns you when the RNG meter is almost filled.",
+        category: "Dungeons",
+        subcategory: "RNG Meter"
+    })
+    rngMeterWarnClose = true;
+
+    @SliderProperty({
+        name: "&dRemaining Score Alert",
+        description: "How much score remaining until the module alerts you that your rngmeter is close to being filled.",
+        category: "Dungeons",
+        subcategory: "RNG Meter",
+        min: 0,
+        max: 2000
+    })
+    rngMeterRemainingAlert = 1200;
 
     @ButtonProperty({
         name: "&dMove RNG Meter Gui",
@@ -322,6 +347,14 @@ class Config {
         subcategory: "Terminals"
     })
     terminalSplits = false;
+
+    @SwitchProperty({
+        name: "Terminal Tracker",
+        description: "Keeps track of how many terminals, devices and levers each player did.",
+        category: "Dungeons",
+        subcategory: "Terminals"
+    })
+    terminalTracker = false;
 
     // ---------------------------------------------------------------
     // Solvers
@@ -505,6 +538,37 @@ class Config {
         subcategory: "Teleport Maze"
     })
     tpMazeSolver = false;
+
+    // Simon Says
+
+    @SwitchProperty({
+        name: "Simon Says Solver",
+        description: "Simon says for terminals!",
+        category: "Solvers",
+        subcategory: "Simon Says"
+    })
+    simonSolver = false;
+
+    @SelectorProperty({
+        name: "Simon Says Style",
+        description: "How the simon says solver renders the solution.",
+        category: "Solvers",
+        subcategory: "Simon Says",
+        options: [
+            "Flat",
+            "Box"
+        ]
+    })
+    simonSolverStyle = 1;
+
+    @SwitchProperty({
+        name: "Cancel Incorrect Clicks",
+        description: "Cancels wrong clicks! wow !!",
+        category: "Solvers",
+        subcategory: "Simon Says"
+    })
+    simonCancelClicks = true;
+
 
     // ---------------------------------------------------------------
     // Gui

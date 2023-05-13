@@ -2,7 +2,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import { fn } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
-import { data } from "../utils/Utils"
+import { data, prefix } from "../utils/Utils"
 
 const rngMeterValues = JSON.parse(FileLib.read("Bloom", "data/RNGMeterValues.json"))
 
@@ -171,12 +171,25 @@ register("chat", (score, rank) => {
     if (!f) return
     addScore(f, score)
     added = true
-    // ChatLib.chat(`Added ${score} onto ${Dungeon.floor}`)
     let d = data.rngMeter.data[f]
+
+    let remaining = d.needed - d.score
+    if (Config.rngMeterWarnClose && remaining <= Config.rngMeterRemainingAlert && remaining > 0) {
+        Client.showTitle(`&aRNGMeter`, `&6${fn(remaining)} &aScore Away`, 5, 50, 5)
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                World.playSound("random.successful_hit", 1, 0)
+                ChatLib.chat(`${prefix} &aRNGMeter &6${fn(remaining)} &aScore Away!`)
+            }, i*250);
+        }
+    }
+
     if (d.score < d.needed || !d.item) return
     data.rngMeter.data[f].score -= data.rngMeter.data[f].needed
     setItem(f, null)
 }).setCriteria(/^ *Team Score: (\d+) \(([\w\+]{1,2})\)$/)
+
+
 
 // Used to get the RNGMeterValues.json data
 

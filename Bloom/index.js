@@ -55,4 +55,5 @@ import "./features/TTTSolver"
 import "./features/RngMeter"
 import "./features/CreeperBeamsSolver"
 import "./features/TerminalSplits"
-
+import "./features/TermimalTracker"
+import "./features/SimonSaysSolver"

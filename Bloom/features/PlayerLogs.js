@@ -1,6 +1,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
 import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
+import { convertToTimeString } from "../../BloomCore/utils/Utils"
 import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue, sortObjectByValues } from "../../BloomCore/utils/Utils"
 import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import Promise from "../../PromiseV2"
@@ -129,6 +130,13 @@ const printPlayerShit = (players, logs) => {
         let classData = logs.reduce((a, b) => {
             let thisRun = b.p[p.uuid]
             let clazz = thisRun.c
+            if (!(clazz in a)) {
+                a[clazz] = {
+                    timesPlayed: 0,
+                    totalSecrets: 0,
+                    string: ""
+                }
+            }
             a[clazz].timesPlayed++
             a[clazz].totalSecrets += thisRun.s
             a[clazz].string = `\n&b${classes[clazz]}: &r${fn(a[clazz].timesPlayed)}`
@@ -174,20 +182,37 @@ const printPlayerShit = (players, logs) => {
 const printUserCriteria = (options) => {
     let floor = options.floor
     let players = options.players
+    let time = options.time
+
     let message = "&aShowing runs logged with "
-    if (!players) message += "Any Players"
+
+    if (!players) message += "any players on "
     else message += players.map(a => `${a.rank} ${a.name}`).join("&r, ") + "&a on "
-    message += floor ? floor : "any floor."
+
+    message += floor ? `${floor}` : "any floor"
+
+    if (time) {
+        let timeStr = convertToTimeString(time)
+        message += ` the past &6${timeStr}&a`
+    }
+
+    message += "."
+
     ChatLib.chat(message)
 }
 
 const handleLogs = (logs, options) => {
     let floor = options.floor
     let players = options.players
+    let time = options.time
     // Filter by specified floor
     if (floor) logs = logs.filter(a => a.f == floor)
     // Filter only the logs with all of the specified players in the run.
     if (players) logs = logs.filter(a => players.every(b => Object.keys(a.p).includes(b.uuid)))
+    if (time) {
+        const now = new Date().getTime()
+        logs = logs.filter(a => now - a.ts < time)
+    }
     if (!logs.length) return ChatLib.chat(`${prefix} &cNo logs with the given criteria!`)
 
     ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
@@ -257,8 +282,8 @@ const handleLogsNoOptions = (logs) => {
             let secretsPerRun = Math.floor(classData[clazz].totalSecrets / classData[clazz].timesPlayed*100)/100
             let deathsPerRun = Math.floor(classData[clazz].deaths / classData[clazz].timesPlayed*100)/100
             classHover += `\n&e${classes[clazz]}:`
-            classHover += `\n  &aTotal Secrets: &r${fn(classData[clazz].timesPlayed)}`
-            classHover += `\n  &aSecrets/run: &b${secretsPerRun}`
+            classHover += `\n  &aTotal Players: &r${classData[clazz].timesPlayed}`
+            classHover += `\n  &aTotal Secrets: &b${fn(classData[clazz].totalSecrets)} &a(&b${fn(secretsPerRun)}/run&a)`
             classHover += `\n  &aDeaths/run: &c${deathsPerRun}`
         })
 
@@ -268,6 +293,19 @@ const handleLogsNoOptions = (logs) => {
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
     }).catch(e => ChatLib.chat(e))
 
+}
+
+const timeToMS = (timeStr) => {
+    const match = timeStr.match(/^((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s)?)$/)
+
+    if (!match) return 0
+
+    const days = parseInt(match[2]) || 0
+    const hours = parseInt(match[3]) || 0
+    const minutes = parseInt(match[4]) || 0
+    const seconds = parseInt(match[5]) || 0
+
+    return total = (days * 86400 + hours * 3600 + minutes * 60 + seconds) * 1000
 }
 
 // Example options to filter dungeon runs
@@ -303,6 +341,12 @@ register("command", (...args) => {
         if (!logs.some(a => a.f == floor)) return ChatLib.chat(`&cNo runs logged on ${floor}!`)
         options.floor = floor
     }
+
+    let time = args.find(a => a.startsWith("t:"))
+    if (time) {
+        options.time = timeToMS(time.slice(2))
+    }
+
     let players = args.find(a => a.startsWith("p:"))
     if (players) {
         players = players.slice(2).split(",")

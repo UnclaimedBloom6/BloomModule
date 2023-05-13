@@ -1,11 +1,14 @@
 {
-    "latestVersion": "4.1.9",
+    "latestVersion": "4.1.10",
     "changelog": [
-        "Fixed AutoKick",
-        "Fixed the /dontrp command not existing",
-        "Fixed an error in the player logging \"TypeError: Reduce of empty...\"",
-        "Fixed auto /ds party not working",
-        "Added Terminal Splits feature"
+        "Fixed 'Dungeon Finder' -> 'Party Finder'.",
+        "Added t:<time> option to player logging.",
+        "Added more documentation for player logging in the config.",
+        "Fixed some players erroring in player logs.",
+        "Added option to have RNG meter warn when close.",
+        "Fixed floor 3 run splits.",
+        "Added Simon Says solver.",
+        "Added terminal tracker."
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

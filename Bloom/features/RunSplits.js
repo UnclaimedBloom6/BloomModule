@@ -43,7 +43,7 @@ const splits = {
         "                             > EXTRA STATS <": "&cBoss Fight"
     },
     "3": {
-        "[BOSS] The Professor: Oh? You found my Guardians one weakness?": "&9Guardians",
+        "[BOSS] The Professor: Oh? You found my Guardians' one weakness?": "&9Guardians",
         "[BOSS] The Professor: I see. You have forced me to use my ultimate technique.": "&eProfessor",
         "[BOSS] The Professor: What?! My Guardian power is unbeatable!": "&aBoss Dead",
         "                             > EXTRA STATS <": "&cDialogue"

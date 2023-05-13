@@ -21,7 +21,7 @@ register("chat", (player, event) => {
 }).setCriteria("Party Finder > ${player} joined the dungeon group! (${*} Level ${*})")
 
 const messageReplacements = {
-    "Party Finder > Your party has been queued in the Party Finder!": "&d&lPF > &aParty Queued.",
+    "Party Finder > Your party has been queued in the dungeon finder!": "&d&lPF > &aParty Queued.",
     "Party Finder > Your group has been de-listed!": "&d&lPF > &aParty Delisted.."
 }
 

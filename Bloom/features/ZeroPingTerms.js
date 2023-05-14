@@ -1,4 +1,4 @@
-import { colorOrder, isEnchanted, setEnchanted, setPaneToGreen } from "../Utils/Utils"
+import { colorOrder, isEnchanted, setEnchanted, setPaneToGreen } from "../utils/Utils"
 import Config from "../Config"
 import TerminalSolver from "./TerminalSolver"
 import Dungeon from "../../BloomCore/dungeons/Dungeon"

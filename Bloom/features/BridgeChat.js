@@ -1,6 +1,6 @@
 import request from "../../requestV2"
 import Config from "../Config"
-import { data } from "../Utils/Utils"
+import { data } from "../utils/Utils"
 
 // 30 mins since last update
 if (new Date().getTime() - data.bridge.lastUpdated > 1.8E6) {

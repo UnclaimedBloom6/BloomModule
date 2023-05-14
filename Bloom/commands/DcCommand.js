@@ -1,7 +1,7 @@
 import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/utils/APIWrappers"
 import { bcData, calcSkillLevel, fn, getRank } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
-import { prefix } from "../Utils/Utils"
+import { prefix } from "../utils/Utils"
 
 export const dcCommand = register("command", (player1, player2) => {
     if (!player1 || !player2) return ChatLib.chat(`&c/dc <player1> <player2> - Show the difference in catacombs experience between two players.`)

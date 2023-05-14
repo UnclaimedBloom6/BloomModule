@@ -1,14 +1,7 @@
 {
-    "latestVersion": "4.1.10",
+    "latestVersion": "4.1.11",
     "changelog": [
-        "Fixed 'Dungeon Finder' -> 'Party Finder'.",
-        "Added t:<time> option to player logging.",
-        "Added more documentation for player logging in the config.",
-        "Fixed some players erroring in player logs.",
-        "Added option to have RNG meter warn when close.",
-        "Fixed floor 3 run splits.",
-        "Added Simon Says solver.",
-        "Added terminal tracker."
+        "Fixed capitalization in imports."
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

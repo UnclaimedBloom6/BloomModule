@@ -149,7 +149,7 @@ If you find a bug, want to share suggestions etc then join my Discord server: ht
 #### Misc Commands
 - /d - Dungeon Hub
 - /go - /g online
-- /ai - /party settings allinvite
+- //ai - /party settings allinvite
 - /f1 - m7 - /joindungeon \<floor>
 - /va \<auctionid> - /viewauction
 - /pko - /p kickoffline

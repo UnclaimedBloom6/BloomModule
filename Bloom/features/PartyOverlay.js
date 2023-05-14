@@ -1,5 +1,5 @@
 import Config from "../Config"
-import { data } from "../Utils/Utils"
+import { data } from "../utils/Utils"
 import Party from "../../BloomCore/Party"
 
 register("dragged", (dx, dy, x, y, btn) => {

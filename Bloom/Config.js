@@ -359,15 +359,15 @@ class Config {
     // ---------------------------------------------------------------
     // Solvers
 
-    // @SwitchProperty({
-    //     name: "&a&lZero Ping Terminals",
-    //     description: "Removes the delay caused by ping when clicking on terminals, making it feel like you have zero ping.\n\n" +
-    //     "&8- Originally created by Alon1396 in the AlonAddons module\n\n" +
-    //     "&cWARNING: Currently, the chances of getting banned for this is virtually 0, however if Hypixel's anticheat updates to try and prevent exploiting terminals then this could cause false bans. Use at own risk.",
-    //     category: "Solvers",
-    //     subcategory: "Terminals"
-    // })
-    // zeroPingTerminals = false;
+    @SwitchProperty({
+        name: "&a&lZero Ping Terminals",
+        description: "Removes the delay caused by ping when clicking on terminals, making it feel like you have zero ping.\n\n" +
+        "&8- Originally created by Alon1396 in the AlonAddons module\n\n" +
+        "&cWARNING: Currently, the chances of getting banned for this is virtually 0, however if Hypixel's anticheat updates to try and prevent exploiting terminals then this could cause false bans. Use at own risk.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    zeroPingTerminals = false;
 
     @SwitchProperty({
         name: "&6Terminal Solvers",
@@ -387,13 +387,13 @@ class Config {
     })
     colorsSolver = false;
 
-    // @SwitchProperty({
-    //     name: "Zero Ping Colors",
-    //     description: "Toggle zero ping being used for the colors terminal.",
-    //     category: "Solvers",
-    //     subcategory: "Terminals"
-    // })
-    // colorsZeroPing = false;
+    @SwitchProperty({
+        name: "Zero Ping Colors",
+        description: "Toggle zero ping being used for the colors terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    colorsZeroPing = false;
 
     // --
 
@@ -405,13 +405,13 @@ class Config {
     })
     startsWithSolver = false;
 
-    // @SwitchProperty({
-    //     name: "Zero Ping Starts With",
-    //     description: "Toggle zero ping being used for the 'starts with' terminal.",
-    //     category: "Solvers",
-    //     subcategory: "Terminals"
-    // })
-    // startsWithZeroPing = false;
+    @SwitchProperty({
+        name: "Zero Ping Starts With",
+        description: "Toggle zero ping being used for the 'starts with' terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    startsWithZeroPing = false;
 
     // --
 
@@ -423,13 +423,13 @@ class Config {
     })
     numbersSolver = false;
 
-    // @SwitchProperty({
-    //     name: "Zero Ping Numbers",
-    //     description: "Toggle zero ping being used for the numbers terminal.",
-    //     category: "Solvers",
-    //     subcategory: "Terminals"
-    // })
-    // numbersZeroPing = false;
+    @SwitchProperty({
+        name: "Zero Ping Numbers",
+        description: "Toggle zero ping being used for the numbers terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    numbersZeroPing = false;
 
     // --
 
@@ -441,13 +441,13 @@ class Config {
     })
     redGreenSolver = false;
 
-    // @SwitchProperty({
-    //     name: "Zero Ping Red Green",
-    //     description: "Toggle zero ping being used for the red green terminal.",
-    //     category: "Solvers",
-    //     subcategory: "Terminals"
-    // })
-    // redGreenZeroPing = false;
+    @SwitchProperty({
+        name: "Zero Ping Red Green",
+        description: "Toggle zero ping being used for the red green terminal.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    redGreenZeroPing = false;
 
     // --
 
@@ -459,21 +459,21 @@ class Config {
     })
     rubixSolver = false;
 
-    // @SwitchProperty({
-    //     name: "Zero Ping Rubix",
-    //     description: "Toggle zero ping being used for the rubix terminal (Make all the same color).",
-    //     category: "Solvers",
-    //     subcategory: "Terminals"
-    // })
-    // rubixZeroPing = false;
+    @SwitchProperty({
+        name: "Zero Ping Rubix",
+        description: "Toggle zero ping being used for the rubix terminal (Make all the same color).",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    rubixZeroPing = false;
 
-    // @SwitchProperty({
-    //     name: "Maze Helper",
-    //     description: "Shows the next maze pane that should be clicked when using Zero Ping Terminals.",
-    //     category: "Solvers",
-    //     subcategory: "Terminals"
-    // })
-    // mazeHelper = true;
+    @SwitchProperty({
+        name: "Maze Helper",
+        description: "Shows the next maze pane that should be clicked when using Zero Ping Terminals.",
+        category: "Solvers",
+        subcategory: "Terminals"
+    })
+    mazeHelper = true;
 
     @SwitchProperty({
         name: "&cHide Terminal Tooltips",

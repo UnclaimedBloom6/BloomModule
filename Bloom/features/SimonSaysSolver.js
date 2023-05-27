@@ -1,4 +1,4 @@
-import { getDistance3D, getPlayerCoords } from "../../BloomCore/utils/Utils"
+import { getDistance3D, getPlayerCoords, registerWhen } from "../../BloomCore/utils/Utils"
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 
@@ -31,8 +31,7 @@ register("tick", () => {
 
 const BUTTONWIDTH = 0.4
 const BUTTONHEIGHT = 0.26
-register("renderWorld", () => {
-    if (!Config.simonSolver || !blocks.size) return
+registerWhen(register("renderWorld", () => {
     const b = [...blocks]
     for (let i = 0; i < b.length; i++) {
         let [x, y, z] = b[i].split(",").map(a => parseInt(a))
@@ -44,7 +43,7 @@ register("renderWorld", () => {
         else RenderLib.drawInnerEspBox(x+0.05, y+0.5-BUTTONHEIGHT/2+0.001, z+0.5, BUTTONWIDTH, BUTTONHEIGHT, ...color, 0.7, false)
         
     }
-})
+}), () => Config.simonSolver && blocks.size)
 
 register("playerInteract", (action, pos, event) => {
     if (!Config.simonSolver || action.toString() !== "RIGHT_CLICK_BLOCK") return

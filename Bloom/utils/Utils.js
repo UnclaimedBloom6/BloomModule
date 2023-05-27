@@ -2,51 +2,52 @@ import PogObject from "../../PogData/index"
 
 export const prefix = "&8[&bBloom&8]&r"
 export const data = new PogObject("Bloom", {
-    "firstTime": true,
-    "speedDisplay": {
-        "x": 0,
-        "y": 0
+    firstTime: true,
+    notifiedZeroPing: false,
+    speedDisplay: {
+        x: 0,
+        y: 0
     },
-    "party": {
-        "x": 0,
-        "y": 0
+    party: {
+        x: 0,
+        y: 0
     },
-    "crystalPB": 0,
-    "runSplits": {
-        "x": 0,
-        "y": 0
+    crystalPB: 0,
+    runSplits: {
+        x: 0,
+        y: 0
     },
-    "runOverview": {
-        "x": 0,
-        "y": 0
+    runOverview: {
+        x: 0,
+        y: 0
     },
-    "dungeonWarpCooldown": {
-        "x": 0,
-        "y": 0
+    dungeonWarpCooldown: {
+        x: 0,
+        y: 0
     },
-    "chMap": {
-        "x": 0,
-        "y": 0,
-        "scale": 1,
-        "headScale": 1
+    chMap: {
+        x: 0,
+        y: 0,
+        scale: 1,
+        headScale: 1
     },
-    "bridge": {
-        "regex": null,
-        "lastUpdated": null
+    bridge: {
+        regex: null,
+        lastUpdated: null
     },
-    "stackTracker": {
-        "x": 0,
-        "y": 0
+    stackTracker: {
+        x: 0,
+        y: 0
     },
-    "toggleSprint": {
-        "x": 0,
-        "y": 0
+    toggleSprint: {
+        x: 0,
+        y: 0
     },
-    "rngMeter": {
-        "x": 0,
-        "y": 0,
-        "scale": 1,
-        "data": {}
+    rngMeter: {
+        x: 0,
+        y: 0,
+        scale: 1,
+        data: {}
     }
 }, "data/data.json")
 
@@ -68,3 +69,13 @@ export let chatIncrement = 3457
 export const setEnchanted = (slot) => Player.getContainer()?.getStackInSlot(slot)?.itemStack?.func_77966_a(net.minecraft.enchantment.Enchantment.field_180314_l, 1)
 export const setPaneToGreen = (slot) => Player.getContainer()?.getStackInSlot(slot)?.setDamage(5)
 export const isEnchanted = (slot) => Player.getContainer()?.getStackInSlot(slot)?.isEnchanted()
+
+export const Terminal = {
+    MELODY: 0,
+    NUMBERS: 1,
+    COLORS: 2,
+    STARTSWITH: 3,
+    MAZE: 4,
+    RUBIX: 5,
+    REDGREEN: 6
+}

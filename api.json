@@ -1,7 +1,20 @@
 {
-    "latestVersion": "4.1.11",
+    "latestVersion": "4.2.0",
     "changelog": [
-        "Fixed capitalization in imports."
+        "Added more documentation to player logging (in /bl).",
+        "Added No Death Animation.",
+        "Added Hide Gray Damage Numbers.",
+        "Added Hide 0 Health Nametags.",
+        "Added Disable Mort Messages.",
+        "Added Three Weirdos Solver.",
+        "Removed Zero Ping Terminals (Moved into it's own module).",
+        "Removed Update Checker.",
+        "Changed /ping command to //ping to avoid conflicts.",
+        "Optimized rendering code for various features.",
+        "RNG Meter now resets if the current item is dropped.",
+        "Added Party Size and Score arguments to /plogs.",
+        "Updated first install message.",
+        "Added notification about zero ping removal."
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

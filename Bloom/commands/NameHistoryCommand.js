@@ -11,12 +11,11 @@ export const nameHistoryCommand = register("command", (player) => {
             names = names.reverse()
             let hoverStr = "&eName History"
             for (let i = 0; i < names.length; i++) {
-                let date
+                let date = "&bCreated"
                 if (Object.keys(names[i]).includes("changedToAt")) {
                     let changedAt = new Date(names[i].changedToAt)
                     date = `${changedAt.getDate()} ${months[changedAt.getMonth()]} ${changedAt.getFullYear()}`
                 }
-                else date = "&bCreated"
                 hoverStr += `\n&a${names[i].name} &e- &b${date}`
             }
             new Message(`&b${username} &8| `, new TextComponent("&7Name History").setHover("show_text", hoverStr)).chat()

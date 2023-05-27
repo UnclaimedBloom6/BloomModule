@@ -7,7 +7,7 @@ export const pingCommand = register("command", () => {
 	waitingPingCommand = true
 	new Message(`${prefix} &aCalculating Ping...`).setChatLineId(47564875).chat()
 	ChatLib.command("fbkjgblsbnljhh")
-}).setName("ping")
+}).setName("/ping")
 
 register("chat", event => {
 	if (waitingPingCommand) {

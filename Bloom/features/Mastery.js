@@ -1,4 +1,4 @@
-import { getScoreboard, removeUnicode } from "../../BloomCore/utils/Utils"
+import { getScoreboard, registerWhen, removeUnicode } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 let scanned = false
@@ -56,8 +56,7 @@ register("step", () => {
     current = current.sort((a, b) => a[3] - b[3])
 })
 
-register("renderWorld", () => {
-    if (!mastery) return
+registerWhen(register("renderWorld", () => {
     current.map((a, i) => {
         let [x, y, z, ts] = a
         let timeLeft = Math.floor((woolLifetime - (new Date().getTime() - ts))/100)/10
@@ -66,4 +65,4 @@ register("renderWorld", () => {
         Tessellator.drawString(`#${i+1}`, x, y+3, z, color, true, 0.08, false)
         Tessellator.drawString(timeLeft, x, y+2, z, color, true, 0.1, false)
     })
-})
+}), () => mastery)

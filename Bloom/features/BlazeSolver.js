@@ -1,5 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { EntityArmorStand, getDistance2D } from "../../BloomCore/utils/Utils"
+import { EntityArmorStand, getDistance2D, registerWhen } from "../../BloomCore/utils/Utils"
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 
@@ -50,16 +50,16 @@ register("worldUnload", () => {
     blazeType = null
 })
 
-register("renderEntity", (entity, pos, pt, event) => {
-    if (!Config.blazeSolver || !Dungeon.inDungeon || !blazes.length || !blazeType) return
+registerWhen(register("renderEntity", (entity, pos, pt, event) => {
     if (entity.getClassName() == "EntityBlaze") return cancel(event)
     if (entity.getName().removeFormatting().startsWith("[Lv15] Blaze ")) return cancel(event)
-})
+}), () => Config.blazeSolver && Dungeon.inDungeon && blazes.length && blazeType)
 
-register("renderWorld", () => {
-    if (!Config.blazeSolver || !Dungeon.inDungeon || !blazeType) return
+
+
+registerWhen(register("renderWorld", () => {
     blazes.forEach((entity, i) => {
         let [r, g, b] = i == 0 ? [0, 1, 0] : i == 1 ? [1, 0.5, 0] : [1, 1, 1]
         RenderLib.drawInnerEspBox(entity.getX(), entity.getY()-2, entity.getZ(), 0.6, 1.8, r, g, b, 1, false)
     })
-})
+}), () => Config.blazeSolver && Dungeon.inDungeon && blazeType)

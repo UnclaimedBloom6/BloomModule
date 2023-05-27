@@ -22,27 +22,28 @@ class Config {
     constructor() {
         this.initialize(this)
         this.setCategoryDescription("General", 
-            "&6&l&nBloom\n\n" +
-            "&7/bl setkey <api key> &8- Set your API key.\n" +
-            "\n" +
-            "&7/ds <player> &8- Dungeon Stats.\n" +
-            "&7/mem <player> &8- Guild Stats.\n" +
-            "&7/check <player> &8- Check if scammer.\n" +
-            "&7//skills <player> &8- Show a player's skills.\n" +
-            "&7//slayer <player> &8- Show a player's slayer stats.\n" +
-            "&7/mykey &8- Show stats about your API key.\n" +
-            "\n" +
-            "&7//rp [...exclude] &8- Reparty (Add names to not reparty those players).\n" +
-            "&7/ping &8- Show your ping.\n" +
-            "&7/ptr &8- Transfer party to random player.\n" +
-            "&7/lsb &8- Warp to lobby then back to Skyblock.\n" +
-            "&7/ld &8- Warp to lobby, Skyblock then Dungeon Hub.\n" +
-            "&7/colors &8-Show all of the formatting codes.\n" +
-            "&7/dc <player1> <player2> &8-Show the cata XP difference between two players.\n" +
-            "&7/pb <floor number> &8-Show the S+ PB's of the whole party on a floor.\n" +
-            "&7/nh <player> &8-Show a player's username history.\n" +
-            "\n\n" +
-            "&6UnclaimedBloom6 is very cool and cool"
+            `
+            &6&l&nBloom
+
+            &b/bl setkey <api key> &r- Set your API key.
+
+            &b/ds <player> &r- Dungeon Stats.
+            &b/mem <player> &r- Guild Stats.
+            &b//skills <player> &r- Show a player's skills.
+            &b//slayer <player> &r- Show a player's slayer stats.
+            &b/mykey &r- Show stats about your API key.
+
+            &b//rp [...exclude] &r- Reparty (Add names to exclude players).
+            &b//ping &r- Show your ping.
+            &b/ptr &r- Transfer party to random player.
+            &b/lsb &r- Warp to lobby then back to Skyblock.
+            &b/ld &r- Warp to lobby, Skyblock then Dungeon Hub.
+            &b/colors &r- Show all of the formatting codes.
+            &b/dc <player1> <player2> &r- Show the cata XP difference between two players.
+            &b/pb <floor_number> &r- Show the S+ PB's of the whole party on a floor.
+
+            &6UnclaimedBloom6 is very cool and cool
+            `
         )
 
     }
@@ -182,6 +183,32 @@ class Config {
     })
     toggleSprintText = "";
 
+    @SwitchProperty({
+        name: "No Death Animation",
+        description: "Removes the death animation when an entity is killed.",
+        category: "General",
+        subcategory: "Death Animation"
+    })
+    noDeathAnimation = false;
+
+    @SwitchProperty({
+        name: "Hide Gray Numbers",
+        description: "Hides the gray damage numbers.",
+        category: "General",
+        subcategory: "Damage Numbers"
+    })
+    hideGrayDamageNumbers = false;
+
+    @SwitchProperty({
+        name: "Hide 0 Health Nametags",
+        description: "Hides armor stands which have 0 health. Eg '[Lv100] Noob 0/100k ❤' would get hidden.",
+        category: "General",
+        subcategory: "0 Health Nametags"
+    })
+    hide0HealthNametags = false;
+
+
+
     // ------------------------------------------
     // Dungeons
 
@@ -277,16 +304,69 @@ class Config {
     
     @SwitchProperty({
         name: "Player Logging",
-        description: "Logs info about every run including players, deaths, how many secrets they found, run time and score.\n" +
-        "Use &b/plogs [p:player] [f:floor] [t:1d, 10h, 7d etc] &7to show info about past runs with specific players, floors, and/or within the last x amount of time.\n" +
-        "&aExample: &b/plogs p:UnclaimedBloom6 f:f5 t:7d &awould show all runs logged with UnclaimedBloom6 on Floor 5 within the last 7 days.\n\n" +
-        "More functionality coming in future updates.\n\n" +
-        "&cRequires API key to be set (/bl setkey <key>). Runs can not be logged if the API key is not set or the API key is invalid." +
-        "&cMORT MESSAGES MUST BE ENABLED",
+        description: `
+        &aLogs information about your dungeon runs:
+         - The Floor
+         - Run Time
+         - Run Score
+         - When the run was completed
+         - Who you played with
+         - Secrets found by everyone in the party
+         - Deaths (During clear and in boss)
+
+        &aThis information can be viewed later using the /plogs command.
+        &aThe /plogs command can take in a range of arguments to narrow
+        &athe runs which are shown:
+
+        /plogs on it's own will show every run you ever logged along
+        with which floors those runs were on, which players you played
+        with the most and some information about how each class
+        performed.
+
+        However using filters, you can filter only S+ runs, only runs with
+        certain people, runs within the past week, months etc.
+        For example: &b/plogs &cp:UnclaimedBloom6,Hosted &et:30d &as:>300 &bf:f7 &r
+        would show runs logged with &cUnclaimedBloom6 and Hosted &ron &bF7
+        the past &e30 days &rwith a &ascore of 300 or more&r.
+
+        &a&nArguments List:
+         * &bp:player1,player2, ... &r- Filter based on players in the party,
+            separated by a comma and no space.
+
+         * &bt:<time> &r- Filter based on how long ago the run was. Eg &6t:30d
+            &rfor &e30 days&r, &6t:1d8h &rfor &e1 day, 8 hours &retc.
+
+         * &bps:<party_size> &r- Filter based on the party size. Eg &6ps:2
+            &rfor duo runs, &6ps:>1 &rfor parties with more than 1 player etc.
+
+         * &bs:<score> &r- Filter based off score. Eg &6s:>300 &rwould show
+            runs with a score of 300 or more, &6s:<300 &rwould show runs with
+            less than 300 score. &6s:317 &rwould show runs with
+            exactly 317 score.
+
+         * &bf:<floor> &r- Filter runs based off floor. Eg &6f:f5 &rwould show only
+            F5 runs, &6f:f7 &ronly F7 etc.
+
+        &cNOTE: Mort Messaged must be enabled in Skytils/SBA etc
+        &cfor this feature to log runs. This module has it's own
+        &cfeature for that, so use that instead if you still
+        &cwant mort messages hidden.
+
+        &c&nAn API key must also be set.&r &cTo set it, run &b/api new
+        &cor &b/bcore setkey <API_KEY>&c.
+        `,
         category: "Dungeons",
         subcategory: "Player Logs"
     })
     playerLogging = false;
+
+    @SwitchProperty({
+        name: "Disable Mort Messages",
+        description: "Disables mort message. Enabling this will not conflict with this or any other CT modules, unlike Skytils or SBA.",
+        category: "Dungeons",
+        subcategory: "Mort"
+    })
+    disableMortMessages = false;
     
     @SwitchProperty({
         name: "&dRNG Meter",
@@ -359,15 +439,6 @@ class Config {
     // ---------------------------------------------------------------
     // Solvers
 
-    @SwitchProperty({
-        name: "&a&lZero Ping Terminals",
-        description: "Removes the delay caused by ping when clicking on terminals, making it feel like you have zero ping.\n\n" +
-        "&8- Originally created by Alon1396 in the AlonAddons module\n\n" +
-        "&cWARNING: Currently, the chances of getting banned for this is virtually 0, however if Hypixel's anticheat updates to try and prevent exploiting terminals then this could cause false bans. Use at own risk.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    zeroPingTerminals = false;
 
     @SwitchProperty({
         name: "&6Terminal Solvers",
@@ -376,8 +447,6 @@ class Config {
         subcategory: "Terminals"
     })
     terminalSolvers = false;
-
-    // ----- Spam -----
 
     @SwitchProperty({
         name: "Colors Solver",
@@ -388,32 +457,12 @@ class Config {
     colorsSolver = false;
 
     @SwitchProperty({
-        name: "Zero Ping Colors",
-        description: "Toggle zero ping being used for the colors terminal.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    colorsZeroPing = false;
-
-    // --
-
-    @SwitchProperty({
         name: "Starts With Solver",
         description: "Toggle the terminal solver for the 'starts with' terminal.",
         category: "Solvers",
         subcategory: "Terminals"
     })
     startsWithSolver = false;
-
-    @SwitchProperty({
-        name: "Zero Ping Starts With",
-        description: "Toggle zero ping being used for the 'starts with' terminal.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    startsWithZeroPing = false;
-
-    // --
 
     @SwitchProperty({
         name: "Numbers Solver",
@@ -424,16 +473,6 @@ class Config {
     numbersSolver = false;
 
     @SwitchProperty({
-        name: "Zero Ping Numbers",
-        description: "Toggle zero ping being used for the numbers terminal.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    numbersZeroPing = false;
-
-    // --
-
-    @SwitchProperty({
         name: "Red Green Solver",
         description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
         category: "Solvers",
@@ -442,38 +481,12 @@ class Config {
     redGreenSolver = false;
 
     @SwitchProperty({
-        name: "Zero Ping Red Green",
-        description: "Toggle zero ping being used for the red green terminal.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    redGreenZeroPing = false;
-
-    // --
-
-    @SwitchProperty({
         name: "Rubix Solver",
         description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
         category: "Solvers",
         subcategory: "Terminals"
     })
     rubixSolver = false;
-
-    @SwitchProperty({
-        name: "Zero Ping Rubix",
-        description: "Toggle zero ping being used for the rubix terminal (Make all the same color).",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    rubixZeroPing = false;
-
-    @SwitchProperty({
-        name: "Maze Helper",
-        description: "Shows the next maze pane that should be clicked when using Zero Ping Terminals.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    mazeHelper = true;
 
     @SwitchProperty({
         name: "&cHide Terminal Tooltips",
@@ -568,6 +581,14 @@ class Config {
         subcategory: "Simon Says"
     })
     simonCancelClicks = true;
+
+    @SwitchProperty({
+        name: "Three Weirdos Solver",
+        description: "Highlights the correct chest in the Three Weirdos dungeon room.",
+        category: "Solvers",
+        subcategory: "Three Weirdos"
+    })
+    weirdosSolver = false;
 
 
     // ---------------------------------------------------------------

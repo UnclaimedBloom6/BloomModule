@@ -1,19 +1,36 @@
-import { data } from "./Utils";
+import { data, prefix } from "./Utils";
 
-register("step", () => {
+const zeroPingGithub = "https://github.com/UnclaimedBloom6/ZeroPingTerminals"
+
+const checkFirstInstall = () => {
     if (!data.firstTime) return
     data.firstTime = false
     data.save()
-    let msgs = [
-        `&a&lThank you for installing Bloom module!\n`,
-        `&bIf you came here for zero ping terminals, but used /ct import`,
-        `&bthen you will need to go to the GitHub page and download`,
-        `&bthat version of the module instead.\n`,
-        `&eIf you are still using BloomCommands, you can remove`,
-        `&ethat module since this one contains all of those commands.\n`,
-        `&aTo get started, use &b/bl&a.`
+
+    const msgs = [
+        "&b&lBloom",
+        "",
+        "&aTo get started, run the &b/bl &acommand."
     ]
     ChatLib.chat(`&b&m${ChatLib.getChatBreak(" ")}`)
-    msgs.map(a => ChatLib.chat(ChatLib.getCenteredText(a)))
+    msgs.forEach(a => ChatLib.chat(ChatLib.getCenteredText(a)))
     ChatLib.chat(`&b&m${ChatLib.getChatBreak(" ")}`)
-}).setFps(5)
+}
+
+const checkZeroPing = () => {
+    if (data.notifiedZeroPing) return
+    data.notifiedZeroPing = true
+    data.save()
+    new Message(
+        `\n`,
+        `${prefix} &aNOTE: Zero Ping Terminals has been moved to it's own module.\n`,
+        `&eYou can get Zero Ping Terminals here:\n`,
+        new TextComponent(`&aClick Here to go to the Github page!`).setClick("open_url", zeroPingGithub).setHover("show_text", `&dClick to go to &a${zeroPingGithub}`),
+        `\n`
+    ).chat()
+}
+
+register("tick", () => {
+    checkFirstInstall()
+    checkZeroPing()
+})

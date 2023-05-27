@@ -1,10 +1,13 @@
 
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { fn } from "../../BloomCore/utils/Utils"
+import { appendToFile, fn } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { data, prefix } from "../utils/Utils"
 
 const rngMeterValues = JSON.parse(FileLib.read("Bloom", "data/RNGMeterValues.json"))
+
+// Used for adding the score after the meter resets
+let lastScoreAdded = 0
 
 // Check if data exists for a floor and fills in missing data if it isn't.
 const checkFloorDataExists = (floor) => {
@@ -27,6 +30,11 @@ const setScore = (floor, score) => {
     checkFloorDataExists(floor)
     data.rngMeter.data[floor].score = score
     data.save()
+}
+
+const getMeterData = (floor) => {
+    checkFloorDataExists(floor)
+    return data.rngMeter.data[floor]
 }
 
 // Sets the item for the floor. Item must be formatted using §. The goal score is set automatically if the item is in the RNGMeterValues.json file.
@@ -160,20 +168,24 @@ register("chat", (floor, item) => {
 }).setCriteria(/&r&aYou set your &r&dCatacombs \((\w{1,2})\) RNG Meter &r&ato drop &r(.+)&r&a!&r/)
 
 
-let added = false
+let added = false // Don't add the score a second time when clicking "EXTRA STATS"
 register("worldUnload", () => added = false)
 register("chat", (score, rank) => {
     if (added) return
     score = parseInt(score)
     if (!["S", "S+"].includes(rank)) return
-    if (rank == "S") score = Math.floor(score * 0.7)
-    let f = Dungeon.floor
-    if (!f) return
-    addScore(f, score)
-    added = true
-    let d = data.rngMeter.data[f]
 
-    let remaining = d.needed - d.score
+    if (rank == "S") score = Math.floor(score * 0.7)
+    let floor = Dungeon.floor
+    if (!floor) return
+
+    lastScoreAdded = score
+
+    addScore(floor, score)
+    added = true
+    const floorData = data.rngMeter.data[floor]
+
+    let remaining = floorData.needed - floorData.score
     if (Config.rngMeterWarnClose && remaining <= Config.rngMeterRemainingAlert && remaining > 0) {
         Client.showTitle(`&aRNGMeter`, `&6${fn(remaining)} &aScore Away`, 5, 50, 5)
         for (let i = 0; i < 3; i++) {
@@ -184,12 +196,27 @@ register("chat", (score, rank) => {
         }
     }
 
-    if (d.score < d.needed || !d.item) return
-    data.rngMeter.data[f].score -= data.rngMeter.data[f].needed
-    setItem(f, null)
+    if (floorData.score < floorData.needed || !floorData.item) return
+    data.rngMeter.data[floor].score -= data.rngMeter.data[floor].needed
+    setItem(floor, null)
 }).setCriteria(/^ *Team Score: (\d+) \(([\w\+]{1,2})\)$/)
 
 
+// RNG Meter item was obtained, so reset the meter score.
+register("chat", (item) => {
+    // Change the formatting so it matches the RNGMeterValues.json item names (& -> § and no §r)
+    const reformatted = item.replace(/&r/g, "").replace(/&/g, "§")
+    if (!Dungeon.floor || !lastScoreAdded) return
+
+    const floorData = getMeterData(Dungeon.floor)
+    if (floorData.item !== reformatted) return
+
+    // Reset the RNG Meter and add the score from the last run
+    setItem(Dungeon.floor, null)
+    setScore(Dungeon.floor, lastScoreAdded)
+    ChatLib.chat(`${prefix} &aRNG Meter item reset!`)
+
+}).setCriteria(/^&r    &r(?:&6&lRARE REWARD! &r)?(.+)&r$/)
 
 // Used to get the RNGMeterValues.json data
 

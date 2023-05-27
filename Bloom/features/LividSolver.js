@@ -1,5 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { EntityArmorStand, EntityOtherPlayerMP } from "../../BloomCore/utils/Utils"
+import { EntityArmorStand, EntityOtherPlayerMP, registerWhen } from "../../BloomCore/utils/Utils"
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 
@@ -39,17 +39,17 @@ register("tick", () => {
     livid = new Livid(...l, e, as)
 })
 
-register("renderWorld", () => {
-    if (!Dungeon.inDungeon || !livid || !Config.lividSolver) return
+registerWhen(register("renderWorld", () => {
+    if (!livid) return
     RenderLib.drawEspBox(livid.entity.getRenderX(), livid.entity.getRenderY(), livid.entity.getRenderZ(), 0.6, 1.8, 0, 1, 0, 1, false)
-})
+}), () => Dungeon.inDungeon && livid && Config.lividSolver)
 
-register("renderEntity", (entity, pos, pt, event) => {
-    if (!Config.hideWrongLivids || !livid || !entity.getName().includes("Livid")) return
+registerWhen(register("renderEntity", (entity, pos, pt, event) => {
+    if (!livid || !entity.getName().includes("Livid")) return
     if ([livid.entity.getName(), livid.armorStand.getName()].some(a => entity.getName() == a)) return
     // if (!entity.getName().endsWith(" Livid") || entity.getName() == livid.getName()) return
     cancel(event)
-})
+}), () => Dungeon.inDungeon && Config.hideWrongLivids)
 
 register("worldLoad", () => livid = null)
 

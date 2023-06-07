@@ -8,13 +8,12 @@ export const bloomCommand = register("command", (...args) => {
     if (args[0] == "setkey") {
         if (!args[1]) return ChatLib.chat(`${prefix} &c/bl setkey <key>`)
         let key = args[1]
-        new Message(`${prefix} &aChecking API key...`).setChatLineId(857684765).chat()
         getApiKeyInfo(key).then(keyInfo => {
-            if (!keyInfo.success) return ChatLib.editChat(857684765, new Message(`${prefix} &cError: Invalid API key.`))
+            if (!keyInfo.success) return ChatLib.chat(`${prefix} &cError: Invalid API key.`)
             bcData.apiKey = key
             bcData.save()
-            ChatLib.editChat(857684765, new Message(`${prefix} &aAPI Key set successfully!`))
-        }).catch(e => ChatLib.editChat(857684765, new Message(`${prefix} &cError: Invalid API key.`)))
+            ChatLib.chat(`${prefix} &aAPI Key set successfully!`)
+        }).catch(e => ChatLib.chat(`${prefix} &cError: Invalid API key.`))
     }
     if (args[0] == "help") {
         let messages = [
@@ -34,6 +33,8 @@ export const bloomCommand = register("command", (...args) => {
         ]
         messages.forEach(a => ChatLib.chat(ChatLib.getCenteredText(a)))
         let link = "https://github.com/UnclaimedBloom6/BloomModule"
-        new Message(new TextComponent(`${prefix} &a&aFor a more in-depth list of features, click on this message to go to the BloomModule Github.`).setHover("show_text", link).setClick("open_url", link)).chat()
+        new Message(
+            new TextComponent(`${prefix} &a&aFor a more in-depth list of features, click on this message to go to the BloomModule Github.`).setHover("show_text", link).setClick("open_url", link)
+        ).chat()
     }
 }).setName("bl")

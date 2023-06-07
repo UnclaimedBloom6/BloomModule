@@ -1,4 +1,4 @@
-import { Terminal, colorOrder, isEnchanted } from "../utils/Utils"
+import { Terminal, colorOrder, isEnchanted, terminalInvNames } from "../utils/Utils"
 import Config from "../Config"
 import { getSlotCenter } from "../../BloomCore/utils/Utils"
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
@@ -23,16 +23,6 @@ const sortStackSize = (container, array) => array.sort((a, b) => getStackFromInd
 const fixColor = (itemName) => {
     Object.keys(colorReplacements).map(a => itemName = itemName.toLowerCase().replace(new RegExp(`^${a}`), colorReplacements[a]))
     return itemName
-}
-
-const terminalInvNames = {
-    "Click the button on time!": Terminal.MELODY, // <-- you were a mistake
-    "Click in order!": Terminal.NUMBERS,
-    "Select all the ": Terminal.COLORS,
-    "What starts with: '": Terminal.STARTSWITH,
-    "Navigate the maze!": Terminal.MAZE, // rest in peace
-    "Change all to same color!": Terminal.RUBIX,
-    "Correct all the panes!": Terminal.REDGREEN,
 }
 
 export default new class TerminalSolver {

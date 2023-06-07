@@ -13,15 +13,32 @@ let overviewStr = null
 register("tick", () => {
     if (!Config.runOverviewMoveGui.isOpen() && (!Config.runOverview || !Dungeon.inDungeon)) return overviewStr = null
 
-    let bloodOpened = !Dungeon.bloodOpened && Dungeon.runStarted ? getTime(new Date().getTime() - Dungeon.runStarted) : Dungeon.bloodOpened ? getTime(Dungeon.bloodOpened - Dungeon.runStarted) : "?"
-    let watcherCleared = Dungeon.watcherCleared ? getSecs(Dungeon.watcherCleared - Dungeon.bloodOpened) : !Dungeon.watcherCleared && Dungeon.bloodOpened ? getSecs(new Date().getTime() - Dungeon.bloodOpened) : "?"
-    let bossEntry = !Dungeon.bossEntry && Dungeon.runStarted ? "?" : getTime(Dungeon.bossEntry - Dungeon.runStarted)
+    let bloodOpened = "?"
+    let watcherCleared = "?"
+    let portalTime = "?"
+    let bossEntry = "?"
+    
+    // Blood Open
+    if (!Dungeon.bloodOpened && Dungeon.runStarted) bloodOpened = getTime(new Date().getTime() - Dungeon.runStarted)
+    else if (Dungeon.bloodOpened) bloodOpened = getTime(Dungeon.bloodOpened - Dungeon.runStarted)
+
+    // Watcher Clear
+    if (Dungeon.watcherCleared) watcherCleared = getSecs(Dungeon.watcherCleared - Dungeon.bloodOpened)
+    else if (!Dungeon.watcherCleared && Dungeon.bloodOpened) watcherCleared = getSecs(new Date().getTime() - Dungeon.bloodOpened)
+
+    // Portal Time
+    if (Dungeon.watcherCleared && !Dungeon.bossEntry) portalTime = `${Math.floor((new Date().getTime() - Dungeon.watcherCleared) / 10) / 100}s`
+    if (Dungeon.bossEntry) portalTime = `${Math.floor((Dungeon.bossEntry - Dungeon.watcherCleared) / 10) / 100}s`
+
+    // Boss Entry
+    if (Dungeon.bossEntry || !Dungeon.runStarted) bossEntry = getTime(Dungeon.bossEntry - Dungeon.runStarted)
 
     overviewStr = [
         `&6&lRun Overview`,
         `&8Wither Doors: &7${Dungeon.openedWitherDoors}`,
         `&4Blood Open: ${bloodOpened}`,
         `&cWatcher Clear: ${watcherCleared}`,
+        `&dPortal: ${portalTime}`,
         `&aBoss Entry: ${bossEntry}`
     ].join("\n")
 })

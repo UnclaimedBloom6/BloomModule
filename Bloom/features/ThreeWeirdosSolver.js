@@ -5,11 +5,11 @@ import RenderLib from "../../RenderLib";
 
 const solutions = [
     /The reward is not in my chest!/,
-    /At least one of them is lying, and the reward is not in \w+'s chest\./,
-    /My chest doesn't have the reward\. We are all telling the truth\./,
+    /At least one of them is lying, and the reward is not in \w+'s chest.?/,
+    /My chest doesn't have the reward\. We are all telling the truth.?/,
     /My chest has the reward and I'm telling the truth!/,
-    /The reward isn't in any of our chests\./,
-    /Both of them are telling the truth\. Also, \w+ has the reward in their chest./,
+    /The reward isn't in any of our chests.?/,
+    /Both of them are telling the truth\. Also, \w+ has the reward in their chest.?/,
 ]
 const wrong = [
     /One of us is telling the truth!/,
@@ -25,6 +25,7 @@ const wrong = [
     /\w+ is telling the truth./,
     /My chest has the reward./
 ]
+
 
 const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
@@ -44,7 +45,7 @@ const doChestStuff = (entityName, mapToAddTo) => {
         // 54 = Chest Block ID
         if (World.getBlockAt(x+dx, y, z+dz).type.getID() !== 54) continue
         mapToAddTo.set(entityName, [x+dx, y, z+dz])
-        ChatLib.chat(`${entityName}: ${JSON.stringify([x+dx, y, z+dz])}`)
+        // ChatLib.chat(`${entityName}: ${JSON.stringify([x+dx, y, z+dz])}`)
         return
     }
 }

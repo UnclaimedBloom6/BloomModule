@@ -48,6 +48,20 @@ export const data = new PogObject("Bloom", {
         y: 0,
         scale: 1,
         data: {}
+    },
+    terminalTimer: {
+        colors: 999999,
+        maze: 999999,
+        melody: 999999,
+        numbers: 999999,
+        redgreen: 999999,
+        rubix: 999999,
+        startsWith: 999999
+    },
+    cellsAlignTimer: {
+        x: 0,
+        y: 0,
+        scale: 1
     }
 }, "data/data.json")
 
@@ -78,4 +92,14 @@ export const Terminal = {
     MAZE: 4,
     RUBIX: 5,
     REDGREEN: 6
+}
+
+export const terminalInvNames = {
+    "Click the button on time!": Terminal.MELODY, // <-- you were a mistake
+    "Click in order!": Terminal.NUMBERS,
+    "Select all the ": Terminal.COLORS,
+    "What starts with: '": Terminal.STARTSWITH,
+    "Navigate the maze!": Terminal.MAZE, // rest in peace
+    "Change all to same color!": Terminal.RUBIX,
+    "Correct all the panes!": Terminal.REDGREEN,
 }

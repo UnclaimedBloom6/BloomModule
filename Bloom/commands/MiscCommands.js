@@ -1,5 +1,4 @@
 import Party from "../../BloomCore/Party"
-import { getTabCompletion } from "../../BloomCore/utils/Utils2"
 import { prefix } from "../utils/Utils"
 
 let commands = {

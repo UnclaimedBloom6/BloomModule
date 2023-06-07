@@ -1,3 +1,4 @@
+import { padText } from "../BloomCore/utils/Utils";
 import {
     @ButtonProperty,
     @CheckboxProperty,
@@ -21,26 +22,34 @@ import {
 class Config {
     constructor() {
         this.initialize(this)
+
+        const lines = [
+            "",
+            "&b/bl setkey <api key> &r- Set your API key.",
+            "",
+            "&b/ds <player> &r- Dungeon Stats.",
+            "&b/mem <player> &r- Guild Stats.",
+            "&b//skills <player> &r- Show a player's skills.",
+            "&b//slayer <player> &r- Show a player's slayer stats.",
+            "&b/mykey &r- Show stats about your API key.",
+            "",
+            "&b//rp [...exclude] &r- Reparty (Add names to exclude players).",
+            "&b//ping &r- Show your ping.",
+            "&b/ptr &r- Transfer party to random player.",
+            "&b/lsb &r- Warp to lobby then back to Skyblock.",
+            "&b/ld &r- Warp to lobby, Skyblock then Dungeon Hub.",
+            "&b/colors &r- Show all of the formatting codes.",
+            "&b/dc <player1> <player2> &r- Show the cata XP difference between two players.",
+            "&b/pb <floor_number> &r- Show the S+ PB's of the whole party on a floor.",
+            ""
+        ]
+        const maxLength = Math.max(...lines.map(a => Renderer.getStringWidth(a)))
+
         this.setCategoryDescription("General", 
             `
             &6&l&nBloom
 
-            &b/bl setkey <api key> &r- Set your API key.
-
-            &b/ds <player> &r- Dungeon Stats.
-            &b/mem <player> &r- Guild Stats.
-            &b//skills <player> &r- Show a player's skills.
-            &b//slayer <player> &r- Show a player's slayer stats.
-            &b/mykey &r- Show stats about your API key.
-
-            &b//rp [...exclude] &r- Reparty (Add names to exclude players).
-            &b//ping &r- Show your ping.
-            &b/ptr &r- Transfer party to random player.
-            &b/lsb &r- Warp to lobby then back to Skyblock.
-            &b/ld &r- Warp to lobby, Skyblock then Dungeon Hub.
-            &b/colors &r- Show all of the formatting codes.
-            &b/dc <player1> <player2> &r- Show the cata XP difference between two players.
-            &b/pb <floor_number> &r- Show the S+ PB's of the whole party on a floor.
+            ${lines.map(a => a !== "" ? padText(a + "&0", ".", maxLength) : a).join("\n")}
 
             &6UnclaimedBloom6 is very cool and cool
             `
@@ -57,17 +66,10 @@ class Config {
     toggleSprintMove = new Gui()
     chMapMoveGui = new Gui()
     rngMeterMoveGui = new Gui()
+    cellsAlignMoveGui = new Gui()
 
     // ---------------------------------------------------------------
     // General
-
-    @SwitchProperty({
-        name: "Update Checker",
-        description: "Checks for updates when logging on.",
-        category: "General",
-        subcategory: "Updates"
-    })
-    updateChecker = true
 
     @SwitchProperty({
         name: "Hide Lightning",
@@ -206,6 +208,47 @@ class Config {
         subcategory: "0 Health Nametags"
     })
     hide0HealthNametags = false;
+
+    @SwitchProperty({
+        name: "Etherwarp Overlay",
+        description: `
+        When holding an AOTE or AOTV, will highlight the block you can etherwarp to.
+        `,
+        category: "General",
+        subcategory: "Etherwarp"
+    })
+    etherwarpOverlay = false;
+
+    @SwitchProperty({
+        name: "Only Show When Sneaking",
+        description: "Will only show the etherwarp overlay when you are sneaking.",
+        category: "General",
+        subcategory: "Etherwarp"
+    })
+    etherwarpOverlayOnlySneak = true;
+
+    @SelectorProperty({
+        name: "Highlight Type",
+        description: "How to highlight the block for the etherwarp overlay.",
+        category: "General",
+        subcategory: "Etherwarp",
+        options: [
+            "Edges",
+            "Edges (Phase)",
+            "Filled",
+            "Filled (Phase)"
+        ]
+    })
+    etherwarpHighlightType = 0;
+
+    @SwitchProperty({
+        name: "Hide Crosshair in Third Person",
+        description: "Hides your crosshair when in third person view.",
+        category: "General",
+        subcategory: "Third Person"
+    })
+    hideThirdPersonCrosshair = false;
+
 
 
 
@@ -435,6 +478,17 @@ class Config {
         subcategory: "Terminals"
     })
     terminalTracker = false;
+
+    @SwitchProperty({
+        name: "Terminal Timer",
+        description: `
+        Tells you how long it took you to complete a terminal. Will also track PBs for each terminal.
+        &cNOTE: This will depend greatly on ping. It times from when the gui is opened, to when the terminal completed message appears in chat (Term closed).
+        `,
+        category: "Dungeons",
+        subcategory: "Terminals"
+    })
+    terminalTimer = false;
 
     // ---------------------------------------------------------------
     // Solvers
@@ -676,6 +730,29 @@ class Config {
     })
     MoveCHMap() {
         this.chMapMoveGui.open()
+    };
+
+
+    @SwitchProperty({
+        name: "Cells Align Timer",
+        description: `
+        Displays a timer on your screen showing the remaining time before you can use cells align again.
+        If you are a mage, the mage cooldown reduction will be accounted for.
+        `,
+        category: "Gui",
+        subcategory: "Cells Align"
+    })
+    cellsAlignTimer = false;
+    
+    @ButtonProperty({
+        name: "Move Align",
+        description: "Move and scale the cells align display.",
+        category: "Gui",
+        subcategory: "Cells Align",
+        placeholder: "Move"
+    })
+    MoveCellsAlign() {
+        this.cellsAlignMoveGui.open()
     };
 
     // ---------------------------------------------------------------

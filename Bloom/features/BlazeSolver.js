@@ -3,8 +3,6 @@ import { EntityArmorStand, getDistance2D, registerWhen } from "../../BloomCore/u
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 
-const EntityBlaze = Java.type("net.minecraft.entity.monster.EntityBlaze")
-
 // H: 1.8, W: 0.6
 
 let blazes = []

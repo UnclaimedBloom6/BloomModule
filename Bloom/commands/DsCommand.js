@@ -5,14 +5,6 @@ import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../Bloo
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 
-// let toDelete = []
-// register("step", () => {
-//     toDelete.forEach(d => ChatLib.clearChat(d))
-//     toDelete = []
-// })
-
-// let chatIncrement = 69
-
 export const dsCommand = register("command", (player, profileid=null) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
@@ -21,10 +13,6 @@ export const dsCommand = register("command", (player, profileid=null) => {
         return
     }
 	if (!player) player = Player.getName()
-    // let lineID = chatIncrement++
-
-    // let message = new Message(`${prefix} &aGetting Dungeon Stats for ${player}...`).setChatLineId(lineID)
-    // message.chat()
 
 	getMojangInfo(player).then(mojangInfo => {
         let [player, uuid] = [mojangInfo.name, mojangInfo.id]

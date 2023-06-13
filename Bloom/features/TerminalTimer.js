@@ -56,7 +56,7 @@ register("chat", (player) => {
     }
 
     const final = `${prefix} &a${displayNames.get(currentTerm)} Terminal took &b${seconds}s&a${extraString}`
-    new TextComponent(final).setClick("run_command", `ct copy ${final.removeFormatting()}`).setHover("show_text", "&aClick to copy!").chat()
+    new TextComponent(final).setClick("run_command", `/ct copy ${final.removeFormatting()}`).setHover("show_text", "&aClick to copy!").chat()
     
     termEnter = null
     currentTerm = null

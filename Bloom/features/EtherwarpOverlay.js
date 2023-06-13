@@ -4,7 +4,7 @@ import Config from "../Config";
 
 registerWhen(register("renderWorld", () => {
     if (Config.etherwarpOverlayOnlySneak && !Player.isSneaking()) return
-    const block = getEtherwarpBlock()
+    const block = getEtherwarpBlock(true)
     if (!block) return
     const [x, y, z] = block
 

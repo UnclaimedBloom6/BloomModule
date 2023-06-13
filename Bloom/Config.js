@@ -211,9 +211,7 @@ class Config {
 
     @SwitchProperty({
         name: "Etherwarp Overlay",
-        description: `
-        When holding an AOTE or AOTV, will highlight the block you can etherwarp to.
-        `,
+        description: `When holding an AOTE or AOTV, will highlight the block you can etherwarp to.`,
         category: "General",
         subcategory: "Etherwarp"
     })

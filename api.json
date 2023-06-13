@@ -1,11 +1,9 @@
 {
-    "latestVersion": "4.2.1",
+    "latestVersion": "4.2.2",
     "changelog": [
-        "Added cells align timer.",
-        "Hide third person crosshair.",
-        "Added terminal timer.",
-        "More documentation to Simon Says Solver.",
-        "Cleaned up some misc code."
+        "Made etherwarp prediction PERFECT",
+        "Updated RNG Meter values",
+        "Fixed terminal timer saying \"ct copy ___\" when message clicked"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

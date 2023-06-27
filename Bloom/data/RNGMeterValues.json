@@ -118,6 +118,7 @@
         "§cStorm the Fish": 411180,
         "§cMaxor the Fish": 411180,
         "§cGoldor the Fish": 411180,
+        "§5Necron's Handle": 274119,
         "§5Shadow Warp": 205590,
         "§5Wither Shield": 205590,
         "§5Implosion": 205590,
@@ -141,10 +142,7 @@
         "§5Hot Potato Book": 5139,
         "§aEnchanted Book (§d§lUltimate Wise II§a)": 5139,
         "§aEnchanted Book (§d§lCombo II§a)": 4111,
-        "§aEnchanted Book (Rejuvenate III§a)": 4111,
-        "§aEnchanted Book (§d§lLast Stand II§a)": 4111,
-        "§aEnchanted Book (Infinite Quiver VII§a)": 4111,
-        "§5Precursor Gear": 3426
+        "§aEnchanted Book (Rejuvenate III§a)": 4111
     },
     "M1": {
         "§9Bonzo's Staff": 24600,

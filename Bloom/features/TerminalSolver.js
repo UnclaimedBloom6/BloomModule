@@ -1,128 +1,115 @@
-import { Terminal, colorOrder, isEnchanted, terminalInvNames } from "../utils/Utils"
+import { onOpenWindowPacket, onSetSlotReceived } from "../../BloomCore/utils/Events"
+import ColorsTerminal from "../terminals/ColorsTerminal"
+import NumbersTerminal from "../terminals/NumbersTerminal"
+import RedGreenTerminal from "../terminals/RedGreenTerminal"
+import RubixTerminal from "../terminals/RubixTerminal"
+import StartsWithTerminal from "../terminals/StartsWithTerminal"
+import MelodyTerminal from "../terminals/MelodyTerminal"
+import Terminal from "../terminals/Terminal"
 import Config from "../Config"
-import { getSlotCenter } from "../../BloomCore/utils/Utils"
-import Dungeon from "../../BloomCore/dungeons/Dungeon"
 
-const colorReplacements = {
-    "light gray": "silver",
-    "wool": "white",
-    "bone": "white",
-    "ink": "black",
-    "lapis": "blue",
-    "cocoa": "brown",
-    "dandelion": "yellow",
-    "rose": "red",
-    "cactus": "green"
-}
-
-const getInvItemsTo = (container, endIndex) => Array.from(Array(endIndex).keys()).filter(a => container.getStackInSlot(a))
-const filterPanesWithMeta = (container, array, meta) => array.filter(a => container.getStackInSlot(a).getRegistryName() == "minecraft:stained_glass_pane" && container.getStackInSlot(a).getMetadata() == meta) 
-const filterPanesWithoutMeta = (container, array, meta) => array.filter(a => container.getStackInSlot(a).getRegistryName() == "minecraft:stained_glass_pane" && container.getStackInSlot(a).getMetadata() !== meta) 
-const getStackFromIndex = (container, index) => container.getStackInSlot(index)
-const sortStackSize = (container, array) => array.sort((a, b) => getStackFromIndex(container, a).getStackSize() - getStackFromIndex(container, b).getStackSize())
-const fixColor = (itemName) => {
-    Object.keys(colorReplacements).map(a => itemName = itemName.toLowerCase().replace(new RegExp(`^${a}`), colorReplacements[a]))
-    return itemName
-}
 
 export default new class TerminalSolver {
-
     constructor() {
 
-        this.reset()
-
-        register("tick", () => {
-            if (!Dungeon.inDungeon || !Config.terminalSolvers) return this.reset()
-            let inv = Player.getContainer()
-            let invName = inv.getName()
-
-            this.terminal = null
-            Object.entries(terminalInvNames).forEach(([k, v]) => {
-                if (!invName.startsWith(k)) return
-                this.terminal = v
-            })
-
-            if (!this.terminal) return this.reset()
-
-            if (this.correctSlots.length) return
-
-            if (this.terminal == Terminal.MELODY) return
-            if (this.terminal == Terminal.NUMBERS && !Config.numbersSolver) return
-            if (this.terminal == Terminal.COLORS && !Config.colorsSolver) return
-            if (this.terminal == Terminal.STARTSWITH && !Config.startsWithSolver) return
-            if (this.terminal == Terminal.RUBIX && !Config.rubixSolver) return
-            if (this.terminal == Terminal.REDGREEN && !Config.redGreenSolver) return
-
-            this.solve(inv)
-        })
-
-        const highlightSlot = (slot, rgba) => {
-            let [x, y] = getSlotCenter(slot)
-            Renderer.translate(0, 0, 260);
-            Renderer.drawRect(rgba ? Renderer.color(rgba[0], rgba[1], rgba[2], rgba[3]) : Renderer.color(0, 255, 0, 255), x - 8, y - 8, 16, 16);
-        }
-
-        const drawTextOnSlot = (slot, text) => {
-            let [x, y] = getSlotCenter(slot)
-            Renderer.translate(0, 0, 260);
-            Renderer.drawString(text, x - 3, y - 3)
-        }
-
-        register("guiRender", () => {
-            if (!this.correctSlots.length || !this.terminal || !Config.terminalSolvers) return
-            if (this.terminal == Terminal.NUMBERS && Config.numbersSolver) this.correctSlots.slice(0, 3).forEach((v, i, arr) => highlightSlot(v, [0, 255 - (arr.indexOf(v)*75), 255 - (arr.indexOf(v)*75), 255]))
-            if ([Terminal.STARTSWITH, Terminal.COLORS].includes(this.terminal)) this.correctSlots.forEach(a => highlightSlot(a))
-            // if (invName == "Navigate the maze!" && Config.mazeHelper && Config.zeroPingTerminals) highlightSlot(this.correctSlots[0], [255, 150, 150, 255])
-            if (this.terminal == Terminal.RUBIX && Config.rubixSolver) new Set(this.correctSlots).forEach(a => {
-                let toClick = this.correctSlots.filter(b => b == a).length
-                if (!Config.colorsRightClick) drawTextOnSlot(a, `&f&l${toClick}`)
-                else drawTextOnSlot(a, `${toClick <= 2 ? "&f&l" + toClick : "&0&l" + (colorOrder.length-toClick)}`)
-            })
-        })
-        
-        register("itemTooltip", (lore, item, event) => {
-            if (this.terminal && Config.hideTerminalTooltips) cancel(event)
-        })
-    }
-    reset() {
-        this.correctSlots = []
+        /** @type {Terminal} */
         this.terminal = null
-    }
-    solve(container) {
-        let invName = container.getName()
-        // ChatLib.chat("SOLVING")
-        if (this.terminal == Terminal.REDGREEN) {
-            this.correctSlots = filterPanesWithMeta(container, getInvItemsTo(container, 45), 14)
-        }
-        else if (this.terminal == Terminal.COLORS) {
-            let color = invName.match(/Select all the (.+) items!/)[1].toLowerCase()
-            this.correctSlots = getInvItemsTo(container, 45).filter(a => fixColor(container.getStackInSlot(a).getName().removeFormatting().toLowerCase()).startsWith(color)).filter(a => !isEnchanted(a))
-        }
-        else if (this.terminal == Terminal.STARTSWITH) {
-            let letter = invName.match(/What starts with: '(\w+)'?/)[1].toLowerCase()
-            this.correctSlots = getInvItemsTo(container, 45).filter(a => container.getStackInSlot(a).getName().removeFormatting().toLowerCase().startsWith(letter)).filter(a => !isEnchanted(a))
-        }
-        // else if (invName == "Navigate the maze!") {
-        //     let greenPane = filterPanesWithMeta(getInvItemsTo(54), 5)
-        //     let whitePanes = filterPanesWithMeta(getInvItemsTo(54), 0)
-        //     let redPane = filterPanesWithMeta(getInvItemsTo(54), 14)
-        //     const areAdjacent = (slot1, slot2) => [slot1%9==0 ? -1 : slot1-1, slot1%9==8 ? -1 : slot1+1, slot1+9, slot1-9].filter(a => a >= 0).some(a => a == slot2)
-        //     this.correctSlots = []
-        //     let unvisited = whitePanes
-        //     let previous = greenPane
-        //     while (!areAdjacent(previous, redPane)) {
-        //         let nextStep = unvisited.filter(a => areAdjacent(a, previous) && !this.correctSlots.includes(a))[0]
-        //         previous = nextStep
-        //         if (previous == null) break
-        //         this.correctSlots.push(nextStep)
-        //     }
-        // }
-        else if (this.terminal == Terminal.NUMBERS) {
-            this.correctSlots = sortStackSize(container, filterPanesWithMeta(container, getInvItemsTo(container, 35), 14))
-        }
-        else if (this.terminal == Terminal.RUBIX) {
-            // I hope to god this never breaks.
-            this.correctSlots = colorOrder.map((v, i) => filterPanesWithoutMeta(container, getInvItemsTo(container, 45), 15).map(a => Array(Math.abs(colorOrder.length-1 - (colorOrder.indexOf(container.getStackInSlot(a).getMetadata())+i)%colorOrder.length)).fill(a)).reduce((a, b) => a.concat(b), [])).sort((a, b) => a.length - b.length)[0]
-        }
+        this.openPacketReceivedThisTick = false
+
+        // Unused if ZeroPingTerminals is not installed. Contains the Terminal type of the terminals with zero ping enabled
+        this.zeroPingTerminals = []
+
+        // For terminal timer
+        this.lastTerminal = null
+
+        register("guiClosed", () => {
+            if (!this.terminal) return
+
+            // Wait until the end of the tick.
+            // If no open window packet has been received, then the terminal was actually closed.
+            // Otherwise, it was just the window being updated.
+            Client.scheduleTask(0, () => {
+                if (!this.openPacketReceivedThisTick) {
+                    // ChatLib.chat(`Terminal Closed`)
+                    this.terminal = null
+                }
+                this.openPacketReceivedThisTick = false
+
+            })
+        })
+
+        onOpenWindowPacket((title, windowID, hasSlots, slotCount) => {
+            if (!Config.terminalSolvers) return
+
+            title = title.removeFormatting()
+            
+            if (this.terminal && title !== this.terminal.title) this.terminal = null
+            if (this.terminal) return this.openPacketReceivedThisTick = true
+
+            const startsWithMatch = title.match(/^What starts with: '(\w)'\?$/)
+            if (startsWithMatch && Config.startsWithSolver) this.terminal = new StartsWithTerminal(title, slotCount, startsWithMatch[1])
+
+            const rubixMatch = title.match(/^Change all to same color!$/)
+            if (rubixMatch && Config.rubixSolver) this.terminal = new RubixTerminal(title, slotCount)
+
+            const colorsMatch = title.match(/^Select all the (\w+) items!$/)
+            if (colorsMatch && Config.colorsSolver) this.terminal = new ColorsTerminal(title, slotCount, colorsMatch[1])
+
+            const redGreenMatch = title.match(/^Correct all the panes!$/)
+            if (redGreenMatch && Config.redGreenSolver) this.terminal = new RedGreenTerminal(title, slotCount)
+
+            const numbersMatch = title.match(/^Click in order!$/)
+            if (numbersMatch && Config.numbersSolver) this.terminal = new NumbersTerminal(title, slotCount)
+
+            const melodyMatch = title.match(/^Click button on time!$/)
+            if (melodyMatch) this.terminal = new MelodyTerminal(title, slotCount)
+            
+            this.lastTerminal = this.terminal
+            if (!this.terminal) return
+
+        })
+
+        onSetSlotReceived((item, slot, windowID) => {
+            if (!this.terminal || slot >= this.terminal.windowSize || windowID == -1) return
+            
+            // Convert to CT item
+            if (item) item = new Item(item)
+
+            this.terminal.lastKnownWindowItems[slot] = item
+            this.terminal.lastKnownWindowID = windowID
+            
+            // Terminal has not been fully loaded yet
+            if (!this.terminal.initializedItems) {
+                this.terminal.items[slot] = item
+                this.terminal.windowID = windowID
+
+                // The initial loading of items has been finished
+                if (slot == this.terminal.windowSize-1) {
+                    this.terminal.initializedItems = true
+                    this.terminal.solve()
+                }
+            }
+            
+            // Update the item in the current version of the window. Don't update it if 0 ping is enabled.
+            if (!this.zeroPingTerminals.includes(this.terminal.type)) {
+                this.terminal.items[slot] = item
+
+                // Re-solve the terminal
+                if (slot == this.terminal.windowSize-1) {
+                    // ChatLib.chat(`Solving !`)
+                    this.terminal.solve()
+                }
+            }
+        })
+
+        register("renderSlot", (slot, gui, event) => {
+            if (!this.terminal) return
+            this.terminal.onSlotRender(slot, gui, event)
+        })
+
+        register("itemTooltip", (lore, item, event) => {
+            if (!this.terminal || !Config.hideTerminalTooltips) return
+            cancel(event)
+        })
     }
 }

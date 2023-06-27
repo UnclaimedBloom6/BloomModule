@@ -65,7 +65,7 @@ const logRun = () => {
             let clazz = Dungeon.classes[player]
             if (!clazz) ChatLib.chat(`No Class for ${player}`)
             data.p[uuid] = {
-                "s": secretDiff,
+                "s": secretDiff ?? 0,
                 "d": Dungeon.partyInfo[player].deaths,
                 "c": clazz ? clazz[0] : "U"
             }
@@ -275,8 +275,14 @@ const handleLogs = (logs, options) => {
     ChatLib.chat(`&aRuns Logged: &b&l${fn(logs.length)}`)
     ChatLib.chat("")
     
-    ChatLib.chat(`Average Run Time: ${convertToPBTime(logs.map(a => a.t).reduce((a, b) => a+b) / logs.length * 1000)}`)
-    ChatLib.chat(`Average Score: ${Math.floor(logs.map(a => a.s).reduce((a, b) => a+b) / logs.length)}`)
+    const times = logs.map(a => a.t * 1000).filter(a => !!a)
+    const avgRunTime = times.reduce((a, b) => a+b) / logs.length
+    const lowestRunTime = Math.min(...times)
+    const maxRunTime = Math.max(...times)
+    ChatLib.chat(`Average Run Time: &b${convertToPBTime(avgRunTime)}`)
+    ChatLib.chat(`Fastest Run: &a${convertToPBTime(lowestRunTime)}`)
+    ChatLib.chat(`Slowest Run: &e${convertToPBTime(maxRunTime)}`)
+    ChatLib.chat(`&dAverage Score: &l${Math.floor(logs.map(a => a.s).reduce((a, b) => a+b) / logs.length)}`)
     ChatLib.chat("")
 
     if (players) printPlayerShit(players, logs)

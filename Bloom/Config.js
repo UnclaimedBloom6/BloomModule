@@ -216,7 +216,7 @@ class Config {
         subcategory: "Etherwarp"
     })
     etherwarpOverlay = false;
-
+    
     @SwitchProperty({
         name: "Only Show When Sneaking",
         description: "Will only show the etherwarp overlay when you are sneaking.",
@@ -224,6 +224,14 @@ class Config {
         subcategory: "Etherwarp"
     })
     etherwarpOverlayOnlySneak = true;
+    
+    @SwitchProperty({
+        name: "Sync With Server",
+        description: `Makes the etherwarp prediction always be accurate, but will look less smooth.`,
+        category: "General",
+        subcategory: "Etherwarp"
+    })
+    etherwarpSyncWithServer = false;
 
     @SelectorProperty({
         name: "Highlight Type",
@@ -239,6 +247,14 @@ class Config {
     })
     etherwarpHighlightType = 0;
 
+    @ColorProperty({
+        name: "Overlay Color",
+        description: "The color of the overlay when a valid etherwarp spot is found.",
+        category: "General",
+        subcategory: "Etherwarp"
+    })
+    etherwarpOverlayColor = new Color(0, 1, 0, 1);
+
     @SwitchProperty({
         name: "Hide Crosshair in Third Person",
         description: "Hides your crosshair when in third person view.",
@@ -246,6 +262,22 @@ class Config {
         subcategory: "Third Person"
     })
     hideThirdPersonCrosshair = false;
+
+    @SwitchProperty({
+        name: "Item Price Lore",
+        description: "Shows the lowest BIN or bazaar buy and sell prices in every item's lore.",
+        category: "General",
+        subcategory: "Price Info"
+    })
+    itemPriceLore = false;
+
+    @SwitchProperty({
+        name: "Item Value Lore",
+        description: "Shows the item's value in the bottom of the item's lore. This is different from the price info as it takes into account upgrades (Recombs, scrolls, enchants, stars etc).",
+        category: "General",
+        subcategory: "Price Info"
+    })
+    itemValueLore = false;
 
 
 
@@ -546,15 +578,15 @@ class Config {
         category: "Solvers",
         subcategory: "Terminals"
     })
-    hideTerminalTooltips = true;
+    hideTerminalTooltips = false;
 
     @SwitchProperty({
-        name: "&cShow Right Click",
-        description: "Shows how many right clicks are needed instead of left clicks on the new colors terminal.\n&eNOTE: Zero ping will still middle click since right clicking was buggy. I'd only recommend using this if you aren't using zero ping.",
+        name: "Hide Wrong Items",
+        description: "Hides incorrect items in the Colors and Startswith terminals.",
         category: "Solvers",
         subcategory: "Terminals"
     })
-    colorsRightClick = false
+    hideWrongItems = false;
 
     @SwitchProperty({
         name: "Mastery",
@@ -752,6 +784,14 @@ class Config {
     MoveCellsAlign() {
         this.cellsAlignMoveGui.open()
     };
+
+    @SwitchProperty({
+        name: "Container Value",
+        description: `Shows the total value of every item in certain containers (Like backpacks, ender chest, wardrobe and chests), as well as each item's value.`,
+        category: "Gui",
+        subcategory: "Container Value"
+    })
+    containerValue = false;
 
     // ---------------------------------------------------------------
     // Auto Kicker

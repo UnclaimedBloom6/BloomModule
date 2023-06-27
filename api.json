@@ -1,9 +1,18 @@
 {
-    "latestVersion": "4.2.2",
+    "latestVersion": "4.2.4",
     "changelog": [
-        "Made etherwarp prediction PERFECT",
-        "Updated RNG Meter values",
-        "Fixed terminal timer saying \"ct copy ___\" when message clicked"
+        "Full rewrite of terminal solvers.",
+        "Added /heldvalue to see breakdown of what your held item is worth.",
+        "Fixed some items not having correct values in the RNG Meter.",
+        "Made cells align timer more accurate.",
+        "Optimized rendering code a bit more for various features.",
+        "Added container value feature.",
+        "Added custom color to etherwarp overlay.",
+        "Made etherwarp overlay sync with server togglable.",
+        "Added item price lore.",
+        "Added item value lore.",
+        "Fixed player logs sometimes logging null secrets.",
+        "Made terminal timer more accurate."
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

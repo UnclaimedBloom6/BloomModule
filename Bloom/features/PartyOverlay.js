@@ -1,6 +1,7 @@
 import Config from "../Config"
 import { data } from "../utils/Utils"
 import Party from "../../BloomCore/Party"
+import { registerWhen } from "../../BloomCore/utils/Utils"
 
 register("dragged", (dx, dy, x, y, btn) => {
     if (!Config.partyOverlayMoveGui.isOpen()) return
@@ -21,7 +22,7 @@ register("tick", () => {
     })
 })
 
-register("renderOverlay", () => {
+registerWhen(register("renderOverlay", () => {
     if (!partyStr) return
     Renderer.drawString(partyStr, data.party.x, data.party.y)
-})
+}), () => partyStr)

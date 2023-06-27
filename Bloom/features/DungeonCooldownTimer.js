@@ -1,5 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { stripRank } from "../../BloomCore/utils/Utils"
+import { registerWhen, stripRank } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { prefix, data } from "../utils/Utils"
 
@@ -30,11 +30,11 @@ register("chat", () => {
     addWarp("You", "&6You")
 }).setCriteria("SkyBlock Dungeon Warp (${*} players)")
 
-register("renderOverlay", () => {
-    // Renderer.drawString(JSON.stringify(data.dungeonWarps, "", 4), data.dungeonWarpCooldown.x, data.dungeonWarpCooldown.y)
+registerWhen(register("renderOverlay", () => {
     if ((!Config.dungeonCooldown || !Object.keys(data.dungeonWarps).length) && !Config.cooldownMoveGui.isOpen()) return
-    Renderer.drawString(`&6&lWarp Cooldown\n` + Object.keys(data.dungeonWarps).map(a => `${data.dungeonWarps[a].formatted}: &d${getWarpTime(a)}s`).join("\n"), data.dungeonWarpCooldown.x, data.dungeonWarpCooldown.y)
-})
+    const playerWarpMessages = Object.keys(data.dungeonWarps).map(a => `${data.dungeonWarps[a].formatted}: &d${getWarpTime(a)}s`).join("\n")
+    Renderer.drawString(`&6&lWarp Cooldown\n${playerWarpMessages}`, data.dungeonWarpCooldown.x, data.dungeonWarpCooldown.y)
+}), () => (Config.dungeonCooldown && Object.keys(data.dungeonWarps).length) || Config.cooldownMoveGui.isOpen())
 
 register("step", () => {
     for (let i of Object.keys(data.dungeonWarps)) {

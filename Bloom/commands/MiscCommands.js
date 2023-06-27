@@ -1,4 +1,6 @@
 import Party from "../../BloomCore/Party"
+import PriceUtils from "../../BloomCore/PriceUtils"
+import { fn, title } from "../../BloomCore/utils/Utils"
 import { prefix } from "../utils/Utils"
 
 let commands = {
@@ -72,3 +74,16 @@ register("command", () => {
     let a = Object.keys(Party.members).filter(a => a !== Player.getName())
     ChatLib.command(`p transfer ${a[Math.floor(Math.random() * a.length)]}`)
 }).setName("ptr")
+
+
+register("command", () => {
+    const held = Player.getHeldItem()
+    if (!held) return
+
+    const price = PriceUtils.getItemValue(held.itemStack, true)
+    if (price == null) return
+
+    let [value, breakdown] = price
+    const breakdownStr = Object.entries(breakdown).map(([k, v]) => `  &a${title(k)}&r: &6${fn(Math.floor(v))}`).join("\n")
+    ChatLib.chat(`${held.getName()}&r: &6${fn(Math.floor(value))}\n${breakdownStr}`)
+}).setName("heldvalue")

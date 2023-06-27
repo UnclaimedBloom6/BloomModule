@@ -1,4 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon";
+import { registerWhen } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 import { data, getSecs } from "../utils/Utils";
 
@@ -73,22 +74,15 @@ register("chat", (event) => {
     }
 })
 
-register("renderOverlay", () => {
+registerWhen(register("renderOverlay", () => {
     if (!Config.runSplitsMoveGui.isOpen() && (!Config.runSplits || !Dungeon.inDungeon || !Dungeon.bossEntry)) return
-    if (splitIndex == Object.keys(splits[splitFloor]).length) {
-        currentSplit = ""
-    }
-    else {
-        currentSplit = `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}`
-    }
     
-    Renderer.drawString(`&6&lRun Splits\n` +
-                        splitMsg +
-                        currentSplit,
-                        data.runSplits.x,
-                        data.runSplits.y
-    )
-})
+    if (splitIndex == Object.keys(splits[splitFloor]).length) currentSplit = ""
+    else currentSplit = `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}`
+
+    Renderer.drawString(`&6&lRun Splits\n${splitMsg}${currentSplit}`, data.runSplits.x, data.runSplits.y)
+
+}), () => Config.runSplitsMoveGui.isOpen() || (Config.runSplits && Dungeon.inDungeon && Dungeon.bossEntry))
 
 register("tick", () => {
     if (Dungeon.floor == "M7") splitFloor = "M7"

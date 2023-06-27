@@ -1,3 +1,4 @@
+import { registerWhen } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { data } from "../utils/Utils"
 
@@ -15,7 +16,7 @@ register("dragged", (mx, my, x, y) => {
     data.save()
 })
 
-register("renderOverlay", () => {
+registerWhen(register("renderOverlay", () => {
     if (!Config.toggleSprint || !Config.toggleSprintText || !Config.toggleSprintOverlay) return
     Renderer.drawString(Config.toggleSprintText, data.toggleSprint.x, data.toggleSprint.y)
-})
+}), () => Config.toggleSprint && Config.toggleSprintText && Config.toggleSprintOverlay)

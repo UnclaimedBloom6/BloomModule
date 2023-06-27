@@ -1,4 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon";
+import { registerWhen } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 import { getTime, getSecs, data } from "../utils/Utils";
 
@@ -43,7 +44,7 @@ register("tick", () => {
     ].join("\n")
 })
 
-register("renderOverlay", () => {
+registerWhen(register("renderOverlay", () => {
     if (!overviewStr) return
     Renderer.drawString(overviewStr, data.runOverview.x, data.runOverview.y)
-})
+}), () => overviewStr)

@@ -1,6 +1,6 @@
 
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { appendToFile, fn } from "../../BloomCore/utils/Utils"
+import { appendToFile, fn, registerWhen } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { data, prefix } from "../utils/Utils"
 
@@ -85,12 +85,12 @@ const renderMeterGui = (floor) => {
     Renderer.retainTransforms(false)
 }
 
-register("renderOverlay", () => {
+registerWhen(register("renderOverlay", () => {
     if (Config.rngMeterMoveGui.isOpen()) return renderMeterGui("F5")
     if (!Config.rngMeter || !Dungeon.floor) return
     if (!Dungeon.runEnded && Config.rngMeterPostRun) return
     renderMeterGui(Dungeon.floor)
-})
+}), () => Config.rngMeterMoveGui.isOpen() || (Config.rngMeter && Dungeon.floor))
 
 register("dragged", (dx, dy, x, y, btn) => {
     if (!Config.rngMeterMoveGui.isOpen()) return

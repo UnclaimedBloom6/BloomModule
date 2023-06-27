@@ -1,6 +1,6 @@
 import Skyblock from "../../BloomCore/Skyblock"
 import { getHead } from "../../BloomCore/utils/APIWrappers"
-import { getPlayerCoords } from "../../BloomCore/utils/Utils"
+import { getPlayerCoords, registerWhen } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { data } from "../utils/Utils"
 
@@ -15,7 +15,7 @@ const mapImage = new Image("chMap.png", "../assets/chMap.png")
 const defaultIcon = new Image("greenMarker.png", "../../BloomCore/assets/blueMarker.png")
 let head = null
 getHead(Player.getName(), true).then(h => head = h)
-register("renderOverlay", () => {
+registerWhen(register("renderOverlay", () => {
     if (Skyblock.area !== "Crystal Hollows" || (!Config.chMap && !Config.chMapMoveGui.isOpen())) return
     let w = h = 150 * data.chMap.scale
     let x = data.chMap.x
@@ -32,7 +32,7 @@ register("renderOverlay", () => {
     Renderer.translate(-headSize[0]/2, -headSize[1]/2)
     Renderer.drawImage(headToDraw, 0, 0, headSize[0], headSize[1])
     Renderer.retainTransforms(false)
-})
+}), () => Skyblock.area == "Crystal Hollows" && (Config.chMap || Config.chMapMoveGui.isOpen()))
 
 register("dragged", (dx, dy, mx, my, btn) => {
     if (!Config.chMapMoveGui.isOpen()) return

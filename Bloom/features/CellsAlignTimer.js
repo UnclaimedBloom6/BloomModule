@@ -1,5 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { C08PacketPlayerBlockPlacement, getSkyblockItemID, renderCenteredString } from "../../BloomCore/utils/Utils"
+import { C08PacketPlayerBlockPlacement, getSkyblockItemID, registerWhen, renderCenteredString } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { data } from "../utils/Utils"
 
@@ -25,9 +25,8 @@ const baseCooldown = 10
 let alignCooldown = 10 // Accounting for cooldown reductions
 
 const isCooldownOver = () => !lastAlign || new Date().getTime() - lastAlign > alignCooldown * 1000
-const getBonusCooldownReduction = (mageLevel) => Math.floor(mageLevel/2) / 100
 
-register("renderOverlay", () => {
+registerWhen(register("renderOverlay", () => {
     if ((!Config.cellsAlignTimer || isCooldownOver() || Client.isInGui()) && !Config.cellsAlignMoveGui.isOpen()) return
 
     const remaining = alignCooldown * 1000 - (new Date().getTime() - lastAlign)
@@ -35,7 +34,7 @@ register("renderOverlay", () => {
     const str = `&b${secs}s`
     
     renderCenteredString(str, data.cellsAlignTimer.x, data.cellsAlignTimer.y, data.cellsAlignTimer.scale)
-})
+}), () => Config.cellsAlignTimer && !isCooldownOver())
 
 // Check cooldown reduction
 register("tick", () => {

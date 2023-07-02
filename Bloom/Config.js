@@ -524,69 +524,69 @@ class Config {
     // Solvers
 
 
-    @SwitchProperty({
-        name: "&6Terminal Solvers",
-        description: "Toggle all terminal solvers.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    terminalSolvers = false;
+    // @SwitchProperty({
+    //     name: "&6Terminal Solvers",
+    //     description: "Toggle all terminal solvers.",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // terminalSolvers = false;
 
-    @SwitchProperty({
-        name: "Colors Solver",
-        description: "Toggle the terminal solver for the colors terminal (Select all the ____  items).",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    colorsSolver = false;
+    // @SwitchProperty({
+    //     name: "Colors Solver",
+    //     description: "Toggle the terminal solver for the colors terminal (Select all the ____  items).",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // colorsSolver = false;
 
-    @SwitchProperty({
-        name: "Starts With Solver",
-        description: "Toggle the terminal solver for the 'starts with' terminal.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    startsWithSolver = false;
+    // @SwitchProperty({
+    //     name: "Starts With Solver",
+    //     description: "Toggle the terminal solver for the 'starts with' terminal.",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // startsWithSolver = false;
 
-    @SwitchProperty({
-        name: "Numbers Solver",
-        description: "Toggle the terminal solver for the numbers terminal.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    numbersSolver = false;
+    // @SwitchProperty({
+    //     name: "Numbers Solver",
+    //     description: "Toggle the terminal solver for the numbers terminal.",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // numbersSolver = false;
 
-    @SwitchProperty({
-        name: "Red Green Solver",
-        description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    redGreenSolver = false;
+    // @SwitchProperty({
+    //     name: "Red Green Solver",
+    //     description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // redGreenSolver = false;
 
-    @SwitchProperty({
-        name: "Rubix Solver",
-        description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    rubixSolver = false;
+    // @SwitchProperty({
+    //     name: "Rubix Solver",
+    //     description: "Toggle the terminal solver for the numbers terminal (Correct all the panes).",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // rubixSolver = false;
 
-    @SwitchProperty({
-        name: "&cHide Terminal Tooltips",
-        description: "Hides the tooltips when hovering over items in terminals.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    hideTerminalTooltips = false;
+    // @SwitchProperty({
+    //     name: "&cHide Terminal Tooltips",
+    //     description: "Hides the tooltips when hovering over items in terminals.",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // hideTerminalTooltips = false;
 
-    @SwitchProperty({
-        name: "Hide Wrong Items",
-        description: "Hides incorrect items in the Colors and Startswith terminals.",
-        category: "Solvers",
-        subcategory: "Terminals"
-    })
-    hideWrongItems = false;
+    // @SwitchProperty({
+    //     name: "Hide Wrong Items",
+    //     description: "Hides incorrect items in the Colors and Startswith terminals.",
+    //     category: "Solvers",
+    //     subcategory: "Terminals"
+    // })
+    // hideWrongItems = false;
 
     @SwitchProperty({
         name: "Mastery",

@@ -1,18 +1,8 @@
 {
-    "latestVersion": "4.2.4",
+    "latestVersion": "4.2.6",
     "changelog": [
-        "Full rewrite of terminal solvers.",
-        "Added /heldvalue to see breakdown of what your held item is worth.",
-        "Fixed some items not having correct values in the RNG Meter.",
-        "Made cells align timer more accurate.",
-        "Optimized rendering code a bit more for various features.",
-        "Added container value feature.",
-        "Added custom color to etherwarp overlay.",
-        "Made etherwarp overlay sync with server togglable.",
-        "Added item price lore.",
-        "Added item value lore.",
-        "Fixed player logs sometimes logging null secrets.",
-        "Made terminal timer more accurate."
+        "Removed Terminal Solver",
+        "Changed Terminal Timer to no longer rely on TerminalSolver"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

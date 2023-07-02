@@ -15,7 +15,7 @@ import { dcCommand } from "./commands/DcCommand"
 import { slayerCommand } from "./commands/SlayerCommand"
 import { kuudraCommand } from "./commands/KuudraCommand"
 
-import TerminalSolver from "./features/TerminalSolver"
+// import TerminalSolver from "./features/TerminalSolver"
 
 import "./features/StacksTracker"
 import "./features/AutoDSParty"

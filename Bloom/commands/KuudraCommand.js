@@ -10,6 +10,8 @@ const kuudraTiers = {
 }
 
 export const kuudraCommand = register("command", (player) => {
+    if (!player) player = Player.getName()
+    
     getMojangInfo(player).then(mojangInfo => {
         if (!mojangInfo) return ChatLib.chat(`&cError: Not a real player!`)
         let {name, id} = mojangInfo
@@ -43,4 +45,4 @@ export const kuudraCommand = register("command", (player) => {
             }).catch(e => ChatLib.chat(`&cError: ${e}`))
         }).catch(e => ChatLib.chat(`&cError: ${e}`))
     }).catch(e => ChatLib.chat(`&cError: ${e}`))
-}).setName("kuudra")
+}).setName("/kuudra")

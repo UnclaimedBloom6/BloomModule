@@ -5,7 +5,7 @@ import { data } from "../utils/Utils"
 export const forwardKey = new KeyBind(Client.getMinecraft().field_71474_y.field_74351_w)
 
 register("tick", () => {
-    if (!Config.toggleSprint || !forwardKey.isKeyDown()) return
+    if (!Config.toggleSprint || !forwardKey.isKeyDown() || Player.isSneaking()) return
     Player.getPlayer().func_70031_b(true)
 })
 

@@ -3,18 +3,18 @@ import { bcData, fn, getRank, monthsShort } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 
-let chatIncrement = 5645
+// let chatIncrement = 5645
 
 export const memberCommand = register("command", (player) => {
 	if (!player) player = Player.getName()
-	chatIncrement++
-	let currentChat = chatIncrement
-	new Message(`${prefix} &aGetting guild stats for &2${player}&a...`).setChatLineId(currentChat).chat()
+	// chatIncrement++
+	// let currentChat = chatIncrement
+	new Message(`${prefix} &aGetting guild stats for &2${player}&a...`).chat()
 	getMojangInfo(player).then(mojangInfo => {
         if (!mojangInfo) return new Message(`${prefix} &cError: That player does not exist!`).chat()
         let uuid = mojangInfo.id
         player = mojangInfo.name
-		ChatLib.editChat(currentChat, new Message(`${prefix} &aGetting Guild Info...`).setChatLineId(currentChat))
+		// ChatLib.editChat(currentChat, new Message(`${prefix} &aGetting Guild Info...`).setChatLineId(currentChat))
         Promise.all([
             getHypixelPlayer(uuid, bcData.apiKey),
             getGuildInfo(player, bcData.apiKey)
@@ -54,7 +54,7 @@ export const memberCommand = register("command", (player) => {
                 return `${hours}:${mins}`
             }
             let joinedHover = `&e&nJoined:\n&a${joined.getDate()} ${monthsShort[joined.getMonth()]}, ${joined.getFullYear()} - ${get24h(joined)}`
-            ChatLib.clearChat(currentChat)
+            // ChatLib.clearChat(currentChat)
             
             let guildHover = "&e&nGuild Info" +
                 `\n&aGuild Name: &e${guildName}` +

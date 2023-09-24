@@ -15,7 +15,7 @@ const containerNames = [
     /^Chest§r$/
 ]
 
-onOpenWindowPacket((title, windowid, hasSlots, slotCount) => {
+onOpenWindowPacket((title, windowid, hasSlots, slotCount, guiID, entityID, event) => {
     if (!Config.containerValue) return
     if (!containerNames.some(a => title.match(a))) return
     

@@ -25,4 +25,4 @@ register("packetReceived", (packet, event) => {
         entity.func_70106_y()
         cancel(event)
     })
-}).setPacketClass(S1CPacketEntityMetadata)
+}).setFilteredClass(S1CPacketEntityMetadata)

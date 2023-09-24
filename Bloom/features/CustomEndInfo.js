@@ -54,7 +54,7 @@ const printEndStats = () => {
         `&a&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`,
         ChatLib.getCenteredText(dungeonMessage),
         "&c&c&c&d&e&f&c",
-        new TextComponent(ChatLib.getCenteredText(dungeonMessage)).setHover("show_text", compHover),
+        new TextComponent(ChatLib.getCenteredText(defeatedText)).setHover("show_text", compHover),
         ChatLib.getCenteredText(scoreMessage),
         ChatLib.getCenteredText(`&fSecrets Found: &b${endData.secretsFound}`),
         `&r&r&r&r&r&r&r`,

@@ -1,8 +1,16 @@
 {
-    "latestVersion": "4.2.6",
+    "latestVersion": "4.4.0",
     "changelog": [
-        "Removed Terminal Solver",
-        "Changed Terminal Timer to no longer rely on TerminalSolver"
+        "Fixed //ping command",
+        "Fixed error in //kuudra command when no player is given",
+        "Removed chat line IDs from /mem command",
+        "Changed the /f5 /f7 etc commands to use the /joininstance command",
+        "Fixed custom end info displaying the wrong line",
+        "Rewrote the Dungeon Cooldown Timer",
+        "Added Hide Soulweaver Gloves Skulls",
+        "Added Show Secret Clicks",
+        "Made Toggle Sprint not active while sneaking",
+        "Added Dungeon Chest Profit gui"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

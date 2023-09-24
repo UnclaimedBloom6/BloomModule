@@ -1,78 +1,34 @@
-import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { registerWhen, stripRank } from "../../BloomCore/utils/Utils"
+import ScalableGui from "../../BloomCore/utils/ScalableGui"
+import { appendToFile, registerWhen, round } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
-import { prefix, data } from "../utils/Utils"
+import { data } from "../utils/Utils"
 
-register("dragged", (dx, dy, x, y) => {
-    if (!Config.cooldownMoveGui.isOpen()) return
-    data.dungeonWarpCooldown.x = x
-    data.dungeonWarpCooldown.y = y
-    data.save()
-})
+const editGui = new ScalableGui(data, data.dungeonWarpCooldown).setCommand("opendungeoncooldowngui")
 
-if (!data.dungeonWarps) {
-    data.dungeonWarps = {}
-    data.save()
-}
-// &a[VIP] Unclaimedd&r&e warped the party to a SkyBlock dungeon!&r
-const addWarp = (name, formatted) => {
-    data.dungeonWarps[name] = {"lastWarp": new Date().getTime(), "formatted": formatted}
-    data.save()
-}
-const getWarpTime = (player) => 70 - Math.floor((new Date().getTime() - data.dungeonWarps[player].lastWarp) / 1000)
-register("chat", (event) => {
-    let player = ChatLib.getChatMessage(event, true).match(/(.+)&e warped the party to a SkyBlock dungeon!&r/)[1]
-    let uf = stripRank(player.removeFormatting())
-    addWarp(uf, player)
-}).setCriteria("${*} warped the party to a SkyBlock dungeon!")
+const getSecondsLeft = () => (30 - (new Date().getTime() - data.dungeonWarpCooldown.lastWarp ?? 0) / 1000).toFixed(2)
 
+// https://regex101.com/r/rkJbvn/1
 register("chat", () => {
-    addWarp("You", "&6You")
-}).setCriteria("SkyBlock Dungeon Warp (${*} players)")
+    data.dungeonWarpCooldown.lastWarp = new Date().getTime()
+    data.save()
+}).setCriteria(/^-*>newLine<-(?:\[[^\]]+\] )(\w+) entered \w+ Catacombs, Floor (\w+)!->newLine<-*$/)
 
 registerWhen(register("renderOverlay", () => {
-    if ((!Config.dungeonCooldown || !Object.keys(data.dungeonWarps).length) && !Config.cooldownMoveGui.isOpen()) return
-    const playerWarpMessages = Object.keys(data.dungeonWarps).map(a => `${data.dungeonWarps[a].formatted}: &d${getWarpTime(a)}s`).join("\n")
-    Renderer.drawString(`&6&lWarp Cooldown\n${playerWarpMessages}`, data.dungeonWarpCooldown.x, data.dungeonWarpCooldown.y)
-}), () => (Config.dungeonCooldown && Object.keys(data.dungeonWarps).length) || Config.cooldownMoveGui.isOpen())
+    if (!Config.dungeonCooldown || !data.dungeonWarpCooldown.lastWarp) return
 
-register("step", () => {
-    for (let i of Object.keys(data.dungeonWarps)) {
-        if (getWarpTime(i) >= 0) continue
-        delete data.dungeonWarps[i]
-        data.save()
-    }
-})
+    const remaining = getSecondsLeft()
+    if (remaining < 0) return
 
-let rsFloor = null
-let restarting = false
+    Renderer.translate(editGui.getX(), editGui.getY())
+    Renderer.scale(editGui.getScale())
+    const str = `&6Warp Cooldown: &a${remaining}s`
+    Renderer.drawString(str, 0, 0)
+    Renderer.finishDraw()
+}), () => Config.dungeonCooldown)
 
-const restart = (floor, reparty) => {
-    if (floor == "stop") {
-        rsFloor = null
-        restarting = false
-        ChatLib.chat(`${prefix} &aNo longer restarting!`)
-        return
-    }
-    if (!floor && Dungeon.floor) rsFloor = Dungeon.floor.toLowerCase()
-    else rsFloor = floor
-    ChatLib.chat(`${prefix} &aRestarting &b${rsFloor} &aafter cooldown is over!`)
-
-    if (reparty) {
-        ChatLib.command("/rp", true)
-        setTimeout(() => {
-            restarting = true
-        }, 3000);
-    }
-    else restarting = true
-}
-register("command", (floor) => restart(floor, true)).setName("rs")
-register("command", (floor) => restart(floor, false)).setName("/rs")
-
-register("tick", () => {
-    if (!restarting || !rsFloor || Object.keys(data.dungeonWarps).includes("You")) return
-    ChatLib.command(rsFloor, true)
-    World.playSound("random.orb", 1, 1)
-    restarting = false
-    rsFloor = null
+editGui.onRender(() => {
+    Renderer.translate(editGui.getX(), editGui.getY())
+    Renderer.scale(editGui.getScale())
+    Renderer.drawString("&6Warp Cooldown: &a10s", 0, 0)
+    Renderer.finishDraw()
 })

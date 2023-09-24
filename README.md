@@ -1,10 +1,14 @@
 # BloomModule
 
+# WARNING: Outdated
+The module will only receive frequent updates on the version uploaded to the CT site (/ct import Bloom).
+There will be no exclusive features to the github version, it is here purely for version control.
+
+
+
 'bLoOoM hOw dO i gEt tHaT tHiNG yOu jUsT sHoWeD!!1??!?!'
 Here you go you fk noob
 
-## Do not expect frequent updates in this repository in the future
-All future versions will be accessible using the command: /ct import Bloom
 
 
 If you find a bug, want to share suggestions etc then join my Discord server: https://discord.gg/pykzREcAuZ

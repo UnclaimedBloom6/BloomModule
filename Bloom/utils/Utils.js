@@ -24,7 +24,9 @@ export const data = new PogObject("Bloom", {
     },
     dungeonWarpCooldown: {
         x: 0,
-        y: 0
+        y: 0,
+        scale: 1,
+        lastWarp: null
     },
     chMap: {
         x: 0,
@@ -63,6 +65,11 @@ export const data = new PogObject("Bloom", {
         x: 0,
         y: 0,
         scale: 1
+    },
+    dungeonChestProfit: {
+        x: 0,
+        y: 0,
+        scale: 0.5
     }
 }, "data/data.json")
 

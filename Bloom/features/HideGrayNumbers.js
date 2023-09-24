@@ -15,4 +15,4 @@ const handleArmorStand = (entityID) => {
 register("packetReceived", (packet, event) => {
     if (!Config.hideGrayDamageNumbers) return
     Client.scheduleTask(0, () => handleArmorStand(packet.func_149024_d()))
-}).setPacketClass(S0FPacketSpawnMob)
+}).setFilteredClass(S0FPacketSpawnMob)

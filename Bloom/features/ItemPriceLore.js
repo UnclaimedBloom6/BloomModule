@@ -7,7 +7,7 @@ const processItem = (itemStack) => {
     const sbID = getSkyblockItemID(itemStack)
     if (!sbID) return
 
-    const value = PriceUtils.getSellPrice(sbID, true)
+    const value = PriceUtils.getSellPrice(sbID, true) ?? 0
     if (value == null) return
 
     const [price, location] = value

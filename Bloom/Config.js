@@ -15,7 +15,7 @@ import {
 
 @Vigilant("Bloom", "Bloom", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ["General", "Dungeons", "Solvers", "Gui", "Party Finder"];
+        const categories = ["General", "Dungeons", "Solvers", "Gui", "Party Finder", "Dungeon Chest Profit"];
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -31,16 +31,16 @@ class Config {
             "&b/mem <player> &r- Guild Stats.",
             "&b//skills <player> &r- Show a player's skills.",
             "&b//slayer <player> &r- Show a player's slayer stats.",
-            "&b/mykey &r- Show stats about your API key.",
+            "&b//kuudra <player> &r- Shows kuudra stats for a player.",
             "",
             "&b//rp [...exclude] &r- Reparty (Add names to exclude players).",
-            "&b//ping &r- Show your ping.",
+            "&b//ping &r- Calculates your ping.",
             "&b/ptr &r- Transfer party to random player.",
-            "&b/lsb &r- Warp to lobby then back to Skyblock.",
-            "&b/ld &r- Warp to lobby, Skyblock then Dungeon Hub.",
             "&b/colors &r- Show all of the formatting codes.",
             "&b/dc <player1> <player2> &r- Show the cata XP difference between two players.",
             "&b/pb <floor_number> &r- Show the S+ PB's of the whole party on a floor.",
+            "",
+            "&b//ai &r- Runs /p settings allinvite",
             ""
         ]
         const maxLength = Math.max(...lines.map(a => Renderer.getStringWidth(a)))
@@ -347,8 +347,8 @@ class Config {
         subcategory: "Cooldown",
         placeholder: "Move"
     })
-    MoveSplitsGui() {
-        this.cooldownMoveGui.open()
+    MoveCooldownGui() {
+        ChatLib.command("opendungeoncooldowngui", true)
     };
 
     @SwitchProperty({
@@ -519,6 +519,22 @@ class Config {
         subcategory: "Terminals"
     })
     terminalTimer = false;
+    
+    @SwitchProperty({
+        name: "Hide Soulweaver Skulls",
+        description: `Hides the skulls which are spawned by the Soulweaver Gloves in Dungeons.`,
+        category: "Dungeons",
+        subcategory: "Soulweaver Gloves"
+    })
+    hideSoulweaverSkulls = false;
+
+    @SwitchProperty({
+        name: "Show Secret Clicks",
+        description: `Tells you when you click on a secret by rendering a box around where the secret is.`,
+        category: "Dungeons",
+        subcategory: "QoL"
+    })
+    showSecretClicks = false;
 
     // ---------------------------------------------------------------
     // Solvers
@@ -868,5 +884,45 @@ class Config {
         subcategory: "Stats"
     })
     autoDSParty = false;
+    
+    // ---------------------------------------------------------------
+    // Chest Profit
+    
+    @SwitchProperty({
+        name: "Dungeon Chest Profit",
+        description: "Shows the items and profit for each chest in dungeons, sorted in order from most to least profit.\n&aThe major RNG drops will always appear first if they are present.",
+        category: "Dungeon Chest Profit",
+        subcategory: ""
+    })
+    dungeonChestProfit = false;
+    
+    // @SwitchProperty({
+    //     name: "Move to Close Chest",
+    //     description: "Closes the chest when you press any movement key.",
+    //     category: "Dungeon Chest Profit",
+    //     subcategory: ""
+    // })
+    // dungeonChestProfitCloseMovement = false;
+    
+    @SwitchProperty({
+        name: "Show Background",
+        description: "Render a black background behind the text.",
+        category: "Dungeon Chest Profit",
+        subcategory: "Customizing"
+    })
+    dungeonChestProfitBackground = true;
+    
+    @ButtonProperty({
+        name: "Edit Location",
+        description: "Change the location (and scale) of the dungeon loot.",
+        category: "Dungeon Chest Profit",
+        subcategory: "Customizing"
+    })
+    DungeonChestEdit() {
+        ChatLib.command(`editdungeonlootlocation`, true)
+    }
+
+
+    
 }
 export default new Config()

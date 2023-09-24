@@ -49,7 +49,7 @@ registerWhen(register("renderEntity", (entity, pos, pt, event) => {
     if ([livid.entity.getName(), livid.armorStand.getName()].some(a => entity.getName() == a)) return
     // if (!entity.getName().endsWith(" Livid") || entity.getName() == livid.getName()) return
     cancel(event)
-}), () => Dungeon.inDungeon && Config.hideWrongLivids)
+}), () => Dungeon.inDungeon && Config.hideWrongLivids && livid)
 
 register("worldLoad", () => livid = null)
 

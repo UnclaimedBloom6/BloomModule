@@ -1,4 +1,4 @@
-import { getDistance3D, getPlayerCoords, registerWhen } from "../../BloomCore/utils/Utils"
+import { MouseEvent, getObjectXYZ, registerWhen } from "../../BloomCore/utils/Utils"
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 
@@ -11,8 +11,8 @@ import Config from "../Config"
 
 let lastExisted = false
 let blocks = new Set()
-let awaitingClick = false
 // The obsidian on the bottom left of the board
+// The buttons are not saved, the position of the block behind the button is. Forgot why I did it this way.
 const start = [111, 120, 92]
 
 const doneListeners = []
@@ -72,23 +72,45 @@ registerWhen(register("renderWorld", () => {
     }
 }), () => Config.simonSolver && blocks.size)
 
-register("playerInteract", (action, pos, event) => {
+register(MouseEvent, (event) => {
+    if (!Config.simonSolver || !Config.simonCancelClicks || Player.isSneaking()) return
+
+    const button = event.button
+    const state = event.buttonstate
+
+    // Only activate on a right click key press
+    if (button !== 1 || !state) return
+
+    const blocksArr = [...blocks]
+    const la = Player.lookingAt()
+
+    // Player is not looking at a block
+    if (!la || !(la instanceof Block)) return
+
+    const [x, y, z] = getObjectXYZ(la)
+    const str = [x+1, y, z].join(",")
+
+    // Make sure it's a button and there are buttons to be pressed
+    if (World.getBlockAt(x, y, z).type.getID() !== 77 || !blocksArr.length || str == blocksArr[0]) return
+
+    // Cancel the mouse event
+    cancel(event)
+})
+
+register("playerInteract", (action, pos) => {
     if (!Config.simonSolver || action.toString() !== "RIGHT_CLICK_BLOCK" || !blocks.size) return
-    if (awaitingClick) return awaitingClick = false
+
     let [x, y, z] = [pos.getX(), pos.getY(), pos.getZ()]
-    // SS Start Button
+
+    // SS Start Button, reset everything
     if (x == 110 && y == 121 && z == 91) {
         blocks.clear()
         return
     }
     let isButton = World.getBlockAt(x, y, z).type.getID() == 77
     let str = [x+1, y, z].join(",")
-    if (!isButton || getDistance3D(...getPlayerCoords(), 108, 120, 94) > 3) return
-    const blocksArr = [...blocks]
-    if (str !== blocksArr[0]) {
-        // ChatLib.chat(`Cancelling ${x},${y},${z}`)
-        if (Config.simonCancelClicks) return cancel(event)
-    } 
+    if (!isButton) return
+    
     blocks.delete(str)
 })
 

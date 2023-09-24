@@ -81,7 +81,7 @@ register("command", () => {
     if (!held) return
 
     const price = PriceUtils.getItemValue(held.itemStack, true)
-    if (price == null) return
+    if (price == null) return ChatLib.chat(`&cCould not calculate value for ${held.getName()}`)
 
     let [value, breakdown] = price
     const breakdownStr = Object.entries(breakdown).map(([k, v]) => `  &a${title(k)}&r: &6${fn(Math.floor(v))}`).join("\n")

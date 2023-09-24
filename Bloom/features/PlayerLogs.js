@@ -1,7 +1,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
 import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
-import { convertToTimeString } from "../../BloomCore/utils/Utils"
+import { convertToTimeString, timeToMS } from "../../BloomCore/utils/Utils"
 import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue, sortObjectByValues } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
 import Config from "../Config"
@@ -28,7 +28,8 @@ const classes = {
 // }
 
 const initPlayers = () => {
-    Dungeon.partyInfo = Dungeon.party.reduce((a, b) => (a[b] = {}, a), {})
+    Dungeon.partyInfo = {}
+    Dungeon.party.forEach(player => Dungeon.partyInfo[player] = {})
     for (let p of Object.keys(Dungeon.partyInfo)) {
         let player = p
         getMojangInfo(player).then(mojangInfo => {
@@ -59,6 +60,10 @@ const logRun = () => {
         Object.keys(Dungeon.partyInfo).map(a => getHypixelPlayer(Dungeon.partyInfo[a].uuid, bcData.apiKey))
     ).then(values => {
         values.map(v => {
+            if (!v) {
+                ChatLib.chat(`&cPlayer Logging: Failed to request data for a player.`)
+                return
+            }
             let uuid = v.player.uuid
             let player = v.player.displayname
             let secretDiff = v.player.achievements.skyblock_treasure_hunter - Dungeon.partyInfo[player].secrets
@@ -98,7 +103,7 @@ register("chat", (player, reason) => {
     if (!Config.playerLogging || !Dungeon.inDungeon || !Dungeon.time || !Dungeon.partyInfo) return
 
     if (player == "You") player = Player.getName()
-    if (!Object.keys(Dungeon.partyInfo).includes(player)) return
+    if (!(player in Dungeon.partyInfo)) return
 
     reason = reason.replace(/^were/, "was")
     if (Dungeon.bossEntry) return Dungeon.partyInfo[player].deaths.push(`(Boss) ${reason}`)
@@ -359,19 +364,6 @@ const handleLogsNoOptions = (logs) => {
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
     }).catch(e => ChatLib.chat(e))
 
-}
-
-const timeToMS = (timeStr) => {
-    const match = timeStr.match(/^((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s)?)$/)
-
-    if (!match) return 0
-
-    const days = parseInt(match[2]) || 0
-    const hours = parseInt(match[3]) || 0
-    const minutes = parseInt(match[4]) || 0
-    const seconds = parseInt(match[5]) || 0
-
-    return total = (days * 86400 + hours * 3600 + minutes * 60 + seconds) * 1000
 }
 
 // // Example options to filter dungeon runs

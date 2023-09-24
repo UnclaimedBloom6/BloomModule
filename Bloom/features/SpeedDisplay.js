@@ -15,7 +15,7 @@ register("tick", () => {
 registerWhen(register("renderOverlay", () => {
     if (!speedStr) return
     Renderer.translate(data.speedDisplay.x, data.speedDisplay.y)
-    Renderer.scale(1.5)
+    Renderer.scale(data.speedDisplay.scale ?? 1)
     Renderer.drawStringWithShadow(speedStr, 0, 0)
 }), () => speedStr)
 
@@ -23,5 +23,12 @@ register("dragged", (dx, dy, x, y) => {
     if (!Config.speedMoveGui.isOpen()) return
     data.speedDisplay.x = x
     data.speedDisplay.y = y
+    data.save()
+})
+
+register("scrolled", (mx, my, dir) => {
+    if (!Config.speedMoveGui.isOpen()) return
+    if (dir == 1) data.speedDisplay.scale += 0.02
+    else data.speedDisplay.scale -= 0.02
     data.save()
 })

@@ -26,7 +26,7 @@ const displayNames = new Map([
 const fixOldPbs = () => {
     if (!("terminalTimer" in data)) return
     Object.entries(data.terminalTimer).forEach(([k, v]) => {
-        if (v > 250) return
+        if (!v || v > 250) return
         data.terminalTimer[k] = null
         data.save()
         ChatLib.chat(`${prefix} &aReset terminal PB for ${displayNames.get(k)}.`)

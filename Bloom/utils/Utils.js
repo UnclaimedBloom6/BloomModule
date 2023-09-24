@@ -6,7 +6,8 @@ export const data = new PogObject("Bloom", {
     notifiedZeroPing: false,
     speedDisplay: {
         x: 0,
-        y: 0
+        y: 0,
+        scale: 1
     },
     party: {
         x: 0,

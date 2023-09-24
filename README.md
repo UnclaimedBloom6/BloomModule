@@ -3,7 +3,9 @@
 'bLoOoM hOw dO i gEt tHaT tHiNG yOu jUsT sHoWeD!!1??!?!'
 Here you go you fk noob
 
-### For versions without Zero Ping Terminals, run "/ct import Bloom" in-game.
+## Do not expect frequent updates in this repository in the future
+All future versions will be accessible using the command: /ct import Bloom
+
 
 If you find a bug, want to share suggestions etc then join my Discord server: https://discord.gg/pykzREcAuZ
 

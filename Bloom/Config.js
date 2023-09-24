@@ -660,7 +660,7 @@ class Config {
 
     @SwitchProperty({
         name: "Cancel Incorrect Clicks",
-        description: "Cancels wrong clicks! wow !!",
+        description: "Cancels wrong clicks! wow !!\n&eSneaking will stop blocking clicks.",
         category: "Solvers",
         subcategory: "Simon Says"
     })

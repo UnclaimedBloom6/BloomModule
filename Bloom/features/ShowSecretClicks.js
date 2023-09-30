@@ -4,29 +4,29 @@ import Dungeon from "../../BloomCore/dungeons/Dungeon";
 import { C08PacketPlayerBlockPlacement } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 
-const highlights = new Set() // [ctBlock, message]
+const highlights = new Map() // [blockStr: {block: ctBlock, locked: false}]
 
-const validBlocks = new Map([
-    ["minecraft:chest", "Chest"],
-    ["minecraft:lever", "Lever"],
-    ["minecraft:skull", "Skull"],
-    // ["minecraft:stone_button", "Button"],
-    // ["minecraft:wooden_button", "Button"],
-    ["minecraft:trapped_chest", "Trapped Chest"]
+const validBlocks = new Set([
+    "minecraft:chest",
+    "minecraft:lever",
+    "minecraft:skull",
+    "minecraft:trapped_chest",
 ])
 
-const highlightBlock = (block, blockName) => {
-    const entry = [block, `Clicked ${blockName}`]
-
-    highlights.add(entry)
-    Client.scheduleTask(20, () => highlights.delete(entry))
+const highlightBlock = (block) => {
+    const blockStr = block.toString()
+    highlights.set(blockStr, {
+        block: block,
+        locked: false
+    })
+    Client.scheduleTask(20, () => highlights.delete(blockStr))
 }
 
 // Just in case
 register("worldUnload", () => highlights.clear())
 
 register("packetSent", (packet) => {
-    if (!Config.showSecretClicks/* || !Dungeon.inDungeon*/) return
+    if (!Config.showSecretClicks || !Dungeon.inDungeon) return
     const pos = packet.func_179724_a()
     const bp = new BlockPos(pos)
     
@@ -37,15 +37,35 @@ register("packetSent", (packet) => {
     const block = World.getBlockAt(x, y, z)
     const blockName = block.type.getRegistryName()
     
-    if (!validBlocks.has(blockName)) return
-    highlightBlock(block, validBlocks.get(blockName))
+    if (!validBlocks.has(blockName) || highlights.has(block.toString())) return
+    highlightBlock(block)
 }).setFilteredClass(C08PacketPlayerBlockPlacement)
 
-register("renderWorld", () => {
-    highlights.forEach(entry => {
-        const [ctBlock, message] = entry
+const renderBlockHighlight = (block, r, g, b) => {
+    renderBlockHitbox(block, r, g, b, 1, true, 2, false)
+    renderBlockHitbox(block, r, g, b, 0.2, true, 2, true)
+}
 
-        renderBlockHitbox(ctBlock, 0, 1, 0, 1, true, 2, false)
-        renderBlockHitbox(ctBlock, 0, 1, 0, 0.2, true, 2, true)
-    })
+register("renderWorld", () => {
+
+    const r = Config.showSecretClicksColor.getRed() / 255
+    const g = Config.showSecretClicksColor.getGreen() / 255
+    const b = Config.showSecretClicksColor.getBlue() / 255
+    
+    for (let value of highlights.values()) {
+        let { block, locked } = value
+        if (locked) renderBlockHighlight(block, 1, 0, 0)
+        else renderBlockHighlight(block, r, g, b)
+    }
 })
+
+register("chat", () => {
+    if (!highlights.size) return
+
+    // Set the chest to be locked
+    for (let obj of highlights.values()) {
+        if (obj.block.type.getRegistryName() !== "minecraft:chest") continue
+        obj.locked = true
+        return
+    }
+}).setCriteria(/^That chest is locked!$/)

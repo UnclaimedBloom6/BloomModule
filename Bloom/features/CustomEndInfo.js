@@ -8,6 +8,7 @@ const toDelete = [
     /^\s*Ally Healing: [\d,.]+\s?(?:\(NEW RECORD!\))?$/,
     /^\s*\+0 Experience \(No Class Milestone Reached\)$/,
     /^\s*The Catacombs - .+ Stats$/,
+    /^\s*Master Mode Catacombs - .+ Stats$/,
     /^\s*Enemies Killed: \d+\s?(?:\(NEW RECORD!\))?$/
 ]
 

@@ -87,7 +87,7 @@ register("tick", () => {
     if (!Config.dungeonChestProfit) return
 
     let inv = Player.getContainer()
-    let match = inv.getName().match(/(\w+) Chest/)
+    let match = inv.getName().match(/^(\w+) Chest$/)
     if (!match) return
 
     let [_, chestName] = match

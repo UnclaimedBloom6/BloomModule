@@ -1,16 +1,11 @@
 {
-    "latestVersion": "4.4.0",
+    "latestVersion": "4.5.0",
     "changelog": [
-        "Fixed //ping command",
-        "Fixed error in //kuudra command when no player is given",
-        "Removed chat line IDs from /mem command",
-        "Changed the /f5 /f7 etc commands to use the /joininstance command",
-        "Fixed custom end info displaying the wrong line",
-        "Rewrote the Dungeon Cooldown Timer",
-        "Added Hide Soulweaver Gloves Skulls",
-        "Added Show Secret Clicks",
-        "Made Toggle Sprint not active while sneaking",
-        "Added Dungeon Chest Profit gui"
+        "Added option to hide enchants damage (Like hide gray damage)",
+        "Added option to show etherwarp fail location",
+        "Improved teleport maze solver",
+        "Fixed 'Master Mode Catacombs' message not being hidden with Custom End Info",
+        "Fixed regex with dungeon chest profit"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

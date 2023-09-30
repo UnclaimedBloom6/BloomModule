@@ -1,4 +1,4 @@
-import { padText } from "../BloomCore/utils/Utils";
+import { Color, padText } from "../BloomCore/utils/Utils";
 import {
     @ButtonProperty,
     @CheckboxProperty,
@@ -202,6 +202,14 @@ class Config {
     hideGrayDamageNumbers = false;
 
     @SwitchProperty({
+        name: "Hide Enchants Damage",
+        description: "Hides the other damage numbers from enchants like fire aspect, thunderlord, venomous etc.",
+        category: "General",
+        subcategory: "Damage Numbers"
+    })
+    hideEnchantDamageNumbers = false;
+
+    @SwitchProperty({
         name: "Hide 0 Health Nametags",
         description: "Hides armor stands which have 0 health. Eg '[Lv100] Noob 0/100k ❤' would get hidden.",
         category: "General",
@@ -233,6 +241,14 @@ class Config {
     })
     etherwarpSyncWithServer = false;
 
+    @SwitchProperty({
+        name: "Show Fail Location",
+        description: `If the etherwarp will fail, shows the block causing the teleport to fail.`,
+        category: "General",
+        subcategory: "Etherwarp"
+    })
+    etherwarpShowFailLocation = false;
+
     @SelectorProperty({
         name: "Highlight Type",
         description: "How to highlight the block for the etherwarp overlay.",
@@ -242,7 +258,9 @@ class Config {
             "Edges",
             "Edges (Phase)",
             "Filled",
-            "Filled (Phase)"
+            "Filled (Phase)",
+            "Both",
+            "Both (Phase)"
         ]
     })
     etherwarpHighlightType = 0;
@@ -254,6 +272,14 @@ class Config {
         subcategory: "Etherwarp"
     })
     etherwarpOverlayColor = new Color(0, 1, 0, 1);
+
+    @ColorProperty({
+        name: "Invalid Teleport Color",
+        description: "The color of the overlay when the teleport is not possible. (Requires 'Show Fail Location' to be enabled)",
+        category: "General",
+        subcategory: "Etherwarp"
+    })
+    etherwarpOverlayFailColor = new Color(1, 0, 0, 1);
 
     @SwitchProperty({
         name: "Hide Crosshair in Third Person",
@@ -536,6 +562,14 @@ class Config {
     })
     showSecretClicks = false;
 
+    @ColorProperty({
+        name: "Secret Click Color",
+        description: "Change the highlight color of the secret when you click it.",
+        category: "Dungeons",
+        subcategory: "QoL"
+    })
+    showSecretClicksColor = Color.GREEN;
+
     // ---------------------------------------------------------------
     // Solvers
 
@@ -646,7 +680,7 @@ class Config {
 
     @SwitchProperty({
         name: "Teleport Maze Solver",
-        description: "tp maze solver!",
+        description: "tp maze solver!\n&cRed &rshows the pads you've already been to, &aGreen &rshows the final teleport pad.",
         category: "Solvers",
         subcategory: "Teleport Maze"
     })

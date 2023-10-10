@@ -1,3 +1,4 @@
+import { onChatPacket } from "../../BloomCore/utils/Events"
 import Config from "../Config"
 
 const uselessMsgs = [
@@ -15,7 +16,6 @@ const uselessMsgs = [
     /You do not have the key for this door!/,
     /The Stormy .+ struck you for .+ damage!/,
     /Please wait a few seconds between refreshing!/,
-    // /This chest has already been searched!/,
     /You cannot move the silverfish in that direction!/,
     /You cannot hit the silverfish while it's moving!/,
     /Your Kill Combo has expired! You reached a .+ Kill Combo!/,
@@ -26,7 +26,10 @@ const uselessMsgs = [
     /Ragnarok is ready to use! Press DROP to activate it!/,
     /This creature is immune to this kind of magic!/
 ]
-register("chat", (message, event) => {
-    if (!Config.blockUselessMessages) return
-    if (uselessMsgs.some(a => message.match(a))) cancel(event)
-}).setCriteria("${message}")
+
+uselessMsgs.forEach(msg => {
+    onChatPacket((event) => {
+        if (!Config.blockUselessMessages) return
+        cancel(event)
+    }).setCriteria(msg)
+})

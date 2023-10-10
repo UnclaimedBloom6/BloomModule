@@ -1,6 +1,6 @@
 import PriceUtils from "../../BloomCore/PriceUtils"
 import { onSetSlotReceived, onWindowItemsPacket } from "../../BloomCore/utils/Events"
-import { S2FPacketSetSlot, S30PacketWindowItems, addLinesToItemStackLore, fn, getSkyblockItemID, round } from "../../BloomCore/utils/Utils"
+import { addLinesToItemStackLore, fn, getSkyblockItemID } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 const processItem = (itemStack) => {

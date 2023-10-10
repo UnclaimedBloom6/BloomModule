@@ -180,7 +180,7 @@ registerWhen(register("renderWorld", () => {
     // })
 
     if (!orderedPads || orderedPads.length < 2) return
-    if (orderedPads[0].totalAngle == orderedPads[1].totalAngle) return
+    if (!orderedPads[0] || orderedPads[0].totalAngle == orderedPads[1].totalAngle) return
 
     renderBlockHitbox(orderedPads[0].block, 0, 1, 0, 1, true, 2, false)
     renderBlockHitbox(orderedPads[0].block, 0, 1, 0, 0.3, true, 2, true)

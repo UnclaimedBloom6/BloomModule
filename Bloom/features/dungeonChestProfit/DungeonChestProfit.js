@@ -4,15 +4,6 @@ import Config from "../../Config"
 import { readFileLines, registerWhen } from "../../../BloomCore/utils/Utils"
 import { ChestItem, DungeonChest, alwaysBuy, chestData } from "./chestUtils"
 
-// const gameSettings = Client.getMinecraft().field_71474_y
-// const movementKeys = [
-//     gameSettings.field_74351_w, // keybindForward
-//     gameSettings.field_74368_y, // keybindBack
-//     gameSettings.field_74366_z, // keybindRight
-//     gameSettings.field_74370_x, // keybindLeft
-//     gameSettings.field_74311_E, // keybindSneak
-// ].map(a => new KeyBind(a))
-
 let openedChests = []
 let renderStr = null
 
@@ -75,14 +66,6 @@ const updateRenderString = () => {
     renderStr = openedChests.map(a => a.getChestStr()).join("\n")
 }
 
-// const doMovementKeyStuff = () => {
-//     const isHeld = movementKeys.some(a => Keyboard.isKeyDown(a.getKeyCode()))
-    
-//     if (!isHeld) return
-
-//     Client.currentGui.close()
-// }
-
 register("tick", () => {
     if (!Config.dungeonChestProfit) return
 
@@ -124,7 +107,6 @@ register("tick", () => {
 
     sortChests()
     updateRenderString()
-    // if (Config.dungeonChestProfitCloseMovement) doMovementKeyStuff()
 })
 
 register("worldUnload", () => {

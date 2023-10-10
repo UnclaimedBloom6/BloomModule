@@ -1,7 +1,7 @@
 
 import { renderBlockHitbox } from "../../BloomCore/RenderUtils";
 import Dungeon from "../../BloomCore/dungeons/Dungeon";
-import { C08PacketPlayerBlockPlacement } from "../../BloomCore/utils/Utils";
+import { C08PacketPlayerBlockPlacement, MCBlockPos } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 
 const highlights = new Map() // [blockStr: {block: ctBlock, locked: false}]
@@ -13,6 +13,11 @@ const validBlocks = new Set([
     "minecraft:trapped_chest",
 ])
 
+const validSkullIDs = new Set([
+    "26bb1a8d-7c66-31c6-82d5-a9c04c94fb02", // Wither Essence
+    "edb0155f-379c-395a-9c7d-1b6005987ac8"  // Redstone Key
+])
+
 const highlightBlock = (block) => {
     const blockStr = block.toString()
     highlights.set(blockStr, {
@@ -20,6 +25,16 @@ const highlightBlock = (block) => {
         locked: false
     })
     Client.scheduleTask(20, () => highlights.delete(blockStr))
+}
+
+const isValidSkull = (x, y, z) => {
+    const tileEntity = World.getWorld().func_175625_s(new MCBlockPos(x, y, z))
+
+    if (!tileEntity || !tileEntity.func_152108_a()) return false
+
+    const skullID = tileEntity.func_152108_a().getId().toString()
+    
+    return validSkullIDs.has(skullID)
 }
 
 // Just in case
@@ -38,6 +53,8 @@ register("packetSent", (packet) => {
     const blockName = block.type.getRegistryName()
     
     if (!validBlocks.has(blockName) || highlights.has(block.toString())) return
+    if (blockName == "minecraft:skull" && !isValidSkull(x, y, z)) return
+
     highlightBlock(block)
 }).setFilteredClass(C08PacketPlayerBlockPlacement)
 
@@ -69,3 +86,4 @@ register("chat", () => {
         return
     }
 }).setCriteria(/^That chest is locked!$/)
+

@@ -1,11 +1,12 @@
 {
-    "latestVersion": "4.5.0",
+    "latestVersion": "4.6.0",
     "changelog": [
-        "Added option to hide enchants damage (Like hide gray damage)",
-        "Added option to show etherwarp fail location",
-        "Improved teleport maze solver",
-        "Fixed 'Master Mode Catacombs' message not being hidden with Custom End Info",
-        "Fixed regex with dungeon chest profit"
+        "Added //enderpearl command to restock ender pearls from stash",
+        "Changed /pb command to //pb",
+        "Changed //ping to use the chat packet",
+        "Fixed blaze solver",
+        "Made show secret clicks only work for wither essence and redstone key skulls",
+        "Added some more error handling for the teleport maze solver"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

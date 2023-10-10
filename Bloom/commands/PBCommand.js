@@ -4,7 +4,7 @@ import { prefix } from "../utils/Utils"
 import { bcData, convertToPBTime } from "../../BloomCore/utils/Utils"
 
 export const pbCommand = register("command", (floor) => {
-    if (!floor) return ChatLib.chat(`${prefix} &c/pb <floor> - Gets the pbs of everyone in your party for a floor. Use /ds p for more stats.`)
+    if (!floor) return ChatLib.chat(`${prefix} &c//pb <floor> - Gets the pbs of everyone in your party for a floor. Use /ds p for more stats.`)
     if (!Object.keys(Party.members).length) return ChatLib.chat(`${prefix} &cParty Empty!`)
     floor = floor.replace(/[^\d]/g, "").trim()
     if (parseInt(floor) > 7) return ChatLib.chat(`${prefix} &cInvalid Floor!`)
@@ -20,4 +20,4 @@ export const pbCommand = register("command", (floor) => {
             })
         })
     }
-}).setName("pb")
+}).setName("/pb")

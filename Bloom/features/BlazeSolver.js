@@ -1,5 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { EntityArmorStand, EntityBlaze, getRoomCenter, registerWhen } from "../../BloomCore/utils/Utils"
+import { EntityArmorStand, EntityBlaze, drawLine3d, getEntityXYZ, getRoomCenter, registerWhen } from "../../BloomCore/utils/Utils"
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 
@@ -46,5 +46,12 @@ registerWhen(register("renderWorld", () => {
     blazes.forEach((entity, i) => {
         let [r, g, b] = i == 0 ? [0, 1, 0] : i == 1 ? [1, 0.5, 0] : [1, 1, 1]
         RenderLib.drawInnerEspBox(entity.getX(), entity.getY()-2, entity.getZ(), 0.6, 1.8, r, g, b, 1, false)
+
+        // Drawing line from 1st blaze to 2nd
+        if (Config.blazeSolverNextLine && (i == 1 || i == 2)) {
+            let [x0, y0, z0] = getEntityXYZ(blazes[i-1])
+            let [x1, y1, z1] = getEntityXYZ(blazes[i])
+            drawLine3d(x0, y0, z0, x1, y1, z1, 1, 0, 0, 1, 3, false)
+        }
     })
 }), () => Config.blazeSolver && Dungeon.inDungeon)

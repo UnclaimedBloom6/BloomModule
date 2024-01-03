@@ -12,7 +12,8 @@ const containerNames = [
     /^\w+ Backpack§r \(Slot #\d{1,2}\)§r$/,
     /^Ender Chest \(\d+\/\d+\)§r$/,
     /^§rWardrobe \(\d+\/\d+\)§r$/,
-    /^Chest§r$/
+    /^Chest§r$/,
+    /^Large Chest§r$/
 ]
 
 onOpenWindowPacket((title, windowid, hasSlots, slotCount, guiID, entityID, event) => {

@@ -15,7 +15,7 @@ import {
 
 @Vigilant("Bloom", "Bloom", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ["General", "Dungeons", "Solvers", "Gui", "Party Finder", "Dungeon Chest Profit"];
+        const categories = ["General", "Dungeons", "Solvers", "Terminals", "Gui", "Party Finder", "Dungeon Chest Profit"];
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -446,7 +446,7 @@ class Config {
          * &bf:<floor> &r- Filter runs based off floor. Eg &6f:f5 &rwould show only
             F5 runs, &6f:f7 &ronly F7 etc.
 
-        &cNOTE: Mort Messages must be enabled in Skytils/SBA etc
+        &cNOTE: Mort Messaged must be enabled in Skytils/SBA etc
         &cfor this feature to log runs. This module has it's own
         &cfeature for that, so use that instead if you still
         &cwant mort messages hidden.
@@ -570,6 +570,75 @@ class Config {
     })
     showSecretClicksColor = Color.GREEN;
 
+    @SwitchProperty({
+        name: "&aTerminal Solvers",
+        description: "The main toggle to enable and disable terminal solvers.",
+        category: "Terminals",
+        subcategory: "Terminal Solvers"
+    })
+    terminalSolvers = false;
+
+    @SwitchProperty({
+        name: "Numbers Solver",
+        description: "Solver for the numbers terminal",
+        category: "Terminals",
+        subcategory: "Terminal Solvers"
+    })
+    numbersTerminalSolver = true;
+
+    @SwitchProperty({
+        name: "Colors Solver",
+        description: "Solver for the colors terminal",
+        category: "Terminals",
+        subcategory: "Terminal Solvers"
+    })
+    colorsTerminalSolver = true;
+
+    @SwitchProperty({
+        name: "Starts With Solver",
+        description: "Solver for the 'What starts with __' terminal",
+        category: "Terminals",
+        subcategory: "Terminal Solvers"
+    })
+    startsWithTerminalSolver = true;
+
+    @SwitchProperty({
+        name: "Rubix Terminal Solver",
+        description: "Solver for the 'Change all to same color' terminal",
+        category: "Terminals",
+        subcategory: "Terminal Solvers"
+    })
+    rubixTerminalSolver = true;
+
+    @SwitchProperty({
+        name: "Hide Wrong Items",
+        description: "Hides the wrong items when in the 'Whats starts with' or colors terminal.",
+        category: "Terminals"
+    })
+    hideWrongTerminalItems = false;
+
+    @SwitchProperty({
+        name: "Hide Terminal Tooltips",
+        description: "Stops item tooltips from being rendered whilst in a terminal.",
+        category: "Terminals"
+    })
+    hideTerminalTooltips = false;
+
+    @SwitchProperty({
+        name: "Don't Pickup Items",
+        description: "Prevents you from picking up items in terminals.",
+        category: "Terminals"
+    })
+    terminalPreventItemPickup = false;
+
+    @SwitchProperty({
+        name: "Block Wrong Clicks",
+        description: "Prevents you from clicking the wrong item in terminals.",
+        category: "Terminals"
+    })
+    terminalBlockWrongClicks = false;
+
+
     // ---------------------------------------------------------------
     // Solvers
 
@@ -604,6 +673,14 @@ class Config {
         subcategory: "Blaze Solver"
     })
     blazeSolver = false;
+
+    @SwitchProperty({
+        name: "Line to Next Blaze",
+        description: "Draws a line to the next blaze to shoot for the blaze solver.",
+        category: "Solvers",
+        subcategory: "Blaze Solver"
+    })
+    blazeSolverNextLine = false;
 
     @SwitchProperty({
         name: "Trivia Solver",
@@ -659,6 +736,29 @@ class Config {
     })
     weirdosSolver = false;
 
+    @SwitchProperty({
+        name: "Arrow Align Solver",
+        description: "Solves the arrow align device in the third terminal section on F7.",
+        category: "Solvers",
+        subcategory: "Arrow Align"
+    })
+    arrowAlignSolver = false;
+
+    @SwitchProperty({
+        name: "Block Arrow Align Clicks",
+        description: "Blocks incorrect clicks on the arrow align device. Can be overridden by sneaking.",
+        category: "Solvers",
+        subcategory: "Arrow Align"
+    })
+    arrowAlignSolverBlockClicks = false;
+    
+    @SwitchProperty({
+        name: "Invert Sneak",
+        description: "If block wrong clicks is enabled, then instead of blocking clicks when standing, block clicks when sneaking only.",
+        category: "Solvers",
+        subcategory: "Arrow Align"
+    })
+    alignSolverInvertSneak = false;
 
     // ---------------------------------------------------------------
     // Gui

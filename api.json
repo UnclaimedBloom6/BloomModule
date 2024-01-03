@@ -1,12 +1,11 @@
 {
-    "latestVersion": "4.6.0",
+    "latestVersion": "4.6.2",
     "changelog": [
-        "Added //enderpearl command to restock ender pearls from stash",
-        "Changed /pb command to //pb",
-        "Changed //ping to use the chat packet",
-        "Fixed blaze solver",
-        "Made show secret clicks only work for wither essence and redstone key skulls",
-        "Added some more error handling for the teleport maze solver"
+        "Added second line to blaze solver",
+        "Fixed capitalization in file paths",
+        "Re-added Terminal Solvers",
+        "Added solver for Arrow Align device",
+        "Added chests and double chests to container value"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

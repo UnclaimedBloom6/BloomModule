@@ -1,4 +1,4 @@
-import { maxLevels, normalSkill } from "../../BloomCore/Skills/normal";
+import { maxLevels, normalSkill } from "../../BloomCore/skills/normal";
 import { getHypixelPlayer, getMojangInfo, getRecentProfile } from "../../BloomCore/utils/APIWrappers";
 import { bcData, calcSkillLevel, fn, getRank, title } from "../../BloomCore/utils/Utils";
 import Promise from "../../PromiseV2";

@@ -179,6 +179,8 @@ register("chat", (score, rank) => {
     let floor = Dungeon.floor
     if (!floor) return
 
+    const floorData = data.rngMeter.data[floor]
+
     // Check if the meter score has been reached
     // For some reason reaching the required score makes the item drop on the next run
     if (floorData.score >= floorData.needed && floorData.item) {
@@ -190,7 +192,6 @@ register("chat", (score, rank) => {
 
     addScore(floor, score)
     added = true
-    const floorData = data.rngMeter.data[floor]
 
     // Close alert
     let remaining = floorData.needed - floorData.score

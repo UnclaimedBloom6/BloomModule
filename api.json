@@ -1,7 +1,11 @@
 {
-    "latestVersion": "4.6.3",
+    "latestVersion": "4.6.4",
     "changelog": [
-        "Fixed incorrect arrow align rotation pattern"
+        "Added option to choose number of lines in blaze puzzle",
+        "Fixed rng meter values for F1 - F7",
+        "Fixed RNG meter resetting one run too soon",
+        "Made fish from F7 worthless in the dungeon chest profit calculator",
+        "Fixed Blaze puzzle timer"
     ],
     "author": "UnclaimedBloom6",
     "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"

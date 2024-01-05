@@ -682,6 +682,16 @@ class Config {
     })
     blazeSolverNextLine = false;
 
+    @SliderProperty({
+        name: "Blaze Lines",
+        description: "The maximum number of lines to render on the blaze puzzle",
+        category: "Solvers",
+        subcategory: "Blaze Solver",
+        min: 0,
+        max: 10
+    })
+    blazeSolverLines = 2;
+
     @SwitchProperty({
         name: "Trivia Solver",
         description: "Quiz puzzle",

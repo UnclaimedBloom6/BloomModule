@@ -179,26 +179,30 @@ register("chat", (score, rank) => {
     let floor = Dungeon.floor
     if (!floor) return
 
+    // Check if the meter score has been reached
+    // For some reason reaching the required score makes the item drop on the next run
+    if (floorData.score >= floorData.needed && floorData.item) {
+        data.rngMeter.data[floor].score -= data.rngMeter.data[floor].needed
+        setItem(floor, null)
+    }
+
     lastScoreAdded = score
 
     addScore(floor, score)
     added = true
     const floorData = data.rngMeter.data[floor]
 
+    // Close alert
     let remaining = floorData.needed - floorData.score
-    if (Config.rngMeterWarnClose && remaining <= Config.rngMeterRemainingAlert && remaining > 0) {
-        Client.showTitle(`&aRNGMeter`, `&6${fn(remaining)} &aScore Away`, 5, 50, 5)
-        for (let i = 0; i < 3; i++) {
-            setTimeout(() => {
-                World.playSound("random.successful_hit", 1, 0)
-                ChatLib.chat(`${prefix} &aRNGMeter &6${fn(remaining)} &aScore Away!`)
-            }, i*250);
-        }
+    if (!Config.rngMeterWarnClose || remaining > Config.rngMeterRemainingAlert || remaining <= 0) return
+    
+    Client.showTitle(`&aRNGMeter`, `&6${fn(remaining)} &aScore Away`, 5, 50, 5)
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+            World.playSound("random.successful_hit", 1, 0)
+            ChatLib.chat(`${prefix} &aRNGMeter &6${fn(remaining)} &aScore Away!`)
+        }, i*250);
     }
-
-    if (floorData.score < floorData.needed || !floorData.item) return
-    data.rngMeter.data[floor].score -= data.rngMeter.data[floor].needed
-    setItem(floor, null)
 }).setCriteria(/^ *Team Score: (\d+) \(([\w\+]{1,2})\)$/)
 
 

@@ -8,7 +8,7 @@ let trueTimeStarted = null
 
 register("tick", () => {
     if (!Dungeon.inDungeon || !Config.blazeTimer) return
-    let blazeEntities = World.getAllEntitiesOfType(EntityArmorStand).filter(a => a.getName().removeFormatting().match(/\[Lv\d+\] Blaze \d+\/\d+./))
+    let blazeEntities = World.getAllEntitiesOfType(EntityArmorStand).filter(a => a.getName().removeFormatting().match(/^\[Lv15\] Blaze [\d,]+\/([\d,]+)❤$/))
     let blazes = blazeEntities.length
     if (blazes) {
         let minDistance = blazeEntities.map(a => getDistance3D(Player.getX(), Player.getY(), Player.getZ(), a.getX(), a.getY(), a.getZ())).sort((a, b) => a-b)[0]

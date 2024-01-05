@@ -13,7 +13,7 @@ register("tick", () => {
     blazes = []
     World.getAllEntitiesOfType(EntityArmorStand).forEach(e => {
         // https://regex101.com/r/g2x8Qo/1
-        const match = e.getName().removeFormatting().match(/^^\[Lv15\] Blaze [\d,]+\/([\d,]+)❤$$/)
+        const match = e.getName().removeFormatting().match(/^\[Lv15\] Blaze [\d,]+\/([\d,]+)❤$/)
         if (!match) return
         const [_, health] = match
         hp = parseInt(health.replace(/,/g, ""))
@@ -47,8 +47,8 @@ registerWhen(register("renderWorld", () => {
         let [r, g, b] = i == 0 ? [0, 1, 0] : i == 1 ? [1, 0.5, 0] : [1, 1, 1]
         RenderLib.drawInnerEspBox(entity.getX(), entity.getY()-2, entity.getZ(), 0.6, 1.8, r, g, b, 1, false)
 
-        // Drawing line from 1st blaze to 2nd
-        if (Config.blazeSolverNextLine && (i == 1 || i == 2)) {
+        // Drawing lines between the blazes
+        if (Config.blazeSolverNextLine && i > 0 && i <= Config.blazeSolverLines) {
             let [x0, y0, z0] = getEntityXYZ(blazes[i-1])
             let [x1, y1, z1] = getEntityXYZ(blazes[i])
             drawLine3d(x0, y0, z0, x1, y1, z1, 1, 0, 0, 1, 3, false)

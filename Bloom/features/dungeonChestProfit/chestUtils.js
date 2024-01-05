@@ -62,6 +62,7 @@ export class ChestItem {
         this.item = item
         this.name = item.getName()
         this.quantity = 1
+        this.itemID = null
         this.init()
     }
     init() {
@@ -82,6 +83,10 @@ export class ChestItem {
         this.calcValue()
     }
     calcValue() {
+        if (worthless.has(this.itemID)) {
+            this.value = 0
+            return
+        }
         this.value = Math.floor((PriceUtils.getSellPrice(this.itemID) ?? 0) *  this.quantity)
     }
     getPriceStr() {
@@ -96,7 +101,7 @@ export class ChestItem {
     }
 }
 
-export const alwaysBuy = [
+export const alwaysBuy = new Set([
     "NECRON_HANDLE",
     "DARK_CLAYMORE",
     "FIRST_MASTER_STAR",
@@ -109,4 +114,11 @@ export const alwaysBuy = [
     "IMPLOSION_SCROLL",
     "WITHER_SHIELD_SCROLL",
     "ENCHANTMENT_ULTIMATE_ONE_FOR_ALL_1"
-]
+])
+
+export const worthless = new Set([
+    "DUNGEON_DISC_5",
+    "MAXOR_THE_FISH",
+    "STORM_THE_FISH",
+    "GOLDOR_THE_FISH"
+])

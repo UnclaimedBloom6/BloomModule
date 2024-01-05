@@ -57,7 +57,7 @@ editGui.onRender(() => {
 
 const sortChests = () => openedChests.sort((a, b) => {
     // Force valuable drops to be opened first, even if their price has been manipulated
-    if (b.items.some(c => alwaysBuy.includes(c.itemID))) return Infinity
+    if (b.items.some(c => alwaysBuy.has(c.itemID))) return Infinity
     
     return b.profit - a.profit
 })

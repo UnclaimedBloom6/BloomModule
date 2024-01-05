@@ -1,6 +1,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon";
 import { Terminal, data, prefix, terminalInvNames } from "../utils/Utils";
 import Config from "../Config";
+import { onChatPacket } from "../../BloomCore/utils/Events";
 
 const terminalNames = new Map([
     [Terminal.COLORS, "colors"],
@@ -51,7 +52,7 @@ register("step", () => {
     })
 })
 
-register("chat", (player) => {
+onChatPacket((player) => {
     if (!termEnter || player !== Player.getName()) return
 
     const time = new Date().getTime() - termEnter

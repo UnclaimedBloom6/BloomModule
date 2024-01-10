@@ -1,4 +1,4 @@
-import { getHypixelPlayer, getMojangInfo, getRecentProfile, getSbProfiles } from "../../BloomCore/utils/APIWrappers"
+import { getHypixelPlayer, getHypixelPlayerV2, getMojangInfo, getRecentProfile, getSbProfiles, getSelectedProfileV2 } from "../../BloomCore/utils/APIWrappers"
 import { bcData, calcSkillLevel, fn, getRank, title } from "../../BloomCore/utils/Utils"
 import { prefix } from "../utils/Utils"
 import { slayerLevelling } from "../../BloomCore/skills/slayer"
@@ -9,7 +9,8 @@ const bossColors = {
     "spider": "&5",
     "wolf": "&f",
     "enderman": "&d",
-    "blaze": "&6"
+    "blaze": "&6",
+    "vampire": "&5"
 }
 
 const tierColors = {
@@ -28,8 +29,8 @@ export const slayerCommand = register("command", (name) => {
         let player = mi.name
         let uuid = mi.id
         Promise.all([
-            getRecentProfile(uuid, null, bcData.apiKey),
-            getHypixelPlayer(uuid, bcData.apiKey)
+            getSelectedProfileV2(uuid),
+            getHypixelPlayerV2(uuid)
         ]).then(values => {
             let [profile, playerInfo] = values
             if (!profile) return ChatLib.chat(`${prefix} &cPlayer has no Skyblock profiles!`)
@@ -37,36 +38,58 @@ export const slayerCommand = register("command", (name) => {
             let mem = profile.members[uuid]
             let levels = []
             let totalXP = 0
-            let slayerTxt = Object.keys(slayerLevelling).map(a => {
-                let boss = mem.slayer_bosses[a]
-                if (!boss.xp) {
+
+            const slayerData = profile.members[uuid].slayer.slayer_bosses
+
+            if (Object.keys(slayerData).length == 0) {
+                ChatLib.chat(`${formatted} &cHas not done any slayer!`)
+                return
+            }
+
+            let maxLineLength = 0
+            let slayerTxt = Object.keys(slayerData).map(boss => {
+                if (!(boss in slayerLevelling)) return "Unknown Slayer"
+
+                const xp = slayerData[boss].xp || 0
+                const levelData = slayerLevelling[boss]
+                const bossData = slayerData[boss]
+
+                if (xp == 0) {
                     levels.push(0)
                     return ""
                 }
-                let xp = boss.xp
+
                 totalXP += xp
-                let level = Math.floor(calcSkillLevel(a, xp))
+                let level = Math.floor(calcSkillLevel(boss, xp))
                 levels.push(level)
-                let bossKills = Object.keys(boss).filter(b => b.startsWith("boss_kills_tier_")).map(b => {
+
+                let bossKills = Object.keys(bossData).filter(b => b.startsWith("boss_kills_tier_")).map(b => {
                     let tier = parseInt(b[b.length-1]) + 1
-                    return [tier, boss[b]]
-                }).reduce((a, b) => {
-                    a[b[0]] = b[1]
-                    return a
-                }, {})
+                    return [tier, bossData[b]]
+                }).reduce((a, b) => (a[b[0]] = b[1], a), {})
+
                 let tiers = Object.keys(bossKills).map(b => `${tierColors[b]}T${b}: &6${fn(bossKills[b])}&r`).join("  ")
 
-                let prevXP = slayerLevelling[a][level]
-                let nextXP = slayerLevelling[a][level+1] ?? 0
-                if (level == 9) prevXP = xp
+                let prevXP = levelData[level]
+                let nextXP = levelData[level+1] ?? 0
+                if (level == 9 || (boss == "vampire" && level == 5)) prevXP = xp
                 let len = Math.ceil(MathLib.map(xp, prevXP, nextXP, 0, 25)) || 25
                 let progressBar = `&6${fn(prevXP)} &a${"".padEnd(len, "=")}&7${"".padEnd(25-len, "-")} &6${nextXP ? fn(nextXP) : "MAX"}`
+                
+                let percentToNextLevel = 100
+                if (nextXP !== 0) percentToNextLevel = Math.floor((xp - prevXP) / (nextXP - prevXP) * 100)
 
-                return `${bossColors[a]}${title(a)}&r &e${fn(xp)} XP &7(Level &e${level}&7)\n${progressBar}\n${tiers}`
+                const final = `${bossColors[boss]}${title(boss)}&r &e${fn(xp)} XP &7(Level &e${level}&7) &7(&8${percentToNextLevel}%&7)\n${progressBar}\n${tiers}`
+                const lineLength = Math.max(...final.split("\n").map(a => Renderer.getStringWidth(a)))
+
+                if (lineLength > maxLineLength) maxLineLength = lineLength
+
+                return final
             }).filter(a => !!a)
-            let maxLen = slayerTxt.map(a => Renderer.getStringWidth(a.split("\n")[1])).sort((a, b) => a-b).reverse()[0]
-            slayerTxt = slayerTxt.join(`\n${"&8&m".padEnd(Math.ceil(maxLen/3))}\n`)
+
+            slayerTxt = slayerTxt.join(`\n${"&8&m".padEnd(Math.ceil(maxLineLength/3))}\n`)
             slayerTxt += `\n\n&bTotal XP: &e${fn(totalXP)}`
+
             new Message(`${formatted} &8| &a${levels.join("&8-&a")} &8| `, new TextComponent(`&eInfo &7(Hover)`).setHover("show_text", slayerTxt)).chat()
             
         }).catch(e => ChatLib.chat(e))

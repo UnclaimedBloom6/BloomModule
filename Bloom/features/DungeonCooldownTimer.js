@@ -5,11 +5,11 @@ import { data } from "../utils/Utils"
 
 const editGui = new ScalableGui(data, data.dungeonWarpCooldown).setCommand("opendungeoncooldowngui")
 
-const getSecondsLeft = () => (30 - (new Date().getTime() - data.dungeonWarpCooldown.lastWarp ?? 0) / 1000).toFixed(2)
+const getSecondsLeft = () => (30 - (Date.now() - data.dungeonWarpCooldown.lastWarp ?? 0) / 1000).toFixed(2)
 
 // https://regex101.com/r/rkJbvn/1
 register("chat", () => {
-    data.dungeonWarpCooldown.lastWarp = new Date().getTime()
+    data.dungeonWarpCooldown.lastWarp = Date.now()
     data.save()
 }).setCriteria(/^-*>newLine<-(?:\[[^\]]+\] )(\w+) entered \w+ Catacombs, Floor (\w+)!->newLine<-*$/)
 

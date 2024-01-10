@@ -15,11 +15,11 @@ register("tick", () => {
         // If too far away then don't count
         if (minDistance > 45) return
     }
-    if (blazes == 10 && !trueTimeStarted) trueTimeStarted = new Date().getTime()
-    if (blazes == 9 && !blazeStarted) blazeStarted = new Date().getTime()
+    if (blazes == 10 && !trueTimeStarted) trueTimeStarted = Date.now()
+    if (blazes == 9 && !blazeStarted) blazeStarted = Date.now()
     if (!blazes && blazeStarted) {
-        new TextComponent(`${prefix} Blaze Puzzle took &b${Math.floor((new Date().getTime() - blazeStarted)/10)/100}s`)
-            .setHover("show_text", `&fTrue time taken: &b${Math.floor((new Date().getTime() - trueTimeStarted)/10)/100}`).chat()
+        new TextComponent(`${prefix} Blaze Puzzle took &b${Math.floor((Date.now() - blazeStarted)/10)/100}s`)
+            .setHover("show_text", `&fTrue time taken: &b${Math.floor((Date.now() - trueTimeStarted)/10)/100}`).chat()
         blazeStarted = null
         trueTimeStarted = null
     }

@@ -7,12 +7,12 @@ let lastDisbandTime
 register("chat", player => {
     player = stripRank(player)
     lastDisbandedPlayer = player
-    lastDisbandTime = new Date().getTime()
+    lastDisbandTime = Date.now()
 }).setCriteria("${player} has disbanded the party!")
 
 register("chat", player => {
     player = stripRank(player.replace(/.+>newLine<-/, ""))
-    if (!Config.autoRejoinReparty || new Date().getTime() - lastDisbandTime > 10000 || player !== lastDisbandedPlayer) return
+    if (!Config.autoRejoinReparty || Date.now() - lastDisbandTime > 10000 || player !== lastDisbandedPlayer) return
     new Thread(() => {
         Thread.sleep(Config.autoRejoinRepartyDelay)
         ChatLib.command(`p accept ${lastDisbandedPlayer}`)

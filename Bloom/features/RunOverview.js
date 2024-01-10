@@ -20,15 +20,15 @@ register("tick", () => {
     let bossEntry = "?"
     
     // Blood Open
-    if (!Dungeon.bloodOpened && Dungeon.runStarted) bloodOpened = getTime(new Date().getTime() - Dungeon.runStarted)
+    if (!Dungeon.bloodOpened && Dungeon.runStarted) bloodOpened = getTime(Date.now() - Dungeon.runStarted)
     else if (Dungeon.bloodOpened) bloodOpened = getTime(Dungeon.bloodOpened - Dungeon.runStarted)
 
     // Watcher Clear
     if (Dungeon.watcherCleared) watcherCleared = getSecs(Dungeon.watcherCleared - Dungeon.bloodOpened)
-    else if (!Dungeon.watcherCleared && Dungeon.bloodOpened) watcherCleared = getSecs(new Date().getTime() - Dungeon.bloodOpened)
+    else if (!Dungeon.watcherCleared && Dungeon.bloodOpened) watcherCleared = getSecs(Date.now() - Dungeon.bloodOpened)
 
     // Portal Time
-    if (Dungeon.watcherCleared && !Dungeon.bossEntry) portalTime = `${Math.floor((new Date().getTime() - Dungeon.watcherCleared) / 10) / 100}s`
+    if (Dungeon.watcherCleared && !Dungeon.bossEntry) portalTime = `${Math.floor((Date.now() - Dungeon.watcherCleared) / 10) / 100}s`
     if (Dungeon.bossEntry) portalTime = `${Math.floor((Dungeon.bossEntry - Dungeon.watcherCleared) / 10) / 100}s`
 
     // Boss Entry

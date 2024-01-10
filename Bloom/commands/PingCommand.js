@@ -5,7 +5,7 @@ let lastPingCommand
 let waitingPingCommand
 
 export const pingCommand = register("command", () => {
-	lastPingCommand = new Date().getTime()
+	lastPingCommand = Date.now()
 	waitingPingCommand = true
 
 	ChatLib.command("fbkjgblsbnljhh", false)
@@ -14,7 +14,7 @@ export const pingCommand = register("command", () => {
 onChatPacket((event) => {
     if (!waitingPingCommand) return
     
-    let ping = new Date().getTime() - lastPingCommand
+    let ping = Date.now() - lastPingCommand
     cancel(event)
     ChatLib.chat(`${prefix} &aCurrent Ping: ${(ping <= 100 ? "&a" : ping <= 200 ? "&e" : "&c") + ping}ms`)
     waitingPingCommand = false

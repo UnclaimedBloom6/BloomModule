@@ -7,9 +7,9 @@ let phaseStarted = null
 let times = []
 
 const newPhase = () => {
-    let secs = Math.floor((new Date().getTime() - phaseStarted)/10)/100
+    let secs = Math.floor((Date.now() - phaseStarted)/10)/100
     times.push(secs)
-    phaseStarted = new Date().getTime()
+    phaseStarted = Date.now()
     phase++
     gateBlown = false
     lastCompleted = [0, 7]
@@ -35,7 +35,7 @@ register("chat", () => {
 }).setCriteria("The Core entrance is opening!")
 
 register("chat", () => {
-    phaseStarted = new Date().getTime()
+    phaseStarted = Date.now()
 }).setCriteria("[BOSS] Goldor: Who dares trespass into my domain?")
 
 register("worldLoad", () => {

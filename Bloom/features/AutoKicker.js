@@ -11,7 +11,7 @@ const doRecentKickStuff = (player) => {
     hidePartySpam(500)
     ChatLib.command(`p kick ${player}`)
     ChatLib.chat(`${prefix} &cKicked &a${player} &cbecause they were recently kicked.`)
-    recentKicks[player] = new Date().getTime()
+    recentKicks[player] = Date.now()
     return true
 }
 
@@ -32,7 +32,7 @@ const doSecretKickStuff = (player) => {
                 hidePartySpam(500)
                 ChatLib.command(`p kick ${player}`)
                 ChatLib.chat(`${prefix} &cKicked &b${player} &cdue to low secrets!`)
-                recentKicks[player] = new Date().getTime()
+                recentKicks[player] = Date.now()
             }
         })
     })
@@ -56,7 +56,7 @@ register("chat", (player, classs) => {
 // Update the recently kicked list
 register("tick", () => {
     if (!Config.autoKicker) return
-    const now = new Date().getTime()
+    const now = Date.now()
     Object.keys(recentKicks).forEach(player => {
         if (now - recentKicks[player] > 3.6e5) delete recentKicks[player]
     })

@@ -1,6 +1,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
-import { getHypixelPlayer, getMojangInfo } from "../../BloomCore/utils/APIWrappers"
+import { getHypixelPlayer, getHypixelPlayerV2, getMojangInfo, getPlayerUUID } from "../../BloomCore/utils/APIWrappers"
+import { onChatPacket } from "../../BloomCore/utils/Events"
 import { convertToTimeString, timeToMS } from "../../BloomCore/utils/Utils"
 import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue, sortObjectByValues } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
@@ -32,17 +33,16 @@ const initPlayers = () => {
     Dungeon.party.forEach(player => Dungeon.partyInfo[player] = {})
     for (let p of Object.keys(Dungeon.partyInfo)) {
         let player = p
-        getMojangInfo(player).then(mojangInfo => {
-            const uuid = mojangInfo.id
-            getHypixelPlayer(uuid, bcData.apiKey).then(playerInfo => {
+        getPlayerUUID(player).then(uuid => {
+            getHypixelPlayerV2(uuid).then(playerInfo => {
                 Dungeon.partyInfo[player] = {
-                    "uuid": uuid,
-                    "secrets": playerInfo.player.achievements.skyblock_treasure_hunter,
-                    "deaths": []
+                    uuid: uuid,
+                    secrets: playerInfo.player.achievements.skyblock_treasure_hunter,
+                    deaths: []
                 }
                 // ChatLib.chat(JSON.stringify(Dungeon.partyInfo, "", 4))
-            })
-        }).catch(e => ChatLib.chat(`&cError initializing players: ${e}`))
+            }).catch(e => ChatLib.chat(`&cError initializing players: ${e.errorMessage}`))
+        }).catch(e => ChatLib.chat(`&cError initializing players: ${e.errorMessage}`))
     }
 }
 
@@ -50,29 +50,29 @@ const logRun = () => {
     if (!FileLib.exists("Bloom", "data/playerLogs.json")) FileLib.write("Bloom", "data/playerLogs.json", "[]")
 
     let data = {
-        "f": Dungeon.floor,
-        "ts": new Date().getTime(),
-        "t": time,
-        "s": score,
-        "p": {}
+        f: Dungeon.floor,
+        ts: Date.now(),
+        t: time,
+        s: score,
+        p: {}
     }
     Promise.all(
-        Object.keys(Dungeon.partyInfo).map(a => getHypixelPlayer(Dungeon.partyInfo[a].uuid, bcData.apiKey))
+        Object.keys(Dungeon.partyInfo).map(a => getHypixelPlayerV2(Dungeon.partyInfo[a].uuid))
     ).then(values => {
-        values.map(v => {
-            if (!v) {
+        values.forEach(playerInfo => {
+            if (!playerInfo) {
                 ChatLib.chat(`&cPlayer Logging: Failed to request data for a player.`)
                 return
             }
-            let uuid = v.player.uuid
-            let player = v.player.displayname
-            let secretDiff = v.player.achievements.skyblock_treasure_hunter - Dungeon.partyInfo[player].secrets
+            let uuid = playerInfo.player.uuid
+            let player = playerInfo.player.displayname
+            let secretDiff = playerInfo.player.achievements.skyblock_treasure_hunter - Dungeon.partyInfo[player].secrets
             let clazz = Dungeon.classes[player]
             if (!clazz) ChatLib.chat(`No Class for ${player}`)
             data.p[uuid] = {
-                "s": secretDiff ?? 0,
-                "d": Dungeon.partyInfo[player].deaths,
-                "c": clazz ? clazz[0] : "U"
+                s: secretDiff ?? 0,
+                d: Dungeon.partyInfo[player].deaths,
+                c: clazz ? clazz[0] : "U"
             }
         })
         // ChatLib.chat(JSON.stringify(data, "", 4))
@@ -82,22 +82,24 @@ const logRun = () => {
     }).catch(e => ChatLib.chat(`&cError logging players: ${e}`))
 }
 
-register("chat", (e) => {
+onChatPacket(() => {
     if (!Config.playerLogging || !Dungeon.inDungeon) return
+    initPlayers()
+}).setCriteria(/^\[NPC\] Mort: Here, I found this map when I first entered the dungeon\.$/)
 
-    let msg = ChatLib.getChatMessage(e).removeFormatting().trim()
-    if (msg == "[NPC] Mort: Here, I found this map when I first entered the dungeon.") return initPlayers()
+onChatPacket(() => {
+    if (!Config.playerLogging || !Dungeon.inDungeon) return
+    logRun()
+}).setCriteria(/^\s*> EXTRA STATS <$/)
 
-    // ☠ Defeated Livid in 01m 02s
-    const timeMatch = getValue(msg, /☠ Defeated .+ in (.+)/, null)
-    if (timeMatch) {
-        wasSuccessful = true
-        time = convertToSeconds(timeMatch)
-    }
-    score = getValue(msg, /Team Score: (\d+) \(.{1,2}\)/, score, "int")
+onChatPacket((boss, runTime, record) => {
+    wasSuccessful = true
+    time = convertToSeconds(runTime)
+}).setCriteria(/^\s*☠ Defeated (.+) in 0?([\dhms ]+?)\s*(\(NEW RECORD!\))?$/)
 
-    if (msg == "> EXTRA STATS <" && wasSuccessful && Dungeon.partyInfo) logRun()
-})
+onChatPacket((scoreNumber, rating, record) => {
+    score = parseInt(scoreNumber)
+}).setCriteria(/^\s*Team Score: (\d+) \((.{1,2})\)\s?(\(NEW RECORD!\))?$/)
 
 register("chat", (player, reason) => {
     if (!Config.playerLogging || !Dungeon.inDungeon || !Dungeon.time || !Dungeon.partyInfo) return
@@ -249,7 +251,7 @@ const handleLogs = (logs, options) => {
     if (players) logs = logs.filter(a => players.every(b => Object.keys(a.p).includes(b.uuid)))
 
     if (time) {
-        const now = new Date().getTime()
+        const now = Date.now()
         logs = logs.filter(a => now - a.ts < time)
     }
 

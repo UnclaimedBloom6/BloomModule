@@ -68,9 +68,9 @@ register("chat", (event) => {
     let formatted = ChatLib.getChatMessage(event)
     let unformatted = ChatLib.removeFormatting(formatted)
     if (unformatted == Object.keys(splits[splitFloor])[splitIndex]) {
-        splitMsg += `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}\n`
+        splitMsg += `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(Date.now() - lastSplit)}\n`
         splitIndex++
-        lastSplit = new Date().getTime()
+        lastSplit = Date.now()
     }
 })
 
@@ -78,7 +78,7 @@ registerWhen(register("renderOverlay", () => {
     if (!Config.runSplitsMoveGui.isOpen() && (!Config.runSplits || !Dungeon.inDungeon || !Dungeon.bossEntry)) return
     
     if (splitIndex == Object.keys(splits[splitFloor]).length) currentSplit = ""
-    else currentSplit = `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(new Date().getTime() - lastSplit)}`
+    else currentSplit = `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(Date.now() - lastSplit)}`
 
     Renderer.drawString(`&6&lRun Splits\n${splitMsg}${currentSplit}`, data.runSplits.x, data.runSplits.y)
 

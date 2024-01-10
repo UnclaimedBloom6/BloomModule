@@ -48,14 +48,14 @@ register("step", () => {
         currentTerm = v
 
         if (termEnter) return
-        termEnter = new Date().getTime()
+        termEnter = Date.now()
     })
 })
 
 onChatPacket((player) => {
     if (!termEnter || player !== Player.getName()) return
 
-    const time = new Date().getTime() - termEnter
+    const time = Date.now() - termEnter
     const seconds = Math.floor(time / 10) / 100
     const termName = terminalNames.get(currentTerm)
     let bestTime = data.terminalTimer[termName] ?? Infinity

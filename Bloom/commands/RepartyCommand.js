@@ -28,7 +28,7 @@ register("command", (...players) => {
 }).setName("partyplayers")
 
 register("chat", event => {
-	if (new Date().getTime() - lastReparty > 2000 || lastReparty == undefined) return
+	if (Date.now() - lastReparty > 2000 || lastReparty == undefined) return
 	let formatted = ChatLib.getChatMessage(event, true)
 	if (/&9&m-----------------------------&r/.test(formatted)) cancel(event)
 	if (/.+ &r&ehas disbanded the party!&r/.test(formatted)) cancel(event)

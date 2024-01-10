@@ -3,8 +3,8 @@ import Config from "../Config"
 import { data } from "../utils/Utils"
 
 // 30 mins since last update
-if (new Date().getTime() - data.bridge.lastUpdated > 1.8E6) {
-    data.bridge.lastUpdated = new Date().getTime()
+if (Date.now() - data.bridge.lastUpdated > 1.8E6) {
+    data.bridge.lastUpdated = Date.now()
     request("https://raw.githubusercontent.com/UnclaimedBloom6/BloomModule/main/api.json").then(d => {
         let regex = JSON.parse(d).bridgeRegex
         if (!regex) return

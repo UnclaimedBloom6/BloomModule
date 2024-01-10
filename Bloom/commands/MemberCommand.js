@@ -41,7 +41,7 @@ export const memberCommand = register("command", (player) => {
                 weeklyGexp = Object.values(member["exp_history"]).reduce((a, b) => a + b)
                 joined = new Date(member["joined"])
                 guildRank = member["rank"]
-                memberDays = parseInt((new Date().getTime() - member["joined"]) / 1000 / 60 / 60 / 24)
+                memberDays = parseInt((Date.now() - member["joined"]) / 1000 / 60 / 60 / 24)
                 Object.keys(member["exp_history"]).forEach(day => {
                     gexpHover += `\n&a${day} - &2${fn(member["exp_history"][day])}`
                 })

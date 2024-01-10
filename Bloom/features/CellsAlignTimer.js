@@ -24,12 +24,12 @@ let lastAlign = null
 const baseCooldown = 10
 let alignCooldown = 10 // Accounting for cooldown reductions
 
-const isCooldownOver = () => !lastAlign || new Date().getTime() - lastAlign > alignCooldown * 1000
+const isCooldownOver = () => !lastAlign || Date.now() - lastAlign > alignCooldown * 1000
 
 registerWhen(register("renderOverlay", () => {
     if ((!Config.cellsAlignTimer || isCooldownOver() || Client.isInGui()) && !Config.cellsAlignMoveGui.isOpen()) return
 
-    const remaining = alignCooldown * 1000 - (new Date().getTime() - lastAlign)
+    const remaining = alignCooldown * 1000 - (Date.now() - lastAlign)
     const secs = Math.floor(remaining/10)/100
     const str = `&b${secs}s`
     
@@ -43,5 +43,5 @@ register("tick", () => {
 })
 
 register("chat", () => {
-    lastAlign = new Date().getTime()
+    lastAlign = Date.now()
 }).setCriteria(/^You aligned [yourself\!|\d other players\!]+$/)

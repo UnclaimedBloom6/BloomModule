@@ -46,12 +46,12 @@ register("step", () => {
         let [x, y, z] = i
         if (current.some(a => a[0] == x && a[1] == y && a[2] == z)) continue
         let block = World.getBlockAt(x, y, z)
-        if (block.type.getID() == 35) current.push([x, y, z, new Date().getTime()])
+        if (block.type.getID() == 35) current.push([x, y, z, Date.now()])
     }
     // Check to see whether any of the places where wool previously existed have turned into air or it has been longer than 7 seconds
     for (let i = 0; i < current.length; i++) {
         let [x, y, z, ts] = current[i]
-        if (new Date().getTime() - ts > woolLifetime || !World.getBlockAt(x, y, z)?.type?.getID()) current.splice(i, 1)
+        if (Date.now() - ts > woolLifetime || !World.getBlockAt(x, y, z)?.type?.getID()) current.splice(i, 1)
     }
     current = current.sort((a, b) => a[3] - b[3])
 })
@@ -59,7 +59,7 @@ register("step", () => {
 registerWhen(register("renderWorld", () => {
     current.map((a, i) => {
         let [x, y, z, ts] = a
-        let timeLeft = Math.floor((woolLifetime - (new Date().getTime() - ts))/100)/10
+        let timeLeft = Math.floor((woolLifetime - (Date.now() - ts))/100)/10
         let color = Renderer.YELLOW
         if (timeLeft < 1) color = Renderer.GREEN
         Tessellator.drawString(`#${i+1}`, x, y+3, z, color, true, 0.08, false)

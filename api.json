@@ -1,8 +1,0 @@
-{
-    "latestVersion": "4.6.5",
-    "changelog": [
-        "Fixed error in rng meter"
-    ],
-    "author": "UnclaimedBloom6",
-    "bridgeRegex": "Guild > \\[MVP\\+{1,2}\\] NecronBridge \\[\\w+\\]: ([^:]+): (.+)"
-}

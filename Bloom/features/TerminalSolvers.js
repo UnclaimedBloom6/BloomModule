@@ -1,5 +1,5 @@
 
-import { C0EPacketClickWindow, clickSlot, getSlotRenderPosition, hightlightSlot } from "../../BloomCore/utils/Utils"
+import { C0EPacketClickWindow, clickSlot, getSlotRenderPosition, highlightSlot, registerWhen } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 let correctSlots = []
@@ -47,7 +47,8 @@ const fixColorItemName = (itemName) => {
 
 const solveCurrentTerminal = (container, match) => {
 
-    const invItems = container.getItems().slice(0, container.getSize())
+    const invItems = container.getItems().slice(0, 55)
+
     if (currentTerminalID == Terminals.NUMBERS.id && Config.numbersTerminalSolver) {
         const redPanes = getSlotsWithPaneMeta(invItems, 14)
         redPanes.sort((a, b) => container.getStackInSlot(a).getStackSize() - container.getStackInSlot(b).getStackSize())
@@ -143,7 +144,7 @@ const getCurrentTerminalInfo = () => {
 }
 
 register("tick", () => {
-    if (!Config.terminalSolvers) return
+    if (!Config.terminalSolvers && !Config.terminalBlockWrongClicks) return
 
     const result = getCurrentTerminalInfo()
 
@@ -160,11 +161,11 @@ register("tick", () => {
 })
 
 register("guiRender", (mx, mt, gui) => {
-    if (currentTerminalID == null || !correctSlots.length || currentTerminalID == Terminals.REDGREEN.id) return
+    if (!Config.terminalSolvers || currentTerminalID == null || !correctSlots.length || currentTerminalID == Terminals.REDGREEN.id) return
     
     if (currentTerminalID == Terminals.NUMBERS.id) {
         correctSlots.slice(0, 3).forEach((slot, i) => {
-            hightlightSlot(gui, slot, 0, 1 - i*0.3, 1, 1, true)
+            highlightSlot(gui, slot, 0, 1 - i*0.3, 1, 1, true, 400)
         })
         return
     }
@@ -193,12 +194,12 @@ register("guiRender", (mx, mt, gui) => {
 
     // Starts with and colors
     correctSlots.forEach(slot => {
-        hightlightSlot(gui, slot, 0, 1, 0, 1, false)
+        highlightSlot(gui, slot, 0, 1, 0, 1, false)
     })
 })
 
 // Hide wrong slots (For colors and startswith terminals)
-register("renderSlot", (slot, gui, event) => {
+registerWhen(register("renderSlot", (slot, gui, event) => {
     if (!Config.hideWrongTerminalItems || !correctSlots.length || currentTerminalID == null) return
     if (currentTerminalID !== Terminals.COLORS.id && currentTerminalID !== Terminals.STARTSWITH.id) return
 
@@ -211,7 +212,7 @@ register("renderSlot", (slot, gui, event) => {
 
     if (correctSlots.includes(slot.getIndex())) return
     cancel(event)
-})
+}), () => Config.terminalSolvers && correctSlots.length)
 
 // Hide terminal tooltips
 register("itemTooltip", (lore, item, event) => {
@@ -220,7 +221,7 @@ register("itemTooltip", (lore, item, event) => {
 })
 
 register("guiMouseClick", (mc, my, btn, gui, event) => {
-    if (!correctSlots.length) return
+    if (currentTerminalID == null) return
     const termInfo = getCurrentTerminalInfo()
     if (!termInfo || (btn !== 0 && btn !== 1)) return
 
@@ -232,7 +233,7 @@ register("guiMouseClick", (mc, my, btn, gui, event) => {
     const index = clickedSlot.getIndex()
 
     // Block wrong clicks
-    if (Config.terminalBlockWrongClicks && !correctSlots.includes(index)) {
+    if (Config.terminalBlockWrongClicks && !correctSlots.includes(index) && correctSlots.length) {
         // ChatLib.chat(`Cancelled wrong click!`)
         cancel(event)
         return
@@ -252,6 +253,17 @@ register("guiMouseClick", (mc, my, btn, gui, event) => {
     Client.sendPacket(new C0EPacketClickWindow(windowId, index, btn, 0, clickedItem, nextActionNum))
 
 })
+
+registerWhen(register("renderItemOverlayIntoGui", (item, x, y, event) => {
+    if (currentTerminalID !== Terminals.NUMBERS.id || !correctSlots.length || item.getMetadata() !== 14) return 
+    cancel(event)
+
+    const stackSize = item.getStackSize().toString()
+    const offset = stackSize.length == 2 ? 2 : 5.5
+
+    Renderer.translate(x + offset, y + 4.5, 800);
+    Renderer.drawString(stackSize, 0, 0, true)
+}), () => correctSlots.length)
 
 // register("packetSent", (p, e) => {
 //     const ActionNumber = p.func_149547_f()

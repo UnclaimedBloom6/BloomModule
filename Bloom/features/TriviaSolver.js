@@ -8,18 +8,30 @@ request({
     url: "https://data.skytils.gg/solvers/oruotrivia.json", // Thanks Noobtils! (This is actually very helpful xd)
     headers: {
         "User-Agent": "Mozilla/5.0",
-    }
-}).then(d => triviaData = JSON.parse(d)).catch(e => console.error("[Bloom] Failed to get Trivia solutions."))
+    },
+    json: true
+}).then(d => triviaData = d).catch(e => console.error(`[Bloom] Failed to get Trivia solutions: $${e}`))
 
 let solutions = []
 register("chat", event => {
     if (!Dungeon.inDungeon || !Config.triviaSolver || !triviaData) return
     let message = ChatLib.getChatMessage(event)
     let unformatted = message.removeFormatting().trim()
-    if (unformatted.match(/\[STATUE\] Oruo the Omniscient: .+/)) return solutions = []
-    if (Object.keys(triviaData).includes(unformatted)) return solutions = triviaData[unformatted]
-    if (unformatted == "What SkyBlock year is it?") return solutions = [`Year ${Math.floor((Date.now()/1000 - 1560276000) / 446400 + 1)}`] // Calculation from Danker's Skyblock Mod
-    let match = unformatted.match(/[ⓐⓑⓒ] (.+)/)
+    
+    // Quiz just opened, reset the solutions from the last time
+    if (unformatted.match(/^\[STATUE\] Oruo the Omniscient: .+$/)) return solutions = []
+
+    if (unformatted in triviaData) return solutions = triviaData[unformatted]
+
+    if (unformatted == "What SkyBlock year is it?") {
+        // Calculation from Danker's Skyblock Mod
+        const year = Math.floor((Date.now() / 1000 - 1560276000) / 446400 + 1)
+        solutions = [`Year ${year}`]
+        return
+    }
+
+    // Make the correct answer green and the wrong ones red
+    const match = unformatted.match(/^[ⓐⓑⓒ] (.+)$/)
     if (!match) return
     let [m, ans] = match
     cancel(event)
@@ -27,7 +39,7 @@ register("chat", event => {
     ChatLib.chat(message.replace(/§a/, "§4"))
 })
 
-
+// Make the question show green in the room too
 register("tick", () => {
     if (!solutions || !Config.triviaSolver || !Dungeon.inDungeon) return
     let stands = World.getAllEntitiesOfType(EntityArmorStand)

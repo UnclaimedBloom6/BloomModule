@@ -1,8 +1,5 @@
 # BloomModule
 
-#### NOTE
-I am no longer working on this module as I have quit playing on Hypixel. This module will not receive updates in the near future except to fix major bugs preventing the module from working at all.
-
 If you find a bug, want to share suggestions etc then join my Discord server: https://discord.gg/pykzREcAuZ
 
 ## Installation

@@ -23,33 +23,29 @@ const displayNames = new Map([
     [Terminal.STARTSWITH, "Starts With"],
 ])
 
-// Fix terminal PBs gained from when the terminals were broken
-const fixOldPbs = () => {
-    if (!("terminalTimer" in data)) return
-    Object.entries(data.terminalTimer).forEach(([k, v]) => {
-        if (!v || v > 250) return
-        data.terminalTimer[k] = null
-        data.save()
-        ChatLib.chat(`${prefix} &aReset terminal PB for ${displayNames.get(k)}.`)
-    })
-}
-fixOldPbs()
-
 let termEnter = null
-let currentTerm = null
+let lastTerm = null
+let wasInTerminal = false
 register("step", () => {
     if (!Config.terminalTimer || !Dungeon.inDungeon || Dungeon.floorNumber !== 7 || !Dungeon.bossEntry) return
 
     const inv = Player.getContainer()
     if (!inv) return
+    
+    for (let e of Object.entries(terminalInvNames)) {
+        let [k, v] = e
+        if (!inv.getName().startsWith(k)) continue
 
-    Object.entries(terminalInvNames).forEach(([k, v]) => {
-        if (!inv.getName().startsWith(k)) return
-        currentTerm = v
+        // Reset the time when new terminal is opened
+        if (!wasInTerminal) termEnter = Date.now()
+        wasInTerminal = true
+        lastTerm = v
 
-        if (termEnter) return
-        termEnter = Date.now()
-    })
+        return
+    }
+
+    // Not in a terminal
+    wasInTerminal = false
 })
 
 onChatPacket((player) => {
@@ -57,7 +53,7 @@ onChatPacket((player) => {
 
     const time = Date.now() - termEnter
     const seconds = Math.floor(time / 10) / 100
-    const termName = terminalNames.get(currentTerm)
+    const termName = terminalNames.get(lastTerm)
     let bestTime = data.terminalTimer[termName] ?? Infinity
     let extraString = ` &8Best: ${Math.floor(bestTime/10) / 100}s`
 
@@ -67,9 +63,9 @@ onChatPacket((player) => {
         data.save()
     }
 
-    const final = `${prefix} &a${displayNames.get(currentTerm)} Terminal took &b${seconds}s&a${extraString}`
+    const final = `${prefix} &a${displayNames.get(lastTerm)} Terminal took &b${seconds}s&a${extraString}`
     new TextComponent(final).setClick("run_command", `/ct copy ${final.removeFormatting()}`).setHover("show_text", "&aClick to copy!").chat()
     
     termEnter = null
-    currentTerm = null
+    lastTerm = null
 }).setCriteria(/^(\w+) activated a terminal! \(\d\/\d\)$/)

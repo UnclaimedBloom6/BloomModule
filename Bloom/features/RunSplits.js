@@ -1,4 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon";
+import { onChatPacket } from "../../BloomCore/utils/Events";
 import { registerWhen } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 import { data, getSecs } from "../utils/Utils";
@@ -61,18 +62,17 @@ const splits = {
     }
 }
 
-register("chat", (event) => {
+onChatPacket((message) => {
     if (!splits[splitFloor]) return
     if (!Dungeon.inDungeon || !splitFloor || splitIndex == Object.keys(splits[splitFloor]).length) return
 
-    let formatted = ChatLib.getChatMessage(event)
-    let unformatted = ChatLib.removeFormatting(formatted)
+    const unformatted = message.removeFormatting()
     if (unformatted == Object.keys(splits[splitFloor])[splitIndex]) {
         splitMsg += `${splits[splitFloor][Object.keys(splits[splitFloor])[splitIndex]]}: ${getSecs(Date.now() - lastSplit)}\n`
         splitIndex++
         lastSplit = Date.now()
     }
-})
+}).setCriteria(/^(.+)$/)
 
 registerWhen(register("renderOverlay", () => {
     if (!Config.runSplitsMoveGui.isOpen() && (!Config.runSplits || !Dungeon.inDungeon || !Dungeon.bossEntry)) return

@@ -182,6 +182,7 @@ registerWhen(register("renderWorld", () => {
     if (!orderedPads || orderedPads.length < 2) return
     if (!orderedPads[0] || orderedPads[0].totalAngle == orderedPads[1].totalAngle) return
 
+    // Why the fuck does this error saying that orderedpads[0] is undefined? I have a fucking check for it
     renderBlockHitbox(orderedPads[0].block, 0, 1, 0, 1, true, 2, false)
     renderBlockHitbox(orderedPads[0].block, 0, 1, 0, 0.3, true, 2, true)
     

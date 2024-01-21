@@ -23,4 +23,4 @@ export const bloomCommand = register("command", (...args) => {
         ChatLib.chat(messages.join("\n"))
         // messages.forEach(a => ChatLib.chat(ChatLib.getCenteredText(a)))
     }
-}).setName("bl")
+}).setName("bloom").setAliases(["bl"])

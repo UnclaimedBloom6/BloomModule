@@ -571,6 +571,14 @@ class Config {
     showSecretClicksColor = Color.GREEN;
 
     @SwitchProperty({
+        name: "Hide Blessing Messages",
+        description: "Hides the chat messages which are sent when blessings are picked up in Dungeons.",
+        category: "Dungeons",
+        subcategory: "QoL"
+    })
+    hideBlessingMessages = false;
+
+    @SwitchProperty({
         name: "&aTerminal Solvers",
         description: "The main toggle to enable and disable terminal solvers.",
         category: "Terminals",

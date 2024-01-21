@@ -43,15 +43,16 @@ onWindowItemsPacket((items) => {
         if (!items[i]) continue
 
         let item = new Item(items[i])
-
-        if (item.getName() == "§fEnchanted Book") {
+        let itemName = item.getName()
+        
+        
+        if (itemName == "§fEnchanted Book") {
             let lore = item.getLore()
             if (lore.length < 1) continue
 
-            item.setName(lore.splice(1, 1)[0])
+            itemName = lore[1]
         }
 
-        let itemName = item.getName()
         let value = PriceUtils.getItemValue(items[i])
         if (value == null) continue
 

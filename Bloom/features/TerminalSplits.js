@@ -1,3 +1,4 @@
+import { onChatPacket } from "../../BloomCore/utils/Events"
 import Config from "../Config"
 
 let phase = 1
@@ -15,26 +16,26 @@ const newPhase = () => {
     lastCompleted = [0, 7]
 }
 
-register("chat", (completed, total) => {
+onChatPacket((completed, total) => {
     completed = parseInt(completed)
     total = parseInt(total)
     if (completed < lastCompleted[0] || (completed == total && gateBlown)) return newPhase()
     lastCompleted = [completed, total]
 }).setCriteria(/.+ [activated|completed]+ a .+! \((\d)\/(\d)\)/)
 
-register("chat", () => {
+onChatPacket(() => {
     if (lastCompleted[0] == lastCompleted[1]) newPhase()
     else gateBlown = true
 }).setCriteria("The gate has been destroyed!")
 
-register("chat", () => {
+onChatPacket(() => {
     if (!Config.terminalSplits) return
     newPhase()
     let msg = times.reduce((a,b,i) => a+`&2${i+1}: &a${b} &8| `, "&dTerminals: ")+`&6Total: ${Math.floor(times.reduce((a, b) => a+b, 0)*100)/100}`
     new TextComponent(msg).setClick("run_command", `/ct copy ${msg.removeFormatting()}`).chat()
 }).setCriteria("The Core entrance is opening!")
 
-register("chat", () => {
+onChatPacket(() => {
     phaseStarted = Date.now()
 }).setCriteria("[BOSS] Goldor: Who dares trespass into my domain?")
 

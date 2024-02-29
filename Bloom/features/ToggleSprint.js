@@ -2,11 +2,11 @@ import { registerWhen } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 import { data } from "../utils/Utils"
 
-export const forwardKey = new KeyBind(Client.getMinecraft().field_71474_y.field_74351_w)
+const sprintKey = new KeyBind(Client.getMinecraft().field_71474_y.field_151444_V)
 
 register("tick", () => {
-    if (!Config.toggleSprint || !forwardKey.isKeyDown() || Player.isSneaking()) return
-    Player.getPlayer().func_70031_b(true)
+    if (!Config.toggleSprint) return
+    sprintKey.setState(true)
 })
 
 register("dragged", (mx, my, x, y) => {

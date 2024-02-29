@@ -5,8 +5,8 @@ import { data } from "../utils/Utils"
 export const forwardKey = new KeyBind(Client.getMinecraft().field_71474_y.field_74351_w)
 
 register("tick", () => {
-    if (!Config.toggleSprint || !forwardKey.isKeyDown() || Player.isSneaking()) return
-    Player.getPlayer().func_70031_b(true)
+if (!Config.toggleSprint) return
+    net.minecraft.client.settings.KeyBinding.func_74510_a(Client.getMinecraft().field_71474_y.field_151444_V.func_151463_i(), true)
 })
 
 register("dragged", (mx, my, x, y) => {

@@ -19,8 +19,11 @@ const currentRoom = getCurrentRoom()
     if (blazeCount == 10 && !trueTimeStarted) trueTimeStarted = Date.now()
     if (blazeCount == 9 && !blazeStarted) blazeStarted = Date.now()
 
-    if (blazeCount || !blazeStarted || (blazeCount == 0 && lastBlazeCount > 1)) return
+    
+    if (blazeCount == 0 && lastBlazeCount > 1) return
     lastBlazeCount = blazeCount
+
+    if (!blazeStarted || blazeCount > 0) return
 
     new TextComponent(`${prefix} Blaze Puzzle took &b${Math.floor((Date.now() - blazeStarted)/10)/100}s`)
         .setHover("show_text", `&fTrue time taken: &b${Math.floor((Date.now() - trueTimeStarted)/10)/100}`).chat()

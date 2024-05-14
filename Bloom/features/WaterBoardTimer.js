@@ -17,7 +17,7 @@ let leverPulled = null
 let chestOpened = null
 
 const checkInWater = (roomX, roomZ, rotation) => {
-    let [x, y, z] = convertToRealCoords(-1, 76, 8, roomX, roomZ, rotation)
+    let [x, y, z] = convertToRealCoords(1, 76, -8, roomX, roomZ, rotation)
     return World.getBlockAt(x, y, z).type.getRegistryName() == "minecraft:double_plant"
 }
 

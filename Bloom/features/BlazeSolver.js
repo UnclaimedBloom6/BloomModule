@@ -1,18 +1,56 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { EntityArmorStand, EntityBlaze, drawLine3d, getCurrentRoom, getEntityXYZ, getRoomCenter, registerWhen } from "../../BloomCore/utils/Utils"
+import { EntityArmorStand, EntityBlaze, drawLine3d, getEntityXYZ, getObjectXYZ, getRoomCenter, registerWhen } from "../../BloomCore/utils/Utils"
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
+import { convertToRealCoords, convertToRoomCoords, getCurrRoomInfo, onRoomEnter, onRoomExit } from "../utils/RoomUtils"
 
 // H: 1.8, W: 0.6
 
+
+let inBlaze = false
 let blazes = []
 
-register("tick", () => {
-    if (!Config.blazeSolver || !Dungeon.inDungeon) return
+register("worldUnload", () => {
+    inBlaze = false
+    blazes = []
+})
 
-    const room = getCurrentRoom()
-    if (!room || room.name !== "Blaze") return
+register("command", () => {
+    const la = Player.lookingAt()
+    if (!(la instanceof Block)) return
+
+    const [x, y, z] = getObjectXYZ(la)
+    const roomInfo = getCurrRoomInfo()
+    if (!roomInfo) return
     
+    const [rx, ry, rot] = roomInfo
+    const [x1, y1, z1] = convertToRoomCoords(x, y, z, rx, ry, rot)
+    const block = World.getBlockAt(x, y, z)
+    ChatLib.chat(`[${x1}, ${y1}, ${z1}]: ${block.type.getRegistryName()}`)
+
+}).setName("roomlookingat")
+
+onRoomEnter((roomX, roomZ, rotation) => {
+    const roomCoords = [
+        [-8, 69, -6],
+        [-9, 72, 5],
+    ]
+
+    inBlaze = roomCoords.some(([x, y, z]) => {
+        const [x1, y1, z1] = convertToRealCoords(x, y, z, roomX, roomZ, rotation)
+        return World.getBlockAt(x1, y1, z1).type.getRegistryName() == "minecraft:leaves"
+    })
+
+})
+
+onRoomExit(() => {
+    inBlaze = false
+    blazes = []
+})
+
+register("tick", () => {
+    if (!Config.blazeSolver || !Dungeon.inDungeon || !inBlaze) return
+
     const hpMap = new Map()
     blazes = []
     World.getAllEntitiesOfType(EntityArmorStand).forEach(e => {
@@ -33,10 +71,6 @@ register("tick", () => {
     if (World.getBlockAt(x+1, 118, z).type.getID() !== 4) {
         blazes.reverse()
     }
-})
-
-register("worldUnload", () => {
-    blazes = []
 })
 
 registerWhen(register("renderEntity", (entity, pos, pt, event) => {

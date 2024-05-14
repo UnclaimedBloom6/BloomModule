@@ -926,6 +926,14 @@ class Config {
     })
     containerValueCraftBooks = false;
 
+    @SwitchProperty({
+        name: "Item Value Overlay",
+        description: "Shows a detailed list of an items's value on the left side of the screen when hovered over.",
+        category: "Gui",
+        subcategory: "Item Value"
+    })
+    itemValueOverlay = false;
+
     // ---------------------------------------------------------------
     // Auto Kicker
 

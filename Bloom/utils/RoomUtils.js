@@ -2,10 +2,10 @@ import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import { getObjectXYZ, getRoomCenter, getRoomComponent, rotateCoords} from "../../BloomCore/utils/Utils"
 
 const doorOffsets = [
-    [0, 16],
-    [-16, 0],
     [0, -16],
-    [16, 0]
+    [16, 0],
+    [0, 16],
+    [-16, 0]
 ]
 
 export const convertToRoomCoords = (x, y, z, roomX, roomZ, roomRotation) => {
@@ -31,6 +31,8 @@ register("command", () => {
 
 let lastDungIndex = null
 let currRoom = null // [roomX, roomZ, rotation]
+
+export const getCurrRoomInfo = () => currRoom
 
 /**
  * @callback RoomEnterExitFunction

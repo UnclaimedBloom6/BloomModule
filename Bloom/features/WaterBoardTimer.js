@@ -62,7 +62,7 @@ register("packetReceived", (packet) => {
 
     const [roomX, roomZ, rotation] = roomInfo
     const chestPos = getObjectXYZ(pos)
-    const expectedChestPos = convertToRealCoords(0, 56, -7, roomX, roomZ, rotation)
+    const expectedChestPos = convertToRealCoords(1, 56, -7, roomX, roomZ, rotation)
     if (!chestPos.every((v, i) => v == expectedChestPos[i])) return
 
     // Chest open is a requirement to have the room exit time appear to avoid cheesing low times

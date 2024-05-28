@@ -48,7 +48,9 @@ const initPlayers = () => {
 
 const logRun = () => {
     if (!FileLib.exists("Bloom", "data/playerLogs.json")) FileLib.write("Bloom", "data/playerLogs.json", "[]")
-
+    
+    if (!Dungeon.partyInfo) return
+    
     let data = {
         f: Dungeon.floor,
         ts: Date.now(),
@@ -79,7 +81,7 @@ const logRun = () => {
         let logs = JSON.parse(FileLib.read("Bloom", "data/playerLogs.json"))
         logs.push(data)
         FileLib.write("Bloom", "data/playerLogs.json", JSON.stringify(logs))
-    }).catch(e => ChatLib.chat(`&cError logging players: ${e}`))
+    }).catch(e => ChatLib.chat(`&cError logging players: ${JSON.stringify(e)}`))
 }
 
 onChatPacket(() => {

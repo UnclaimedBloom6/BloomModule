@@ -73,7 +73,7 @@ export const dsCommand = register("command", (player) => {
                 let str = "&cCompletions"
                 for (let floor = 1; floor <= 7; floor++) {
                     let comps = cata["tier_completions"][floor] == undefined ? 0 : cata["tier_completions"][floor]
-                    let masterComps = master && master ? master.tier_completions[floor] == undefined ? "" : master.tier_completions[floor] : ""
+                    let masterComps = master && "tier_completions" in master ? master.tier_completions[floor] == undefined ? "" : master.tier_completions[floor] : ""
                     let masterStr = masterComps == "" ? "" : ` &8| &c${master.tier_completions[floor]}`
                     totalNormal += comps
                     totalMaster += masterComps == "" ? 0 : masterComps
@@ -126,7 +126,7 @@ export const dsCommand = register("command", (player) => {
                 new TextComponent(`&cS`).setHover("show_text", sHover)
             ).chat()
 
-        }).catch(e => `${prefix} &cError getting Dungeon Stats for ${player}: ${e}`)
+        }).catch(e => ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${e}`))
     }).catch(error => {
         ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${error}`)
     })

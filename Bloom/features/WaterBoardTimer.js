@@ -38,11 +38,10 @@ onRoomExit(() => {
 })
 
 register("playerInteract", (action, pos) => {
-    if (!roomInfo || action.toString() !== "RIGHT_CLICK_BLOCK") return
-    const [x, y, z] = getObjectXYZ(pos)
-    const block = World.getBlockAt(x, y, z)
-    const blockName = block.type.getRegistryName()
-    if (blockName !== "minecraft:lever" || leverPulled) return
+    if (!roomInfo || action.toString() !== "RIGHT_CLICK_BLOCK" || leverPulled) return
+    const pos = getObjectXYZ(pos)
+    if (!pos.every((v, i) => v == [0, 60, -10][i])) return
+    
     leverPulled = Date.now()
 })
 
@@ -62,7 +61,7 @@ register("packetReceived", (packet) => {
 
     const [roomX, roomZ, rotation] = roomInfo
     const chestPos = getObjectXYZ(pos)
-    const expectedChestPos = convertToRealCoords(1, 56, -7, roomX, roomZ, rotation)
+    const expectedChestPos = convertToRealCoords(0, 56, 7, roomX, roomZ, rotation)
     if (!chestPos.every((v, i) => v == expectedChestPos[i])) return
 
     // Chest open is a requirement to have the room exit time appear to avoid cheesing low times

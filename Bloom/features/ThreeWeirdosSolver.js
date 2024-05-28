@@ -39,7 +39,6 @@ onRoomEnter((roomX, roomY, rotation) => {
     const [x1, y1, z1] = convertToRealCoords(x0, y0, z0, roomX, roomY, rotation)
 
     inWeirdos = World.getBlockAt(x1, y1, z1).type.getRegistryName() == "minecraft:redstone_wire"
-    ChatLib.chat(`Weirdos: ${inWeirdos}`)
 })
 
 onRoomExit(() => {

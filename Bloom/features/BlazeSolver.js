@@ -3,6 +3,7 @@ import { EntityArmorStand, EntityBlaze, drawLine3d, getEntityXYZ, getObjectXYZ, 
 import RenderLib from "../../RenderLib"
 import Config from "../Config"
 import { convertToRealCoords, convertToRoomCoords, getCurrRoomInfo, onRoomEnter, onRoomExit } from "../utils/RoomUtils"
+import { prefix } from "../utils/Utils"
 
 // H: 1.8, W: 0.6
 
@@ -10,10 +11,9 @@ import { convertToRealCoords, convertToRoomCoords, getCurrRoomInfo, onRoomEnter,
 let inBlaze = false
 let blazes = []
 
-register("worldUnload", () => {
-    inBlaze = false
-    blazes = []
-})
+let blazeStarted = null
+let trueTimeStarted = null
+let lastBlazeCount = 10
 
 register("command", () => {
     const la = Player.lookingAt()
@@ -46,10 +46,13 @@ onRoomEnter((roomX, roomZ, rotation) => {
 onRoomExit(() => {
     inBlaze = false
     blazes = []
+    blazeStarted = null
+    trueTimeStarted = null
+    lastBlazeCount = 10
 })
 
 register("tick", () => {
-    if (!Config.blazeSolver || !Dungeon.inDungeon || !inBlaze) return
+    if ((!Config.blazeSolver && !Config.blazeTimer) || !Dungeon.inDungeon || !inBlaze) return
 
     const hpMap = new Map()
     blazes = []
@@ -62,8 +65,25 @@ register("tick", () => {
         hpMap.set(e, hp)
         blazes.push(e)
     })
-    if (!blazes || !blazes.length) return
 
+    // Start each timer
+    if (blazes.length == 10 && !trueTimeStarted) trueTimeStarted = Date.now()
+    if (blazes.length == 9 && !blazeStarted) blazeStarted = Date.now()
+
+    // Check for puzzle end
+    if (!blazes || !blazes.length) {
+        // Blaze count went from >1 to 0, must have failed
+        if (lastBlazeCount !== 1 || !Config.blazeTimer) return
+
+        new TextComponent(`${prefix} Blaze Puzzle took &b${Math.floor((Date.now() - blazeStarted)/10)/100}s`)
+            .setHover("show_text", `&fTrue time taken: &b${Math.floor((Date.now() - trueTimeStarted)/10)/100}`).chat()
+
+        lastBlazeCount = 0
+
+        return
+    }
+
+    lastBlazeCount = blazes.length
     blazes.sort((a, b) => hpMap.get(a) - hpMap.get(b))
     
     const [x, z] = getRoomCenter()

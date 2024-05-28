@@ -1,8 +1,8 @@
 import Config from "../Config";
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { EntityArmorStand, getCurrentRoom, getObjectXYZ } from "../../BloomCore/utils/Utils"
-import RenderLib from "../../RenderLib";
+import { EntityArmorStand, getObjectXYZ, registerWhen } from "../../BloomCore/utils/Utils"
 import { renderFilledBox } from "../../BloomCore/RenderUtils";
+import { convertToRealCoords, onRoomEnter, onRoomExit } from "../utils/RoomUtils";
 
 const solutions = [
     /The reward is not in my chest!/,
@@ -27,11 +27,24 @@ const wrong = [
     /My chest has the reward./
 ]
 
-
 const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
 const correctChests = new Map() // "entityName": [x, y, z]
 const incorrectChests = new Map()
+let inWeirdos = false
+const redstoneLocation = [-2, 69, 7] // minecraft:redstone_wire
+
+onRoomEnter((roomX, roomY, rotation) => {
+    const [x0, y0, z0] = redstoneLocation
+    const [x1, y1, z1] = convertToRealCoords(x0, y0, z0, roomX, roomY, rotation)
+
+    inWeirdos = World.getBlockAt(x1, y1, z1).type.getRegistryName() == "minecraft:redstone_wire"
+    ChatLib.chat(`Weirdos: ${inWeirdos}`)
+})
+
+onRoomExit(() => {
+    inWeirdos = false
+})
 
 const doChestStuff = (entityName, mapToAddTo) => {
     if (mapToAddTo.has(entityName)) return
@@ -52,7 +65,7 @@ const doChestStuff = (entityName, mapToAddTo) => {
 }
 
 register("chat", (event) => {
-    if (!Dungeon.inDungeon || !Config.weirdosSolver) return
+    if (!Dungeon.inDungeon || !Config.weirdosSolver || !inWeirdos) return
 
     const message = ChatLib.getChatMessage(event).removeFormatting()
     const match = message.match(/\[NPC\] (\w+): (.+)/)
@@ -67,7 +80,7 @@ register("chat", (event) => {
         return
     }
     
-    if (!wrong.some(a => text.match(a))) return
+    if (!wrong.some(a => a.test(text))) return
 
     // The wrong answer
     cancel(event)
@@ -83,13 +96,10 @@ const highlightChest = (coord, red, green, blue, alpha) => {
     renderFilledBox(x+0.5, y, z+0.5, w, h, red, green, blue, alpha, false)
 }
 
-register("renderWorld", () => {
-    const roomData = getCurrentRoom()
-    if (!roomData || roomData.name !== "Three Weirdos") return
-
+registerWhen(register("renderWorld", () => {
     correctChests.forEach((v, k) => highlightChest(v, 0, 1, 0, 0.5))
     incorrectChests.forEach((v, k) => highlightChest(v, 1, 0, 0, 0.5))
-})
+}), () => inWeirdos)
 
 register("worldUnload", () => {
     correctChests.clear()

@@ -36,21 +36,20 @@ const getCurrentFrameRotations = () => {
     const posMap = new Map()
 
     // Process the existing item frames and save the positions and rotations
-    itemFrames.forEach(frame => {
+    for (let frame of itemFrames) {
         const pos = getEntityXYZ(frame).map(Math.floor)
         const posStr = pos.join()
 
         const mcItem = frame.getEntity().func_82335_i() // getDisplayedItem()
-        if (!mcItem) return
+        if (!mcItem) continue
 
         const ctItem = new Item(mcItem)
-        if (ctItem.getRegistryName() !== "minecraft:arrow") return
+        if (ctItem.getRegistryName() !== "minecraft:arrow") continue
 
         const rotation = frame.getEntity().func_82333_j() // getRotation()
 
         posMap.set(posStr, rotation)
-
-    })
+    }
 
     // Construct the 25-length array of the board
     let [x, y0, z0] = deviceCorner

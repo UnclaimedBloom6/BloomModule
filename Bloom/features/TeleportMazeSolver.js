@@ -1,8 +1,9 @@
 import { renderBlockHitbox, renderBoxFromCorners, renderBoxOutline, renderFilledBox } from "../../BloomCore/RenderUtils";
 import { onScoreboardLine } from "../../BloomCore/utils/Events";
-import { S08PacketPlayerPosLook, drawLine3d, getPlayerEyeCoords, manhattanDistance, registerWhen } from "../../BloomCore/utils/Utils";
+import { S08PacketPlayerPosLook, drawLine3d, getPlayerEyeCoords, getRoomComponent, manhattanDistance, registerWhen } from "../../BloomCore/utils/Utils";
 import Vector3 from "../../BloomCore/utils/Vector3";
 import Config from "../Config";
+import { convertToRealCoords, onRoomEnter, onRoomExit } from "../utils/RoomUtils";
 
 const getPseudoRandomRGB = (index) => {
     const indexString = String(index*10)
@@ -61,7 +62,7 @@ let minX = null
 let minZ = null
 let cells = null
 let orderedPads = null // Pads in order from most to least likely to be the end
-let dungeonPos = null // [x, z] from 0-6 on the map
+let inTpMaze = false
 
 const reset = () => {
     minX = null
@@ -69,6 +70,7 @@ const reset = () => {
     cells = null
     orderedPads = null
     dungeonPos = null
+    inTpMaze = false
 }
 
 const getCellAt = (x, z) => {
@@ -104,42 +106,26 @@ const isPadInStartOrEndCell = (tpPad) => {
     return false
 }
 
-const getDungeonPositionIndex = () => {
-    const xIndex = Math.floor((Player.getX() + 200) / 32)
-    const zIndex = Math.floor((Player.getZ() + 200) / 32)
-    return [xIndex, zIndex]
-}
-
-const roomExitListener = register("tick", () => {
-    const [x, z] = getDungeonPositionIndex()
-    // Reset stuff when the player walks outside of tp maze
-    if (!dungeonPos || dungeonPos[0] !== x || dungeonPos[1] !== z) {
-        roomExitListener.unregister()
-        reset()
-    }
-})
-
-register("worldUnload", reset)
-
-onScoreboardLine((_, text) => {
+onRoomEnter((roomX, roomZ, rotation) => {
     if (!Config.tpMazeSolver) return
-    if (!text.match(/^§7\d+\/\d+\/\d+ §8[^ ]+ -60,-456$/)) return
-    reset()
-    roomExitListener.register()
-    
-    const [xIndex, zIndex] = getDungeonPositionIndex()
-    dungeonPos = [xIndex, zIndex]
 
-    const roomX = xIndex * 32 - 200
-    const roomZ = zIndex * 32 - 200
-    
+    const [x1, y1, z1] = convertToRealCoords(0, 69, -3, roomX, roomZ, rotation)
+    if (World.getBlockAt(x1, y1, z1).type.getRegistryName() !== "minecraft:end_portal_frame") {
+        inTpMaze = false
+        return
+    }
+
+    inTpMaze = true
+
     let pads = []
     for (let dx = 0; dx <= 31; dx++) {
         for (let dz = 0; dz <= 31; dz++) {
-            let block = World.getBlockAt(roomX + dx, 69, roomZ + dz)
+            let x = roomX + dx - 16 // -16 to get to the corner of the room, not the center
+            let z = roomZ + dz - 16
+            let block = World.getBlockAt(x, 69, z)
             if (block.type.getID() !== 120) continue
 
-            pads.push(new TpPad(roomX+dx, roomZ+dz, block))
+            pads.push(new TpPad(x, z, block))
         }
     }
 
@@ -159,6 +145,13 @@ onScoreboardLine((_, text) => {
         cells[hash].addPad(pad)
     }
 })
+
+onRoomExit(() => {
+    if (!inTpMaze) return
+    reset()
+})
+
+register("worldUnload", reset)
 
 registerWhen(register("renderWorld", () => {
     if (!cells || !Config.tpMazeSolver) return

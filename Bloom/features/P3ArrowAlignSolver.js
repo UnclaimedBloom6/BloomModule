@@ -37,16 +37,16 @@ const getCurrentFrameRotations = () => {
 
     // Process the existing item frames and save the positions and rotations
     for (let frame of itemFrames) {
-        const pos = getEntityXYZ(frame).map(Math.floor)
-        const posStr = pos.join()
+        let pos = getEntityXYZ(frame).map(Math.floor)
+        let posStr = pos.join()
 
-        const mcItem = frame.getEntity().func_82335_i() // getDisplayedItem()
+        let mcItem = frame.getEntity().func_82335_i() // getDisplayedItem()
         if (!mcItem) continue
 
-        const ctItem = new Item(mcItem)
+        let ctItem = new Item(mcItem)
         if (ctItem.getRegistryName() !== "minecraft:arrow") continue
 
-        const rotation = frame.getEntity().func_82333_j() // getRotation()
+        let rotation = frame.getEntity().func_82333_j() // getRotation()
 
         posMap.set(posStr, rotation)
     }

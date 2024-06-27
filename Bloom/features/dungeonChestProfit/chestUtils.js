@@ -62,7 +62,6 @@ export class ChestItem {
         this.item = item
         this.name = item.getName()
         this.quantity = 1
-        this.itemID = null
         this.init()
     }
     init() {
@@ -85,16 +84,34 @@ export class ChestItem {
     calcValue() {
         if (worthless.has(this.itemID)) {
             this.value = 0
-            return
+            return 0
         }
-        this.value = Math.floor((PriceUtils.getSellPrice(this.itemID) ?? 0) *  this.quantity)
+        
+        const sellInfo = PriceUtils.getSellPrice(this.itemID, true)
+        if (!sellInfo) return 0
+        const [price, from] = sellInfo
+        
+        this.value = price * this.quantity
+        
+        if (this.item.getRegistryName() == "minecraft:enchanted_book") {
+            this.value = PriceUtils.getBookPriceWhenCrafted(this.item)
+        }
+
+        // Tax shit
+        if (config.includeTaxes) {
+            if (from == PriceUtils.locations.AUCTION) this.value = PriceUtils.getBINPriceAfterTax(this.value)
+            else this.value *= (1 - 0.0125)
+        }
+
+
+        return Math.floor(this.value)
     }
     getPriceStr() {
         let color = "&a+"
         if (this.value == 0) color = "&e"
         if (this.value < 0) color = "&c-"
 
-        return `${this.name}&f: ${color}${fn(this.value)}`
+        return `${this.name}&f: ${color}${fn(Math.floor(this.value))}`
     }
     toString() {
         return `ChestItem[${this.itemID}, qty=${this.quantity}, value=${this.value}]`

@@ -1,5 +1,3 @@
-/// <reference types="../CTAutocomplete" />
-/// <reference lib="es2015" />
 
 import { skillsCommand } from "./commands/SkillsCommand"
 import { dontRp } from "./commands/DontRP"
@@ -14,6 +12,7 @@ import { kuudraCommand } from "./commands/KuudraCommand"
 import { pbCommand } from "./commands/PBCommand"
 import "./commands/MiscCommands"
 import "./commands/EnderPearlCommand"
+import "./commands/wikiCommand"
 
 import "./utils/FirstInstall"
 

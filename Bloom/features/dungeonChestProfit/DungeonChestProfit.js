@@ -3,6 +3,7 @@ import { data } from "../../utils/Utils"
 import Config from "../../Config"
 import { readFileLines, registerWhen } from "../../../BloomCore/utils/Utils"
 import { ChestItem, DungeonChest, alwaysBuy, chestData } from "./chestUtils"
+import Dungeon from "../../../BloomCore/dungeons/Dungeon"
 
 let openedChests = []
 let renderStr = null
@@ -67,7 +68,7 @@ const updateRenderString = () => {
 }
 
 register("tick", () => {
-    if (!Config.dungeonChestProfit) return
+    if (!Config.dungeonChestProfit || !Dungeon.inDungeon) return
 
     let inv = Player.getContainer()
     let match = inv.getName().match(/^(\w+) Chest$/)

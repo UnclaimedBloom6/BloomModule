@@ -3,8 +3,16 @@ import { fn } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 
 
-register("itemTooltip", (_, item) => {
+register("postGuiRender", () => {
     if (!Config.itemValueOverlay) return
+
+    const inv = Player.getContainer()
+
+    const slot = Client.currentGui.getSlotUnderMouse()
+    if (!slot) return
+
+    const item = inv.getStackInSlot(slot.getIndex())
+    if (!item) return
 
     const itemValueInfo = PriceUtils.getItemValue(item, true)
     
@@ -21,5 +29,4 @@ register("itemTooltip", (_, item) => {
 
     Renderer.translate(10, 10)
     Renderer.drawString(str, 0, 0)
-
 })

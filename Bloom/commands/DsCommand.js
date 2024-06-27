@@ -28,7 +28,8 @@ export const dsCommand = register("command", (player) => {
             let nameFormatted = `${getRank(playerInfo)} ${playerName}&r`
             if (!Object.keys(sbProfile.members[uuid].dungeons.dungeon_types.catacombs).length) return ChatLib.chat(`${prefix} &c${playerName} has never entered the Catacombs!`)
             let profileName = sbProfile["cute_name"]
-            const secretsFound = playerInfo.player.achievements.skyblock_treasure_hunter || 0
+            const secretsFound = playerInfo.player?.achievements?.skyblock_treasure_hunter || 0
+            const profileSecrets = sbProfile.members[uuid]?.dungeons?.secrets || 0
             
             let dung = sbProfile.members[uuid].dungeons
             let master = sbProfile.members[uuid].dungeons.dungeon_types.master_catacombs ?? null
@@ -89,7 +90,7 @@ export const dsCommand = register("command", (player) => {
             let cataHover = `&e&nCatacombs\n` +
                 `&bTotal XP: &6${fn(cataXP)}\n` +
                 `&aProgress: &6${fn(cataXP - catacombs[cataLow])}&a/&6${fn(xpNext)}\n` +
-                (cataLevel < 50 ? `&eRemaining: &6${fn(parseInt(catacombs[cataLow+1] - cataXP) || 0)}\n` : "") +
+                (cataLevel < 50 ? `&eRemaining: &6${fn(Math.floor(catacombs[cataLow+1] - cataXP) || 0)}\n` : "") +
                 `&dPercent To 50: &6${percentTo50}%`
 
             if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%2e8)}&c/&6200,000,000`
@@ -100,7 +101,9 @@ export const dsCommand = register("command", (player) => {
             
             let secretsHover = `&e&nSecrets\n` +
             `&aTotal: &e${fn(secretsFound)}\n` +
-            `&aSecrets/Run: &e${parseInt((secretsFound / (totalNormal + totalMaster)) * 100)/100}`
+            `&eProfile: ${fn(profileSecrets)}\n` +
+            `&aSecrets/Run: &e${(secretsFound / (totalNormal + totalMaster)).toFixed(2)}`
+
             const getTimes = (key) => {
                 let str = ""
                 for (let floor = 1; floor <= 7; floor++) {
@@ -112,6 +115,7 @@ export const dsCommand = register("command", (player) => {
                 }
                 return str
             }
+
             let sPlusHover = `&cS+ Runs${getTimes("fastest_time_s_plus")}`
             let sHover = `&cS Runs${getTimes("fastest_time_s")}`
             

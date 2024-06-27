@@ -70,7 +70,8 @@ export const data = new PogObject("Bloom", {
         x: 0,
         y: 0,
         scale: 0.5
-    }
+    },
+    wikiType: "official",
 }, "data/data.json")
 
 export const colorOrder = [1, 4, 13, 11, 14]

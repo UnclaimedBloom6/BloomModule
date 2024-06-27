@@ -110,7 +110,12 @@ register("chat", (player, reason) => {
     if (!(player in Dungeon.partyInfo)) return
 
     reason = reason.replace(/^were/, "was")
-    if (Dungeon.bossEntry) return Dungeon.partyInfo[player].deaths.push(`(Boss) ${reason}`)
+    if (Dungeon.bossEntry) {
+        let deaths = Dungeon.partyInfo[player]?.deaths
+        if (!deaths) return
+        deaths.push(`(Boss) ${reason}`)
+        return
+    }
 
     if (!Dungeon.partyInfo[player].deaths) return
 
@@ -204,6 +209,7 @@ const printUserCriteria = (options) => {
     let time = options.time
     let partySize = options.partySize
     let score = options.score
+    let runTime = options.runTime
 
     let message = "&aShowing runs logged with"
 
@@ -234,6 +240,15 @@ const printUserCriteria = (options) => {
         message += scoreStr
     }
 
+    if (runTime) {
+        let [symbol, _, time] = runTime
+        let runTimeStr = ` and run time of `
+        if (symbol == "<") runTimeStr += `less than &6${time}&a`
+        else if (symbol == ">") runTimeStr += `&6${time}&a or more`
+        else runTimeStr += `&6${time}&a`
+        message += runTimeStr
+    }
+
     message += "."
 
     ChatLib.chat(message)
@@ -245,6 +260,7 @@ const handleLogs = (logs, options) => {
     let time = options.time
     let partySize = options.partySize
     let score = options.score
+    let runTime = options.runTime
 
     // Filter by specified floor
     if (floor) logs = logs.filter(a => a.f == floor)
@@ -274,6 +290,16 @@ const handleLogs = (logs, options) => {
         if (symbol == "<") filterFunc = i => i.s < scoreInt
         if (symbol == ">") filterFunc = i => i.s >= scoreInt
 
+        logs = logs.filter(filterFunc)
+    }
+    
+    if (runTime) {
+        let [symbol, timeSecs] = runTime
+    
+        let filterFunc = i => i.t == timeSecs
+        if (symbol == "<") filterFunc = i => i.t < timeSecs
+        if (symbol == ">") filterFunc = i => i.t >= timeSecs
+    
         logs = logs.filter(filterFunc)
     }
 
@@ -435,11 +461,20 @@ register("command", (...args) => {
     // Score Argument
     let scoreArg = args.find(a => a.startsWith("s:"))
     if (scoreArg) {
-        // Validate the party size using https://regex101.com/r/BRYdfk/1
-        let match = scoreArg.match(/^^s:([<>])?(\d{1,3})$/)
+        // https://regex101.com/r/BRYdfk/1
+        let match = scoreArg.match(/^s:([<>])?(\d{1,3})$/)
         if (!match) return ChatLib.chat(`&cInvalid score argument! Try: s:>300 for S+ runs.`)
         let [_, symbol, score] = match
         options.score = [symbol, parseInt(score)]
+    }
+
+    let runSpeedArg = args.find(a => a.startsWith("rs:"))
+    if (runSpeedArg) {
+        // https://regex101.com/r/R1yO0b/1
+        let match = runSpeedArg.match(/^rs:([<>])?([\dmsh]+)$/)
+        if (!match) return ChatLib.chat(`&cInvalid run speed argument! Examples: rs:<3m rs:>5m30s rs:3m`)
+        let [_, symbol, time] = match
+        options.runTime = [symbol, timeToMS(time)/1000, time]
     }
 
     // Handle players argument differently since the UUID needs to be grabbed for each player.

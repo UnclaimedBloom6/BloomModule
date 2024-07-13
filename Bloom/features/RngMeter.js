@@ -178,6 +178,7 @@ register("chat", (score, rank) => {
     if (!floor) return
 
     const floorData = data.rngMeter.data[floor]
+    if (!floorData) return
 
     // Check if the meter score has been reached
     // For some reason reaching the required score makes the item drop on the next run

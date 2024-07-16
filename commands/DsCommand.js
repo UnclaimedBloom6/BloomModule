@@ -191,8 +191,8 @@ export const dsCommand = register("command", (player) => {
                 }
 
                 extraComponents = [
+                    columnSeparator,new TextComponent(`&cS+`).setHover("show_text", `&cS+ Runs${getTimes("fastest_time_s_plus")}`),
                     columnSeparator,new TextComponent(`&cS`).setHover("show_text", `&cS Runs${getTimes("fastest_time_s")}`),
-                    columnSeparator,new TextComponent(`&cS+`).setHover("show_text", `&cS Runs${getTimes("fastest_time_s_plus")}`),
                     "\n",
                     new TextComponent(`&cMP: &e${fn(mp)}`).setHover("show_text", mpHover),columnSeparator
                 ];

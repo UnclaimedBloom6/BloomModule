@@ -1,0 +1,36 @@
+&f&lWood Chest &6(0)&f: &a+34,182
+  §6Infinite Quiver VI&f: &c-0
+  §dWither Essence §8x16&f: &a+27,974
+  §dUndead Essence §8x13&f: &a+6,208
+
+&6&lGold Chest &6(100,000)&f: &c-10,852
+  §d§lNo Pain No Gain I&f: &a+1
+  §6Rejuvenate I&f: &a+59,570
+  §dWither Essence §8x12&f: &a+20,981
+  §dUndead Essence §8x18&f: &a+8,596
+
+&b&lDiamond Chest &6(250,000)&f: &c-153,053
+  §6Infinite Quiver VI&f: &c-0
+  §6Rejuvenate I&f: &a+59,570
+  §6Feather Falling VI&f: &a+4
+  §dWither Essence §8x14&f: &a+24,478
+  §dUndead Essence §8x27&f: &a+12,895
+
+&2&lEmerald Chest &6(500,000)&f: &a+27,230
+  §6Rejuvenate II&f: &a+118,629
+  §d§lWisdom I&f: &a+354,699
+  §dWither Essence §8x24&f: &a+41,962
+  §dUndead Essence §8x25&f: &a+11,940
+
+&5&lObsidian Chest &6(1,500,000)&f: &c-27,673
+  §5Shadow Assassin Boots&f: &a+990,000
+  §d§lLast Stand I&f: &a+412,042
+  §dWither Essence §8x29&f: &a+50,704
+  §dUndead Essence §8x41&f: &a+19,581
+
+&8&lBedrock Chest &6(2,000,000)&f: &c-1,883,609
+  §zLethality VI&f: &c-0
+  §d§lCombo II&f: &a+30,002
+  §d§lBank III&f: &a+205
+  §dWither Essence §8x37&f: &a+64,692
+  §dUndead Essence §8x45&f: &a+21,492

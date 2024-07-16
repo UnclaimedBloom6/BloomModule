@@ -1,0 +1,15 @@
+{
+    "name": "Bloom",
+    "description": "Random stuff idk",
+    "version": "4.7.5",
+    "author": "UnclaimedBloom6",
+    "entry": "index.js",
+    "requires": [
+        "requestV2",
+        "PogData",
+        "Vigilance",
+        "PromiseV2",
+        "BloomCore",
+        "RenderLib"
+    ]
+}

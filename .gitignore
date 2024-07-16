@@ -1,3 +1,4 @@
-Bloom/data/data.json
-Bloom/config.toml
-Bloom/data/playerLogs.json
+data/data.json
+data/playerLogs.json
+config.toml
+zip.sh

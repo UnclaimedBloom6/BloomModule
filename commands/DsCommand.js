@@ -20,12 +20,6 @@ const columnSeparator = ` &8| `
 
 const prettifyLevel = (level) => level == 120 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
 
-function rightPadNumber(str, len) {
-    if (str.length >= len) return str
-    if (len - str.length > 2) len += 1
-    return str + " ".repeat(len - str.length)
-}
-
 const padWithCommas = (string, maxLength) => {
     const toAdd = Math.floor((maxLength - Renderer.getStringWidth(string)) / Renderer.getStringWidth(invisComma))
     return string + invisComma.repeat(toAdd)

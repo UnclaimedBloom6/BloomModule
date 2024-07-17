@@ -88,13 +88,17 @@ function kuudraCommandExec(player) {
 register("chat", (player, combatLevel) => {
 	if (player === Player.getName()) {
         if (!Config.autoDSParty) return;
+        
 		new Thread(() => {
 			hidePartySpam(750)
 			ChatLib.command("pl")
 			Thread.sleep(750)
 			kuudraCommandExec(p)
 		}).start()
-	} else if (Config.autoDS) {
-		kuudraCommandExec(player)
+
+        return
 	}
-}).setChatCriteria("Party Finder > ${player} joined the group! (Combat Level ${*})")
+
+    if (Config.autoDS) kuudraCommandExec(player)
+
+}).setChatCriteria(/^Party Finder > (\w{1,16}) joined the group! \(Combat Level (\d+)\)$/)

@@ -40,7 +40,7 @@ export function getSpiritPetStatus(sbProfile) {
 const gdragSymbol = "GDRAG"
 export function getGdragStatus(sbProfile) {
     const gdrags = sbProfile.pets_data?.pets?.filter(a => a.type == "GOLDEN_DRAGON")
-    if (!gdrags || !gdrags.length) return {gdragText: "&c" + gdragSymbol,gdragHover: "&eNo Golden Dragon Pet"}
+    if (!gdrags || !gdrags.length) return {gdragText: "&cNO" + gdragSymbol,gdragHover: "&eNo Golden Dragon Pet"}
     let missingBalance = false
     const bank = sbProfile.banking
     if (bank && bank.balance < 990_000_000) missingBalance = true

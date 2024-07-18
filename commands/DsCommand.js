@@ -17,6 +17,7 @@ const classWithSymbols = {
 
 const invisComma = "&0,"
 const columnSeparator = ` &8| `
+const runTableSeparator = ` &b| `
 
 const prettifyLevel = (level) => level == 120 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
 
@@ -84,7 +85,7 @@ const getCompInfo = (dungeonObject) => {
 
             // Separator every two columns
             if (col % 2 == 0 && col !== 0) {
-                finalArr[i+1] += columnSeparator
+                finalArr[i+1] += runTableSeparator
             }
 
             // And add the data for this floor
@@ -93,7 +94,7 @@ const getCompInfo = (dungeonObject) => {
 
         // Insert the title and center it in the column. This whole block is just for a centered fucking header
         if (col % 2 == 1) {
-            finalArr[0] += columnSeparator
+            finalArr[0] += runTableSeparator
             
             let title = colTitles.shift()
             let titleWidth = Renderer.getStringWidth(title)
@@ -103,7 +104,7 @@ const getCompInfo = (dungeonObject) => {
             // How much space should be taken up by commas in total on L + R
             let spaceToFill = maxWidth - existingWidth - titleWidth
             // Amount of comma space each side
-            let sideSpace = Math.floor((spaceToFill) / 2)
+            let sideSpace = Math.ceil(spaceToFill / 2)
 
             // Insert the centered column title
             finalArr[0] = padWithCommas(finalArr[0], existingWidth + sideSpace)

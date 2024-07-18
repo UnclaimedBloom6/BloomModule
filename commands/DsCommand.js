@@ -1,15 +1,190 @@
 import Party from "../../BloomCore/Party"
 import { catacombs } from "../../BloomCore/skills/catacombs"
-import { getHypixelPlayer, getHypixelPlayerV2, getMojangInfo, getPlayerUUID, getProfileByID, getRecentProfile, getSelectedProfileV2 } from "../../BloomCore/utils/APIWrappers"
+import { getHypixelPlayerV2, getPlayerUUID, getSelectedProfileV2 } from "../../BloomCore/utils/APIWrappers"
 import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
+import {getMpInfo, getSpiritPetStatus, getGdragStatus, getSelectedArrows, getSbLevelInfo} from "../utils/ProfileInfoCommons"
+import Config from "../Config"
+
+const classWithSymbols = {
+    "mage": "⚚ Mage",
+    "healer": "☤ Healer",
+    "archer": "➶ Archer",
+    "tank": "። Tank",
+    "berserk": "⚔ Berserk"
+}
+
+const invisComma = "&0,"
+const columnSeparator = ` &8| `
+
+const prettifyLevel = (level) => level == 120 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
+
+const padWithCommas = (string, maxLength) => {
+    const toAdd = Math.floor((maxLength - Renderer.getStringWidth(string)) / Renderer.getStringWidth(invisComma))
+    return string + invisComma.repeat(toAdd)
+}
+
+/**
+ * Inserts black commas at the end of each string in the array until they are all equal length
+ * @param {String[]} stringsArr 
+ * @returns {String[]}
+ */
+const padStrings = (stringsArr) => {
+    const maxLength = Math.max(...stringsArr.map(v => Renderer.getStringWidth(v)))
+
+    return stringsArr.map(v => padWithCommas(v, maxLength))
+
+}
+
+const getFormattedTime = (timeMs, isMM) => {
+    if (!timeMs) return "&8??:??"
+
+    const formatted = convertToPBTime(timeMs)
+
+    if (isMM) return "&c" + formatted
+    return "&a" + formatted
+}
+
+const getFormattedComps = (comps, isMM) => {
+    if (!comps) return "&80"
+    
+    if (isMM) return "&c" + fn(comps)
+    return "&a" + fn(comps)
+}
+
+// |   Comps    |     S+     |      S      |
+// 1] 46   9    | 2:08  2:19 | 2:28  ??:?? |
+// 2] 56   4    | 2:20  5:11 | 2:09  3:30  |
+// 3] 1    24   | ??:?? 3:34 | ??:?? 2:37  |
+// 4] 22   2    | 4:14  4:26 | 3:17  6:31  |
+// 5] 4589 1138 | 1:41  1:41 | 2:03  2:04  |
+// 6] 504  272  | 2:31  2:27 | 2:49  2:34  |
+// 7] 385  1    | 4:16  9:16 | 4:26  ??:?? |
+/**
+ * 
+ * @param {*} compMatrix - Example above, 6x7 matrix of comps, pbs etc. Having them all in a neat little matrix makes formatting it all much easier
+ */
+const getCompInfo = (dungeonObject) => {
+    const { matrix, normalComps, masterComps } = createCompMatrix(dungeonObject)
+    const totalComps = normalComps + masterComps
+
+    const finalArr = new Array(8).fill("") // 8 instead of 7 because of the column titles
+
+    const colTitles = ["&eComps", "&eS+", "&eS"]
+
+    // Go by columns first instead of rows since we need to build the strings from left to right
+    for (let col = 0; col < matrix[0].length; col++) {
+        // Get all of the strings for this column and pad them
+        let paddedStrings = padStrings(matrix.map(v => v[col]))
+
+        for (let i = 0; i < paddedStrings.length; i++) {
+            // Insert the floor number into the start of the line
+            if (col == 0) finalArr[i+1] += `&e${i+1}] `
+
+            // Separator every two columns
+            if (col % 2 == 0 && col !== 0) {
+                finalArr[i+1] += columnSeparator
+            }
+
+            // And add the data for this floor
+            finalArr[i+1] += paddedStrings[i]
+        }
+
+        // Insert the title and center it in the column. This whole block is just for a centered fucking header
+        if (col % 2 == 1) {
+            finalArr[0] += columnSeparator
+            
+            let title = colTitles.shift()
+            let titleWidth = Renderer.getStringWidth(title)
+            let existingWidth = Renderer.getStringWidth(finalArr[0]) // How long the top line is already
+            let maxWidth = Math.max(...finalArr.map(a => Renderer.getStringWidth(a))) // The target width
+
+            // How much space should be taken up by commas in total on L + R
+            let spaceToFill = maxWidth - existingWidth - titleWidth
+            // Amount of comma space each side
+            let sideSpace = Math.floor((spaceToFill) / 2)
+
+            // Insert the centered column title
+            finalArr[0] = padWithCommas(finalArr[0], existingWidth + sideSpace)
+            finalArr[0] += title
+            finalArr[0] = padWithCommas(finalArr[0], maxWidth)
+        }
+    }
+
+    // Combine the string and add the total completions at the bottom of it
+    let compHover = finalArr.join("\n")
+    compHover += `\n&aCompletions: &a${fn(normalComps)} &8| &c${fn(masterComps)}`
+    compHover += `\n&aOverall: &e${fn(totalComps)}`
+
+    return {
+        compHover,
+        normalComps,
+        masterComps
+    }
+}
+
+/**
+ * Final result will be a 6x7 matrix of all strings
+ * [
+ *     [NORMAL_COMP, MM_COMP, NORM_S_PLUS_PB, MM_S_PLUS_PB, NORM_S_PB, MM_S_PB], // Floor 1
+ *     [NORMAL_COMP, MM_COMP, NORM_S_PLUS_PB, MM_S_PLUS_PB, NORM_S_PB, MM_S_PB], // Floor 2
+ *     [] ... // 3
+ *     [] ... // 4
+ *     [] ... // 5
+ *     [] ... // 6
+ *     [] ... // 6
+ * ]
+ * @param {Object} dungeonDataObj - Object containing the matrix, normal comps, and mm comps
+ */
+const createCompMatrix = (dungeonDataObj) => {
+
+    const matrix = new Array(7).fill(null) // Create a 6x7 matrix of nulls
+    matrix.forEach((_, i) => matrix[i] = new Array(6).fill(null))
+    
+    const normal = dungeonDataObj.dungeon_types.catacombs
+    const mm = dungeonDataObj.dungeon_types.master_catacombs
+
+    let normalComps = 0
+    let masterComps = 0
+
+    // Start populating the matrix
+    for (let floorIndex = 0; floorIndex < matrix.length; floorIndex++) {
+        // Stats for this floor get inserted into the matrix
+        // I fucking hate this
+        let normComps = (normal && "tier_completions" in normal ? normal.tier_completions[floorIndex+1] : null) ?? 0
+        let mmComps = (mm && "tier_completions" in mm ? mm.tier_completions[floorIndex+1] : null) ?? 0
+        matrix[floorIndex][0] = `&a${getFormattedComps(normComps)}  `
+        matrix[floorIndex][1] = `&c${getFormattedComps(mmComps, true)} `
+        normalComps += normComps
+        masterComps += mmComps
+        
+        let normSPlus = (normal && "fastest_time_s_plus" in normal ? normal.fastest_time_s_plus[floorIndex+1] : null) ?? 0
+        let mmSPlus = (mm && "fastest_time_s_plus" in mm ? mm.fastest_time_s_plus[floorIndex+1] : null) ?? 0
+        matrix[floorIndex][2] = `&a${getFormattedTime(normSPlus)}  `
+        matrix[floorIndex][3] = `&c${getFormattedTime(mmSPlus, true)} `
+        
+        let normS = (normal && "fastest_time_s" in normal ? normal.fastest_time_s[floorIndex+1] : null) ?? 0
+        let mmS = (mm && "fastest_time_s" in mm ? mm.fastest_time_s[floorIndex+1] : null) ?? 0
+        matrix[floorIndex][4] = `&a${getFormattedTime(normS)}  `
+        matrix[floorIndex][5] = `&c${getFormattedTime(mmS, true)} `
+    }
+
+    return {
+        matrix,
+        normalComps,
+        masterComps
+    }
+}
 
 export const dsCommand = register("command", (player) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)
-        Object.keys(Party.members).filter(a => a !== Player.getName()).forEach(a => ChatLib.command(`ds ${a}`, true))
+        Object.keys(Party.members).forEach(a => {
+            if (a == Player.getName()) return
+            ChatLib.command(`ds ${a}`, true)
+        })
         return
     }
 	if (!player) player = Player.getName()
@@ -19,42 +194,33 @@ export const dsCommand = register("command", (player) => {
             getHypixelPlayerV2(uuid),
             getSelectedProfileV2(uuid)
         ]).then(values => {
-            const [playerInfo, sbProfile] = values
+            let [playerInfo, sbProfile] = values
 
             if (!playerInfo) return ChatLib.chat(`${prefix} &cCouldn't get player info for ${player}`)
             if (!sbProfile) return ChatLib.chat(`${prefix} &cCouldn't get ${player}'s Skyblock profile!`)
             
             const playerName = playerInfo.player.displayname
             let nameFormatted = `${getRank(playerInfo)} ${playerName}&r`
-            if (!Object.keys(sbProfile.members[uuid].dungeons.dungeon_types.catacombs).length) return ChatLib.chat(`${prefix} &c${playerName} has never entered the Catacombs!`)
             let profileName = sbProfile["cute_name"]
-            const secretsFound = playerInfo.player?.achievements?.skyblock_treasure_hunter || 0
-            const profileSecrets = sbProfile.members[uuid]?.dungeons?.secrets || 0
+            if (!sbProfile.members[uuid]) return ChatLib.chat(`${prefix} &cCouldn't get ${player}'s Skyblock profile!`)
+            sbProfile.members[uuid].banking = sbProfile.banking
+            sbProfile = sbProfile.members[uuid]
             
-            let dung = sbProfile.members[uuid].dungeons
-            let master = sbProfile.members[uuid].dungeons.dungeon_types.master_catacombs ?? null
-            let cata = sbProfile.members[uuid].dungeons.dungeon_types.catacombs
+            if (!Object.keys(sbProfile.dungeons.dungeon_types.catacombs).length) return ChatLib.chat(`${prefix} &c${playerName} has never entered the Catacombs!`)
+            const secretsFound = playerInfo.player?.achievements?.skyblock_treasure_hunter || 0
+            const profileSecrets = sbProfile?.dungeons?.secrets || 0
+            
+            let dung = sbProfile.dungeons
+            let master = sbProfile.dungeons.dungeon_types.master_catacombs ?? null
+            let cata = sbProfile.dungeons.dungeon_types.catacombs
             
             let selectedClass = dung.selected_dungeon_class
     
-            const prettify = (level) => level == 120 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
-            
             let cataXP = Math.floor(cata["experience"])
             let cataLevel = calcSkillLevel("catacombs", cataXP)
             let cataLevelInt = Math.floor(cataLevel)
-            let cataLevelStr = prettify(cataLevel)
+            let cataLevelStr = prettifyLevel(cataLevel)
             let cataLow = cataLevel > 50 ? 50 : cataLevelInt
-            
-            let totalNormal = 0
-            let totalMaster = 0
-            
-            const classWithSymbols = {
-                "mage":"⚚ Mage",
-                "healer":"☤ Healer",
-                "archer":"➶ Archer",
-                "tank":"። Tank",
-                "berserk":"⚔ Berserk"
-            }
             
             let nameHover = `${nameFormatted} &a- &e${profileName}`
             let classLvls = []
@@ -64,24 +230,12 @@ export const dsCommand = register("command", (player) => {
                 classLvls.push(classLvl)
                 let xpCurr = classLvl >= 50 ? (classXP - catacombs[50])%2e8 : parseInt(classXP - catacombs[parseInt(classLvl)])
                 let xpNext = classLvl >= 50 ? 2e8 : catacombs[parseInt(classLvl)+1] - catacombs[parseInt(classLvl)] || 0
-                nameHover += `\n${classs == selectedClass ? "&a" : "&c"}${classWithSymbols[classs]} - &e${prettify(classLvl)}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)`
+                nameHover += `\n${classs == selectedClass ? "&a" : "&c"}${classWithSymbols[classs]} - &e${prettifyLevel(classLvl)}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)`
                 
             })
             let classAverage = Math.round(classLvls.reduce((a, b) => a + b) / classLvls.length * 100) / 100
             nameHover += `\n\n&cClass Average: ` + (classAverage == 50 ? `&6&l${classAverage}` : `&e${classAverage}`)
             nameHover += `\n\n&d&lSkyCrypt &7(Click)\n&ahttps://sky.shiiyu.moe/stats/${playerName}`
-            const getCompHover = () => {
-                let str = "&cCompletions"
-                for (let floor = 1; floor <= 7; floor++) {
-                    let comps = cata["tier_completions"][floor] == undefined ? 0 : cata["tier_completions"][floor]
-                    let masterComps = master && "tier_completions" in master ? master.tier_completions[floor] == undefined ? "" : master.tier_completions[floor] : ""
-                    let masterStr = masterComps == "" ? "" : ` &8| &c${master.tier_completions[floor]}`
-                    totalNormal += comps
-                    totalMaster += masterComps == "" ? 0 : masterComps
-                    str += `\n&e${floor}] &a${fn(comps)}${masterStr}`
-                }
-                return str
-            }
 
             let xpNext = catacombs[cataLow+1] - catacombs[cataLow]
             xpNext = isNaN(xpNext) ? 0 : xpNext
@@ -95,39 +249,43 @@ export const dsCommand = register("command", (player) => {
 
             if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%2e8)}&c/&6200,000,000`
 
-            let compHover = getCompHover() + `\n&a${fn(totalNormal)}`
-            compHover += totalMaster == 0 ? "" :  ` &8| &c${fn(totalMaster)}`
-            compHover += `\n&aTotal: &e${fn(totalNormal + totalMaster)}`
-            
+            const { compHover, normalComps, masterComps } = getCompInfo(dung)
+
             let secretsHover = `&e&nSecrets\n` +
             `&aTotal: &e${fn(secretsFound)}\n` +
-            `&eProfile: ${fn(profileSecrets)}\n` +
-            `&aSecrets/Run: &e${(secretsFound / (totalNormal + totalMaster)).toFixed(2)}`
+            (profileSecrets && profileSecrets !== secretsFound ? `&aProfile: &e${fn(profileSecrets)}\n` : "") +
+            `&aSecrets/Run: &e${(secretsFound / (normalComps + masterComps)).toFixed(2)}`
 
-            const getTimes = (key) => {
-                let str = ""
-                for (let floor = 1; floor <= 7; floor++) {
-                    let normalTime = key in cata ? cata[key][floor] == undefined ? null : cata[key][floor] : null
-                    let masterTime = master && key in master ? master[key][floor] == undefined ? null : master[key][floor] : null
-                    
-                    let masterStr = masterTime == null ? "" : ` &8| &c${convertToPBTime(masterTime)}`
-                    str += `\n&e${floor}] &a${convertToPBTime(normalTime)}${masterStr}`
-                }
-                return str
+            const { mp, mpHover } = getMpInfo(sbProfile)
+
+            const extraComponents = [
+                columnSeparator,
+                new TextComponent(`&cMP: &e${fn(mp)}`).setHover("show_text", mpHover)
+            ]
+
+            if (Config.advancedDS) {
+                const { spirit, spiritText } = getSpiritPetStatus(sbProfile)
+                const { gdragText, gdragHover } = getGdragStatus(sbProfile)
+                
+                extraComponents.push(
+                    "\n   ",
+                    new TextComponent(getSbLevelInfo(sbProfile)),
+                    columnSeparator,
+                    new TextComponent(spiritText).setHover("show_text",`&cSpirit pet: ${ spirit ? "&aYes" : "&cNo" }`),
+                    columnSeparator,
+                    new TextComponent(gdragText).setHover("show_text", gdragHover),
+                    columnSeparator,
+                    new TextComponent(getSelectedArrows(sbProfile))
+                )
             }
 
-            let sPlusHover = `&cS+ Runs${getTimes("fastest_time_s_plus")}`
-            let sHover = `&cS Runs${getTimes("fastest_time_s")}`
-            
-            // toDelete.push(lineID)
-
             new Message(
-                new TextComponent(`${nameFormatted}`).setHover("show_text", nameHover).setClick("open_url", `https://sky.shiiyu.moe/stats/${playerName}`), ` &8| `,
-                new TextComponent(`&c${cataLevelStr}`).setHover("show_text", cataHover), ` &8| `,
-                new TextComponent(`&e${fn(secretsFound)}`).setHover("show_text", secretsHover), ` &8| `,
-                new TextComponent(`&cCompletions`).setHover("show_text", compHover), ` &8| `,
-                new TextComponent(`&cS+`).setHover("show_text", sPlusHover), ` &8| `,
-                new TextComponent(`&cS`).setHover("show_text", sHover)
+                new TextComponent(`${nameFormatted}`).setHover("show_text", nameHover).setClick("open_url", `https://sky.shiiyu.moe/stats/${playerName}`), columnSeparator,
+                new TextComponent(`&c${cataLevelStr}`).setHover("show_text", cataHover), columnSeparator,
+                new TextComponent(`&e${fn(secretsFound)}`).setHover("show_text", secretsHover), columnSeparator,
+                new TextComponent(`&cRuns`).setHover("show_text", compHover),
+                ...extraComponents
+                // new TextComponent(`&cS`).setHover("show_text", sHover), columnSeparator,
             ).chat()
 
         }).catch(e => ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${e}`))

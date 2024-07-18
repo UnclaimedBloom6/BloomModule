@@ -1009,6 +1009,14 @@ class Config {
         subcategory: "Stats"
     })
     autoDSParty = false;
+
+    @SwitchProperty({
+        name: "Advanced /ds and //kuudra",
+        description: "/ds and //kuudra will show extra player statistics",
+        category: "Party Finder",
+        subcategory: "Stats"
+    })
+    advancedDS = false;
     
     // ---------------------------------------------------------------
     // Chest Profit

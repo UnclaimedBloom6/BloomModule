@@ -249,15 +249,14 @@ export const dsCommand = register("command", (player) => {
                 `&dPercent To 50: &6${percentTo50}%`
 
             if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%2e8)}&c/&6200,000,000`
-
+            
             const { compHover, normalComps, masterComps } = getCompInfo(dung)
+            const { mp, mpHover } = getMpInfo(sbProfile)
 
             let secretsHover = `&e&nSecrets\n` +
             `&aTotal: &e${fn(secretsFound)}\n` +
             (profileSecrets && profileSecrets !== secretsFound ? `&aProfile: &e${fn(profileSecrets)}\n` : "") +
             `&aSecrets/Run: &e${(secretsFound / (normalComps + masterComps)).toFixed(2)}`
-
-            const { mp, mpHover } = getMpInfo(sbProfile)
 
             const extraComponents = [
                 columnSeparator,

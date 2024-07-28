@@ -934,6 +934,16 @@ class Config {
     })
     itemValueOverlay = false;
 
+    @ButtonProperty({
+        name: "Edit Location",
+        description: "Change the location (and scale) of the item value overlay",
+        category: "Gui",
+        subcategory: "Item Value"
+    })
+    ItemValueOverlayEdit() {
+        ChatLib.command(`edititemvalueoverlay`, true)
+    }
+
     // ---------------------------------------------------------------
     // Auto Kicker
 

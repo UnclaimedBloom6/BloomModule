@@ -71,6 +71,11 @@ export const data = new PogObject("Bloom", {
         y: 0,
         scale: 0.5
     },
+    itemValueOverlay: {
+        x: 0,
+        y: 0,
+        scale: 1
+    },
     wikiType: "official",
 }, "data/data.json")
 

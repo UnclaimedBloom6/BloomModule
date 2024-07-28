@@ -1,8 +1,8 @@
+import { registerWhen } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
 const EntityFallingBlock = Java.type("net.minecraft.entity.item.EntityFallingBlock")
 
-register("renderEntity", (entity, pos, pt, event) => {
-    if (!Config.hideFallingBlocks) return
+registerWhen(register("renderEntity", (entity, pos, pt, event) => {
     cancel(event)
-}).setFilteredClass(EntityFallingBlock)
+}).setFilteredClass(EntityFallingBlock), () => Config.hideFallingBlocks)

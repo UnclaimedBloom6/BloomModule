@@ -59,7 +59,6 @@ class Config {
 
     stackTrackerGui = new Gui()
     partyOverlayMoveGui = new Gui()
-    runSplitsMoveGui = new Gui()
     cooldownMoveGui = new Gui()
     runOverviewMoveGui = new Gui()
     toggleSprintMove = new Gui()
@@ -339,7 +338,7 @@ class Config {
 
     @SwitchProperty({
         name: "Run Splits",
-        description: "Shows the Run Splits for the current run on the screen.",
+        description: "Shows the Run Splits for the current run on screen. Will also keep track of your fastest splits and show how far away you are from them eg (+2.4s)",
         category: "Dungeons",
         subcategory: "Run Splits"
     })
@@ -353,7 +352,7 @@ class Config {
         placeholder: "Move"
     })
     MoveRunSplitsGui() {
-        this.runSplitsMoveGui.open()
+        ChatLib.command("bloommoverunsplits", true)
     };
 
     @SwitchProperty({

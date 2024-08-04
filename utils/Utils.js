@@ -77,6 +77,11 @@ export const data = new PogObject("Bloom", {
         scale: 1
     },
     wikiType: "official",
+    betterSplits: {
+        x: 0,
+        y: 0,
+        scale: 1
+    }
 }, "data/data.json")
 
 export const colorOrder = [1, 4, 13, 11, 14]

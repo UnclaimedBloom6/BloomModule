@@ -2,3 +2,4 @@ data/data.json
 data/playerLogs.json
 config.toml
 zip.sh
+data/bestSplits.json

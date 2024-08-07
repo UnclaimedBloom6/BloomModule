@@ -51,6 +51,8 @@ const showKillMobsMessage = () => {
 };
 
 const onBloodOpened = () => {
+    if (!Config.watcherClear) return;
+
     ChatLib.chat("§cBlood Opened.");
     bloodStarted = Date.now();
     startMeasuring(targetServerDuration);
@@ -70,55 +72,6 @@ const onBloodOpened = () => {
     });
 };
 
-// for (let i = 0; i < dungeonMessages.length; i++) {
-//     console.log(`WatcherClear: Registering for floor ${i + 1}`);
-//     console.log(`WatcherClear: Message: ${dungeonMessages[i]}`);
-//     registerWhen(
-//         register("chat", onBloodOpened)
-//             .setCriteria(dungeonMessages[i]),
-//         () => Config.watcherClear && Dungeon.floorNumber == i + 1
-//     );
-// }
-
-registerWhen(
-    register("chat", onBloodOpened)
-        .setCriteria(dungeonMessages[0]),
-    () => Config.watcherClear && Dungeon.floorNumber == 1
-);
-
-registerWhen(
-    register("chat", onBloodOpened)
-        .setCriteria(dungeonMessages[1]),
-    () => Config.watcherClear && Dungeon.floorNumber == 2
-);
-
-registerWhen(
-    register("chat", onBloodOpened)
-        .setCriteria(dungeonMessages[2]),
-    () => Config.watcherClear && Dungeon.floorNumber == 3
-);
-
-registerWhen(
-    register("chat", onBloodOpened)
-        .setCriteria(dungeonMessages[3]),
-    () => Config.watcherClear && Dungeon.floorNumber == 4
-);
-
-registerWhen(
-    register("chat", onBloodOpened)
-        .setCriteria(dungeonMessages[4]),
-    () => Config.watcherClear && Dungeon.floorNumber == 5
-);
-
-registerWhen(
-    register("chat", onBloodOpened)
-        .setCriteria(dungeonMessages[5]),
-    () => Config.watcherClear && Dungeon.floorNumber == 6
-);
-
-registerWhen(
-    register("chat", onBloodOpened)
-        .setCriteria(dungeonMessages[6]),
-    () => Config.watcherClear && Dungeon.floorNumber == 7
-);
-
+for (let i = 0; i < dungeonMessages.length; i++) {
+    register("chat", onBloodOpened).setCriteria(dungeonMessages[i]);
+}

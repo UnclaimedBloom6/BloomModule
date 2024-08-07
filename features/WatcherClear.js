@@ -1,5 +1,6 @@
 import { waitServerTime } from "../utils/TimerMeasure"
 import Config from "../Config"
+import { onChatPacket } from "../../BloomCore/utils/Events"
 
 let targetServerTime = 22_000 // 22 Seconds
 let bloodOpen = false
@@ -29,7 +30,7 @@ const showKillMobsMessage = () => {
     World.playSound("fireworks.twinkle", 100, 1)
 }
 
-register("chat", () => {
+onChatPacket(() => {
     if (!Config.watcherClear || bloodOpen) return
     
     ChatLib.chat("&cBlood Opened.")

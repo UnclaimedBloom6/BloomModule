@@ -191,7 +191,11 @@ const renderGui = () => {
 }
 
 register("tick", () => {
-    if (!Config.runSplits || triggers.length || !Dungeon.floor) return
+    if (!Config.runSplits || !Dungeon.floor || !Dungeon.bossEntry) {
+        cleanUp()
+        return
+    }
+    if (triggers.length) return
     registerSplits(Dungeon.floor)
 })
 

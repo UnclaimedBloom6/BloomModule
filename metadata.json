@@ -1,7 +1,7 @@
 {
     "name": "Bloom",
     "description": "Random stuff idk",
-    "version": "4.7.5",
+    "version": "4.8.0",
     "author": "UnclaimedBloom6",
     "entry": "index.js",
     "requires": [

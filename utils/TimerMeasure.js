@@ -1,44 +1,46 @@
-const S32PacketConfirmTransaction = Java.type("net.minecraft.network.play.server.S32PacketConfirmTransaction");
 
-let tickCount = 0;
-let startTime = null;
-let endTime = null;
-let measuring = false;
-const targetDuration = 25 * 1000;
+const S32PacketConfirmTransaction = Java.type("net.minecraft.network.play.server.S32PacketConfirmTransaction")
 
-export const startMeasuring = () => {
-    tickCount = 0;
-    startTime = new Date().getTime();
-    endTime = startTime + targetDuration;
-    measuring = true;
-    //ChatLib.chat('Started measuring server time...');
-}
+// Active timers here as {ticksLeft: TICKS, onComplete: Function}
+const funcs = []
 
-export const getCurrentTime = () => {
+const packetListener = register("packetReceived", () => {
+    // Decrement each tick counter in the array
+    for (let i = 0; i < funcs.length; i++) {
+        let thing = funcs[i]
+        thing.ticksLeft--
 
-    const actualDuration = new Date().getTime() - startTime;
-    const actualDurationSeconds = actualDuration / 1000;
-    const serverTPS = tickCount / actualDurationSeconds;
-    const perceivedDuration = (tickCount / 20) * 1000;
-
-    // ChatLib.chat(`Measured server time: ${tickCount} ticks`);
-    // ChatLib.chat(`Actual duration: ${actualDurationSeconds.toFixed(2)} seconds`);
-    // ChatLib.chat(`Server TPS: ${serverTPS.toFixed(2)}`);
-    // ChatLib.chat(`Perceived duration: ${(perceivedDuration / 1000).toFixed(2)} seconds`);
-    return { actualDuration, tickCount };
-}
-
-export const stopMeasuring = () => {
-    measuring = false;
-}
-
-register("packetReceived", (packet, event) => {
-    if (measuring && packet instanceof S32PacketConfirmTransaction) {
-        tickCount++;
+        // Timer not finished
+        if (thing.ticksLeft > 0) continue
+        
+        // This timer has finished
+        thing.onComplete()
+        funcs.splice(i, 1)
     }
-}).setFilteredClass(S32PacketConfirmTransaction);
 
-register("command", () => {
-    startMeasuring();
-}).setName("measuretime");
+    // Unregister this listener if there's nothing left
+    if (funcs.length == 0) {
+        packetListener.unregister()
+    }
+}).setFilteredClass(S32PacketConfirmTransaction).unregister()
 
+/**
+ * Runs a function after a certain amount of server ticks has passed
+ * @param {Number} ticks 
+ * @param {Function} onComplete 
+ */
+export const waitServerTicks = (ticks, onComplete) => {
+    funcs.push({
+        ticksLeft: ticks,
+        onComplete
+    })
+
+    packetListener.register()
+}
+
+/**
+ * Runs a function after a certain amount of server ticks has passed
+ * @param {Number} ticks 
+ * @param {Function} onComplete 
+ */
+export const waitServerTime = (ms, onComplete) => waitServerTicks(Math.floor(ms / 50), onComplete)

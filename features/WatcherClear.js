@@ -10,18 +10,17 @@ register("worldUnload", () => {
 
 const displayCountdown = (seconds, onDone) => {
     // Countdown is done!
+    Client.showTitle("", `&a0`, 0, 20, 0)
+
     if (seconds <= 0) {
-        Client.showTitle("", `&a0`, 0, 20, 0)
         onDone()
         return
     }
 
-    // Sometimes the first one doesn't appear
-    Client.showTitle("", `&a${seconds}`, 0, 20, 0)
     Client.showTitle("", `&a${seconds}`, 0, 20, 0)
 
     // Decrement one second
-    waitServerTime(seconds * 1000, () => displayCountdown(seconds - 1, onDone))
+    waitServerTime(1000, () => displayCountdown(seconds - 1, onDone))
 }
 
 const showKillMobsMessage = () => {

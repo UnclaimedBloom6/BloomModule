@@ -38,7 +38,7 @@ class Config {
             "&b/ptr &r- Transfer party to random player.",
             "&b/colors &r- Show all of the formatting codes.",
             "&b/dc <player1> <player2> &r- Show the cata XP difference between two players.",
-            "&b/pb <floor_number> &r- Show the S+ PB's of the whole party on a floor.",
+            "&b//pb <floor_number> &r- Show the S+ PB's of the whole party on a floor.",
             "",
             "&b//ai &r- Runs /p settings allinvite",
             ""

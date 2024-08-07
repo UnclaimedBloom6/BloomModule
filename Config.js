@@ -667,6 +667,14 @@ class Config {
     })
     waterBoardTimers = false;
 
+    @SwitchProperty({
+        name: "Blood Camp Timer",
+        description: "Displays when the Watcher mobs should be killed to guarentee a better blood camp",
+        category: "Dungeons",
+        subcategory: "QoL",
+    })
+    watcherClear = false;
+
 
     // ---------------------------------------------------------------
     // Solvers

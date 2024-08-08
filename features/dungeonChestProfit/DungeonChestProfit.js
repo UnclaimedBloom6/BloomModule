@@ -68,7 +68,7 @@ const updateRenderString = () => {
 }
 
 register("tick", () => {
-    if (!Config.dungeonChestProfit || !Dungeon.inDungeon) return
+    if (!Config.dungeonChestProfit) return
 
     let inv = Player.getContainer()
     let match = inv.getName().match(/^(\w+) Chest$/)

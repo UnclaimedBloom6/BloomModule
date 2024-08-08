@@ -98,10 +98,8 @@ export class ChestItem {
         }
 
         // Tax shit
-        if (config.includeTaxes) {
-            if (from == PriceUtils.locations.AUCTION) this.value = PriceUtils.getBINPriceAfterTax(this.value)
-            else this.value *= (1 - 0.0125)
-        }
+        if (from == PriceUtils.locations.AUCTION) this.value = PriceUtils.getBINPriceAfterTax(this.value)
+        else this.value *= (1 - 0.0125)
 
 
         return Math.floor(this.value)

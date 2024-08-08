@@ -121,6 +121,7 @@ const registerSplits = (floor) => {
     }
 
     triggers.push(register("renderOverlay", () => {
+        if (!Dungeon.bossEntry) return
         renderGui()
     }))
 }
@@ -191,11 +192,12 @@ const renderGui = () => {
 }
 
 register("tick", () => {
-    if (!Config.runSplits || !Dungeon.floor || !Dungeon.bossEntry) {
+    if (!Config.runSplits || !Dungeon.floor) {
         cleanUp()
         return
     }
     if (triggers.length) return
+
     registerSplits(Dungeon.floor)
 })
 

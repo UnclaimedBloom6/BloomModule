@@ -24,7 +24,7 @@ const renderProfitGui = () => {
 
         let width = Math.max(...lines.map(a => Renderer.getStringWidth(a)))
         let height = lines.length * 9
-        Renderer.drawRect(Renderer.color(0, 0, 0, 175), -2, -2, width+2, height+2)
+        Renderer.drawRect(Renderer.color(0, 0, 0, 175), -2, -2, width+10, height+2)
     }
 
     Renderer.drawString(textToDraw, 0, 0)

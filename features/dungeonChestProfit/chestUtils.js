@@ -49,7 +49,7 @@ export class DungeonChest {
     }
     calcValueAndProfit() {
         this.value = this.items.reduce((a, b) => a + b.value, 0)
-        this.profit = this.value - this.cost
+        this.profit = Math.floor(this.value - this.cost)
     }
 }
 

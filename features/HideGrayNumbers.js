@@ -1,4 +1,4 @@
-import { EntityArmorStand, appendToFile } from "../../BloomCore/utils/Utils";
+import { appendToFile, EntityArmorStand } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 
 const S0FPacketSpawnMob = Java.type("net.minecraft.network.play.server.S0FPacketSpawnMob")
@@ -26,7 +26,21 @@ const handleArmorStand = (entityID) => {
     }
 }
 
-register("packetReceived", (packet, event) => {
+const entityListener = register("packetReceived", (packet, event) => {
     if (!Config.hideGrayDamageNumbers && !Config.hideEnchantDamageNumbers) return
     Client.scheduleTask(0, () => handleArmorStand(packet.func_149024_d()))
-}).setFilteredClass(S0FPacketSpawnMob)
+}).setFilteredClass(S0FPacketSpawnMob).unregister()
+
+Config.registerListener("Hide Gray Numbers", state => {
+    if (state) entityListener.register()
+    else if (!Config.hideGrayDamageNumbers) entityListener.unregister()
+})
+
+Config.registerListener("Hide Enchants Damage", state => {
+    if (state) entityListener.register()
+    else if (!Config.hideGrayDamageNumbers) entityListener.unregister()
+})
+
+if (Config.hideGrayDamageNumbers || Config.hideEnchantDamageNumbers) {
+    entityListener.register()
+}

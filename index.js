@@ -1,3 +1,5 @@
+/// <reference types="../CTAutocomplete" />
+/// <reference lib="es2015" />
 
 import { skillsCommand } from "./commands/SkillsCommand"
 import { dontRp } from "./commands/DontRP"

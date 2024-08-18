@@ -9,6 +9,7 @@ const toDelete = [
     /^\s*\+0 Experience \(No Class Milestone Reached\)$/,
     /^\s*The Catacombs - .+ Stats$/,
     /^\s*Master Mode Catacombs - .+ Stats$/,
+    /^\s*Master Mode The Catacombs - .+ Stats$/,
     /^\s*Enemies Killed: \d+\s?(?:\(NEW RECORD!\))?$/
 ]
 
@@ -117,13 +118,13 @@ register("chat", (xp, event) => {
     cancel(event)
 }).setCriteria(/^\s*(\+[\d,.]+\s?\w+ Experience)\s?(?:\(.+\))?$/)
 
-// https://regex101.com/r/W4UjWQ/1
+// https://regex101.com/r/W4UjWQ/2
 register("chat", (masterMode, floor, event) => {
     if (!Config.customEndInfo) return
     endData.masterMode = !!masterMode
     endData.floor = floor
     cancel(event)
-}).setCriteria(/^\s*(Master Mode)?(?:The)? Catacombs - (Entrance|Floor .{1,3})$/)
+}).setCriteria(/^\s*(Master Mode)? ?(?:The)? Catacombs - (Entrance|Floor .{1,3})$/)
 
 register("chat", (secrets, event) => {
     if (!Config.customEndInfo) return

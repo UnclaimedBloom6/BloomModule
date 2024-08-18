@@ -86,4 +86,3 @@ register("chat", () => {
         return
     }
 }).setCriteria(/^That chest is locked!$/)
-

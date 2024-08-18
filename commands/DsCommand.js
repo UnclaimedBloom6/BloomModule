@@ -1,7 +1,7 @@
 import Party from "../../BloomCore/Party"
 import { catacombs } from "../../BloomCore/skills/catacombs"
 import { getHypixelPlayerV2, getPlayerUUID, getSelectedProfileV2 } from "../../BloomCore/utils/APIWrappers"
-import { bcData, calcSkillLevel, convertToPBTime, fn, getRank } from "../../BloomCore/utils/Utils"
+import { bcData, calcSkillLevel, convertToPBTime, fn, getRank, unzipGzipData } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 import {getMpInfo, getSpiritPetStatus, getGdragStatus, getSelectedArrows, getSbLevelInfo} from "../utils/ProfileInfoCommons"
@@ -23,7 +23,7 @@ const prettifyLevel = (level) => level == 120 ? `&b&l${level}` : level >= 50 ? `
 
 const padWithCommas = (string, maxLength) => {
     const toAdd = Math.floor((maxLength - Renderer.getStringWidth(string)) / Renderer.getStringWidth(invisComma))
-    return string + invisComma.repeat(toAdd)
+    return string + invisComma.repeat(toAdd < 0 ? 0 : toAdd)
 }
 
 /**
@@ -69,9 +69,9 @@ const getFormattedComps = (comps, isMM) => {
 const getCompInfo = (dungeonObject) => {
     const { matrix, normalComps, masterComps } = createCompMatrix(dungeonObject)
     const totalComps = normalComps + masterComps
-
+    
     const finalArr = new Array(8).fill("") // 8 instead of 7 because of the column titles
-
+    
     const colTitles = ["&eComps", "&eS+", "&eS"]
 
     // Go by columns first instead of rows since we need to build the strings from left to right
@@ -100,12 +100,12 @@ const getCompInfo = (dungeonObject) => {
             let titleWidth = Renderer.getStringWidth(title)
             let existingWidth = Renderer.getStringWidth(finalArr[0]) // How long the top line is already
             let maxWidth = Math.max(...finalArr.map(a => Renderer.getStringWidth(a))) // The target width
-
+            
             // How much space should be taken up by commas in total on L + R
             let spaceToFill = maxWidth - existingWidth - titleWidth
             // Amount of comma space each side
             let sideSpace = Math.ceil(spaceToFill / 2)
-
+            
             // Insert the centered column title
             finalArr[0] = padWithCommas(finalArr[0], existingWidth + sideSpace)
             finalArr[0] += title
@@ -176,6 +176,41 @@ const createCompMatrix = (dungeonDataObj) => {
         normalComps,
         masterComps
     }
+}
+
+const createInventoryComponent = (sbProfile) => {
+    const noData = new TextComponent("&cItems").setHover("show_text", "&cNo inv data")
+    
+    const armorData = unzipGzipData(sbProfile?.inventory?.inv_armor?.data)
+    const invData = unzipGzipData(sbProfile?.inventory?.inv_contents?.data)
+
+    if (!unzipGzipData || !invData) return noData
+
+    const armorContents = armorData.toObject()
+    const invContents = invData.toObject()
+
+    if (!armorContents || !invContents) return noData
+
+    const armorArray = armorContents.i.map(v => {
+        if (!v) return "&8Empty"
+
+        return v?.tag?.display?.Name ?? "&8Empty"
+    }).reverse()
+
+    const hotbarArray = invContents.i.slice(0, 8).map(v => {
+        if (!v) return "&8Empty"
+
+        return v?.tag?.display?.Name ?? "&8Empty"
+    })
+
+    let finalHover = "&aInventory Contents\n" + 
+        "&b&nArmor:\n" +
+        armorArray.join("\n") + 
+        "\n\n&b&nHotbar:\n" + 
+        hotbarArray.join("\n")
+
+    return new TextComponent("&aItems").setHover("show_text", finalHover)
+
 }
 
 export const dsCommand = register("command", (player) => {
@@ -251,6 +286,7 @@ export const dsCommand = register("command", (player) => {
             if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%2e8)}&c/&6200,000,000`
             
             const { compHover, normalComps, masterComps } = getCompInfo(dung)
+
             const { mp, mpHover } = getMpInfo(sbProfile)
 
             let secretsHover = `&e&nSecrets\n` +
@@ -259,8 +295,8 @@ export const dsCommand = register("command", (player) => {
             `&aSecrets/Run: &e${(secretsFound / (normalComps + masterComps)).toFixed(2)}`
 
             const extraComponents = [
-                columnSeparator,
-                new TextComponent(`&cMP: &e${fn(mp)}`).setHover("show_text", mpHover)
+                new TextComponent(`&cMP: &e${fn(mp)}`).setHover("show_text", mpHover), columnSeparator,
+                createInventoryComponent(sbProfile)
             ]
 
             if (Config.advancedDS) {
@@ -283,7 +319,7 @@ export const dsCommand = register("command", (player) => {
                 new TextComponent(`${nameFormatted}`).setHover("show_text", nameHover).setClick("open_url", `https://sky.shiiyu.moe/stats/${playerName}`), columnSeparator,
                 new TextComponent(`&c${cataLevelStr}`).setHover("show_text", cataHover), columnSeparator,
                 new TextComponent(`&e${fn(secretsFound)}`).setHover("show_text", secretsHover), columnSeparator,
-                new TextComponent(`&cRuns`).setHover("show_text", compHover),
+                new TextComponent(`&cRuns`).setHover("show_text", compHover), columnSeparator,
                 ...extraComponents
                 // new TextComponent(`&cS`).setHover("show_text", sHover), columnSeparator,
             ).chat()

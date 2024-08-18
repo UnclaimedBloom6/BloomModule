@@ -60,7 +60,6 @@ class Config {
     stackTrackerGui = new Gui()
     partyOverlayMoveGui = new Gui()
     cooldownMoveGui = new Gui()
-    runOverviewMoveGui = new Gui()
     toggleSprintMove = new Gui()
     chMapMoveGui = new Gui()
     rngMeterMoveGui = new Gui()
@@ -333,7 +332,7 @@ class Config {
         placeholder: "Move"
     })
     MoveOverviewGui() {
-        this.runOverviewMoveGui.open()
+        ChatLib.command("bloommoverunoverview", true)
     };
 
     @SwitchProperty({

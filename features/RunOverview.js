@@ -1,18 +1,14 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon";
+import ScalableGui from "../../BloomCore/utils/ScalableGui";
 import { registerWhen } from "../../BloomCore/utils/Utils";
 import Config from "../Config";
 import { getTime, getSecs, data } from "../utils/Utils";
 
-register("dragged", (dx, dy, x, y) => {
-    if (!Config.runOverviewMoveGui.isOpen()) return
-    data.runOverview.x = x
-    data.runOverview.y = y
-    data.save()
-})
+const editGui = new ScalableGui(data, data.runOverview).setCommand("bloommoverunoverview")
 
 let overviewStr = null
 register("tick", () => {
-    if (!Config.runOverviewMoveGui.isOpen() && (!Config.runOverview || !Dungeon.inDungeon)) return overviewStr = null
+    if (!editGui.isOpen() && (!Config.runOverview || !Dungeon.inDungeon)) return overviewStr = null
 
     let bloodOpened = "?"
     let watcherCleared = "?"
@@ -46,5 +42,9 @@ register("tick", () => {
 
 registerWhen(register("renderOverlay", () => {
     if (!overviewStr) return
-    Renderer.drawString(overviewStr, data.runOverview.x, data.runOverview.y)
+
+    Renderer.translate(editGui.getX(), editGui.getY())
+    Renderer.scale(editGui.getScale())
+    Renderer.drawString(overviewStr, 0, 0)
+    Renderer.finishDraw()
 }), () => overviewStr)

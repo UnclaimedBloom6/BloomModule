@@ -20,7 +20,8 @@ export const data = new PogObject("Bloom", {
     },
     runOverview: {
         x: 0,
-        y: 0
+        y: 0,
+        scale: 1
     },
     dungeonWarpCooldown: {
         x: 0,

@@ -1,5 +1,6 @@
 data/data.json
 data/playerLogs.json
+data/bestSplits.json
 config.toml
 zip.sh
-data/bestSplits.json
+out/

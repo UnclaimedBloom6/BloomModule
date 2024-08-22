@@ -442,11 +442,6 @@ class Config {
          * &bf:<floor> &r- Filter runs based off floor. Eg &6f:f5 &rwould show only
             F5 runs, &6f:f7 &ronly F7 etc.
 
-        &cNOTE: Mort Messaged must be enabled in Skytils/SBA etc
-        &cfor this feature to log runs. This module has it's own
-        &cfeature for that, so use that instead if you still
-        &cwant mort messages hidden.
-
         &c&nAn API key must also be set.&r &cTo set it, run &b/api new
         &cor &b/bcore setkey <API_KEY>&c.
         `,

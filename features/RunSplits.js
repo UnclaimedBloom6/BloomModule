@@ -121,7 +121,7 @@ const registerSplits = (floor) => {
     }
 
     triggers.push(register("renderOverlay", () => {
-        if (!Dungeon.bossEntry) return
+        if (!Dungeon.bossEntry && !editGui.isOpen()) return
         renderGui()
     }))
 }
@@ -192,7 +192,7 @@ const renderGui = () => {
 }
 
 register("tick", () => {
-    if (!Config.runSplits || !Dungeon.floor) {
+    if ((!Config.runSplits || !Dungeon.floor) && !editGui.isOpen()) {
         cleanUp()
         return
     }
@@ -211,5 +211,6 @@ editGui.onOpen(() => {
 editGui.onClose(() => {
     if (!fakeSplits) return
     fakeSplits = false
+
     cleanUp()
 })

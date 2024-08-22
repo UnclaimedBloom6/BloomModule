@@ -10,6 +10,7 @@
         "Vigilance",
         "PromiseV2",
         "BloomCore",
-        "RenderLib"
+        "RenderLib",
+        "ListFix"
     ]
 }

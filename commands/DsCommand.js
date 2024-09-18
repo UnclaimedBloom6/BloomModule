@@ -324,7 +324,7 @@ export const dsCommand = register("command", (player) => {
                 // new TextComponent(`&cS`).setHover("show_text", sHover), columnSeparator,
             ).chat()
 
-        }).catch(e => ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${e}`))
+        }).catch(e => ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${JSON.stringify(e)}`))
     }).catch(error => {
         ChatLib.chat(`${prefix} &cError getting Dungeon Stats for ${player}: ${error}`)
     })

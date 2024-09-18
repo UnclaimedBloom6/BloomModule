@@ -1,9 +1,9 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
-import { getHypixelPlayer, getHypixelPlayerV2, getMojangInfo, getPlayerUUID } from "../../BloomCore/utils/APIWrappers"
+import { getHypixelPlayerV2, getMojangInfo, getPlayerUUID } from "../../BloomCore/utils/APIWrappers"
 import { onChatPacket } from "../../BloomCore/utils/Events"
 import { convertToTimeString, timeToMS } from "../../BloomCore/utils/Utils"
-import { bcData, convertToPBTime, convertToSeconds, fn, getRank, getValue, sortObjectByValues } from "../../BloomCore/utils/Utils"
+import { bcData, convertToPBTime, convertToSeconds, fn, getRank, sortObjectByValues } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
 import Config from "../Config"
 import { prefix } from "../utils/Utils"
@@ -34,6 +34,7 @@ const initPlayers = () => {
     for (let p of Object.keys(Dungeon.partyInfo)) {
         let player = p
         getPlayerUUID(player).then(uuid => {
+            // ChatLib.chat(`${player} UUID: ${uuid}`)
             getHypixelPlayerV2(uuid).then(playerInfo => {
                 Dungeon.partyInfo[player] = {
                     uuid: uuid,
@@ -41,8 +42,8 @@ const initPlayers = () => {
                     deaths: []
                 }
                 // ChatLib.chat(JSON.stringify(Dungeon.partyInfo, "", 4))
-            }).catch(e => ChatLib.chat(`&cError initializing players: ${e.errorMessage}`))
-        }).catch(e => ChatLib.chat(`&cError initializing players: ${e.errorMessage}`))
+            }).catch(e => ChatLib.chat(`&cError initializing ${player} (Second Request): ${e}`))
+        }).catch(e => ChatLib.chat(`&cError getting UUID for ${player}: ${e}`))
     }
 }
 
@@ -350,7 +351,7 @@ const handleLogsNoOptions = (logs) => {
     delete players[Player.getUUID().replace(/-/g, "")]
 
     // Make a request to the api/player method for every player in the party at the same time.
-    Promise.all(Object.keys(players).slice(0, 10).map(a => getHypixelPlayer(a, bcData.apiKey))).then(values => {
+    Promise.all(Object.keys(players).slice(0, 10).map(a => getHypixelPlayerV2(a))).then(values => {
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
         ChatLib.chat(`&aShowing all runs logged with no filters.`)
 
@@ -499,7 +500,7 @@ register("command", (...args) => {
                 "rank": "&7"
             }))
             Promise.all(
-                players.map(a => getHypixelPlayer(a.uuid, bcData.apiKey))
+                players.map(a => getHypixelPlayerV2(a.uuid, bcData.apiKey))
             ).then(values => {
                 players.forEach((v, i) => {
                     v.rank = getRank(values[i])

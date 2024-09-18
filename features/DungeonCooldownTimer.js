@@ -11,7 +11,7 @@ const getSecondsLeft = () => (30 - (Date.now() - data.dungeonWarpCooldown.lastWa
 register("chat", () => {
     data.dungeonWarpCooldown.lastWarp = Date.now()
     data.save()
-}).setCriteria(/^-*>newLine<-(?:\[[^\]]+\] )(\w+) entered \w+ Catacombs, Floor (\w+)!->newLine<-*$/)
+}).setCriteria(/^-*>newLine<-(?:\[[^\]]+\] )(\w+) entered M?M? ?The Catacombs, Floor (\w+)!->newLine<-*$/)
 
 registerWhen(register("renderOverlay", () => {
     if (!Config.dungeonCooldown || !data.dungeonWarpCooldown.lastWarp) return

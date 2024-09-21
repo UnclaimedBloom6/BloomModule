@@ -1,6 +1,14 @@
 // This file contains helper functions to parse a player's profile information to be used in /ds and //kuudra
 import { fn, title } from "../../BloomCore/utils/Utils"
 
+export const classWithSymbols = {
+    "mage": "⚚ Mage",
+    "healer": "☤ Healer",
+    "archer": "➶ Archer",
+    "tank": "። Tank",
+    "berserk": "⚔ Berserk"
+}
+
 export function getMpInfo(sbProfile) {
     let mp = -1
     let mpHover = ""
@@ -108,3 +116,4 @@ function getLevelColor(level) {
 	if (level < 480) return "&c"
 	return "&4"
 }
+

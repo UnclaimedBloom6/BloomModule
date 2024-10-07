@@ -84,29 +84,34 @@ const registerSplits = (floor) => {
         currRunSplits[segment.name] = {
             start: null,
             end: null,
-            diffFromBest: null // Distance from best, negative number = faster, positive = slower
+            diffFromBest: null, // Distance from best, negative number = faster, positive = slower
         }
+        
+        let currSplit = currRunSplits[segment.name]
+        let currSplitIndex = i
 
         // The start criteria will fall back to the end criteria of the previous split if not set
-        let startCriteria = segment.start ?? splitInfo[floorKey][i-1].end
+        let startCriteria = segment.start ?? null
         // The end criteria will just use the run end message if not set
         let endCriteria = segment.end ?? RUN_END_CRITERIA
 
-        let startTrigger = onChatPacket(() => {
-            currRunSplits[segment.name].start = Date.now()
+        let startTrigger = null
+        if (startCriteria) startTrigger = onChatPacket(() => {
+            currSplit.start = Date.now()
             startTrigger.unregister()
         }).setCriteria(startCriteria)
 
         // Chat packet used so other mods cannot fuck with the splits not being detected
         let endTrigger = onChatPacket(() => {
-            if (!currRunSplits[segment.name].start) return // Segments cannot end if they have not started
+            // Segments cannot end if they have not started
+            if (!currSplit.start) return
 
-            currRunSplits[segment.name].end = Date.now()
-            let { start, end } = currRunSplits[segment.name]
+            currSplit.end = Date.now()
+            let { start, end } = currSplit
             
             const delta = end - start
             const oldBest = getBestSplit(floor, segment.name)
-            currRunSplits[segment.name].diffFromBest = oldBest == null ? -delta : delta - oldBest
+            currSplit.diffFromBest = oldBest == null ? -delta : delta - oldBest
 
             if (oldBest == null || delta < oldBest) {
                 saveBestSplit(floor, segment.name, delta)
@@ -114,10 +119,16 @@ const registerSplits = (floor) => {
             }
 
             endTrigger.unregister()
+
+            // Fucking cancer way of doing this
+            if (currSplitIndex < splitInfo[floorKey].length-1 && !splitInfo[floorKey][currSplitIndex+1].start) {
+                let nextSeg = splitInfo[floorKey][currSplitIndex+1].name
+                currRunSplits[nextSeg].start = Date.now()
+            }
         }).setCriteria(endCriteria)
 
-        triggers.push(startTrigger, endTrigger)
-
+        if (startTrigger) triggers.push(startTrigger)
+        triggers.push(endTrigger)
     }
 
     triggers.push(register("renderOverlay", () => {

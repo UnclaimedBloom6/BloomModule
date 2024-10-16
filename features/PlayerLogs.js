@@ -10,7 +10,6 @@ import { prefix } from "../utils/Utils"
 
 let score = null
 let time = null
-let wasSuccessful = false // So that it won't count failed runs
 
 const classes = {
     "T": "Tank",

@@ -225,3 +225,15 @@ editGui.onClose(() => {
 
     cleanUp()
 })
+
+register("command", (floor) => {
+    if (!floor) return ChatLib.chat(`&c/resetsplits <floor>`)
+    floor = floor.toUpperCase()
+
+    if (!(floor in bestSplits)) return ChatLib.chat(`&cNo splits saved for ${floor}!`)
+
+    delete bestSplits[floor]
+    bestSplits.save()
+
+    ChatLib.chat(`&aDeleted split PBs for ${floor}!`)
+}).setName("resetsplits")

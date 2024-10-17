@@ -133,7 +133,7 @@ register("tick", () => {
 
         for (let line of lore) {
             let l = line.removeFormatting().trim()
-            let match = l.match(/^([\w,]+)\/([\w,]+)$/)
+            let match = l.match(/^([\w,]+)\/([\w\.,]+)$/)
             if (!match) continue
             let [_, curr, final] = match
             if (final.endsWith("k")) final = parseInt(final.slice(0, final.length-1)) * 1000

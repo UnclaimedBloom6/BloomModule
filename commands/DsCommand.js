@@ -202,6 +202,12 @@ const createInventoryComponent = (sbProfile) => {
 
 }
 
+const gamemodeColors = {
+    ironman: "&7",
+    bingo: "&c",
+    stranded: "&a"
+}
+
 export const dsCommand = register("command", (player, profilename) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
@@ -221,17 +227,19 @@ export const dsCommand = register("command", (player, profilename) => {
         ]).then(values => {
             let [playerInfo, sbProfiles] = values
 
+            let sbProfile = sbProfiles.profiles.find(a => a.selected)
+
             const profileNames = sbProfiles.profiles.map(a => {
-                let final = `&b${a.cute_name}`
+                let final = ""
+                if (a.cute_name == sbProfile.cute_name) final += "&a> &r"
+                final += `&b${a.cute_name}`
 
                 if (a.game_mode) {
-                    final += ` (${title(a.game_mode)})`
+                    final += ` &b(${gamemodeColors[a.game_mode] || "&b"}${title(a.game_mode)}&b)`
                 }
 
                 return final
             })
-
-            let sbProfile = sbProfiles.profiles.find(a => a.selected)
 
             // Stats for a specific profile
             if (profilename) {
@@ -277,15 +285,15 @@ export const dsCommand = register("command", (player, profilename) => {
             
             let nameHover = `${nameFormatted} &a- &e${profileName}`
             let classLvls = []
-            Object.keys(dung.player_classes).forEach(classs => {
-                let classXP = parseInt(dung.player_classes[classs].experience)
+            Object.entries(dung.player_classes).forEach(([classs, classData]) => {
+                let classXP = parseInt(classData.experience)
                 let classLvl = calcSkillLevel(classs, classXP)
                 classLvls.push(classLvl)
                 let xpCurr = classLvl >= 50 ? (classXP - catacombs[50])%2e8 : parseInt(classXP - catacombs[parseInt(classLvl)])
                 let xpNext = classLvl >= 50 ? 2e8 : catacombs[parseInt(classLvl)+1] - catacombs[parseInt(classLvl)] || 0
                 nameHover += `\n${classs == selectedClass ? "&a" : "&c"}${classWithSymbols[classs]} - &e${prettifyLevel(classLvl)}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)`
-                
             })
+
             let classAverage = Math.round(classLvls.reduce((a, b) => a + b) / classLvls.length * 100) / 100
             nameHover += `\n\n&cClass Average: ` + (classAverage == 50 ? `&6&l${classAverage}` : `&e${classAverage}`)
             nameHover += `\n\nProfiles:\n${profileNames.join("\n")}`

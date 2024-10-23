@@ -13,9 +13,9 @@ import { data, prefix } from "../utils/Utils";
 
 const editGui = new ScalableGui(data, data.betterSplits).setCommand("bloommoverunsplits")
 
-// https://regex101.com/r/RbZslx/1
 const bestSplits = new PogObject("Bloom", {}, "data/bestSplits.json") // {"FLOOR": [seg1ms, seg2ms, seg3ms, ...]}
 
+// https://regex101.com/r/RbZslx/1
 const RUN_END_CRITERIA = /^\s*☠ Defeated (.+) in 0?([\dhms ]+?)\s*(\(NEW RECORD!\))?$/
 let currRunSplits = null // {Boss Kill: { start: TIMESTAMP, end: null }, ...}
 

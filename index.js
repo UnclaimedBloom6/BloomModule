@@ -14,6 +14,7 @@ import { kuudraCommand } from "./commands/KuudraCommand"
 import { pbCommand } from "./commands/PBCommand"
 import "./commands/MiscCommands"
 import "./commands/EnderPearlCommand"
+import "./commands/SuperBoomCommand"
 import "./commands/wikiCommand"
 
 import "./utils/FirstInstall"

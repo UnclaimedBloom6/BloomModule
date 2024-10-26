@@ -8,7 +8,7 @@ register("command", (count) => {
         return
     }
 
-    const pearlStack = Player.getInventory().getItems().find(a => a?.getName() == "§fEnder Pearl")
+    const pearlStack = Player.getInventory().getItems().find(a => /^§fEnder Pearl(?: §\dx\d+)?$/.test(a?.getName() ?? ""))
 
     // No ender pearls in inventory
     if (!pearlStack) {

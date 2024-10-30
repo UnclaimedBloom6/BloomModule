@@ -6,17 +6,17 @@ import Config from "../Config";
 
 const highlights = new Map() // [blockStr: {block: ctBlock, locked: false}]
 
-const validBlocks = new Set([
+const validBlocks = [
     "minecraft:chest",
     "minecraft:lever",
     "minecraft:skull",
     "minecraft:trapped_chest",
-])
+]
 
-const validSkullIDs = new Set([
-    "26bb1a8d-7c66-31c6-82d5-a9c04c94fb02", // Wither Essence
-    "edb0155f-379c-395a-9c7d-1b6005987ac8"  // Redstone Key
-])
+const validSkullIDs = [
+    "e0f3e929-869e-3dca-9504-54c666ee6f23", // Wither Essence
+    "fed95410-aba1-39df-9b95-1d4f361eb66e"  // Redstone Key
+]
 
 const highlightBlock = (block) => {
     const blockStr = block.toString()
@@ -34,7 +34,7 @@ const isValidSkull = (x, y, z) => {
 
     const skullID = tileEntity.func_152108_a().getId().toString()
     
-    return validSkullIDs.has(skullID)
+    return validSkullIDs.includes(skullID)
 }
 
 // Just in case
@@ -52,7 +52,7 @@ register("packetSent", (packet) => {
     const block = World.getBlockAt(x, y, z)
     const blockName = block.type.getRegistryName()
     
-    if (!validBlocks.has(blockName) || highlights.has(block.toString())) return
+    if (!validBlocks.includes(blockName) || highlights.has(block.toString())) return
     if (blockName == "minecraft:skull" && !isValidSkull(x, y, z)) return
 
     highlightBlock(block)

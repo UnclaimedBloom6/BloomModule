@@ -1,7 +1,7 @@
-import { getSkullTexture } from "../../BloomCore/utils/Utils"
+import { appendToFile, getDistanceToEntity, getSkullTexture } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
-const soulweaverSkullTexture = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmYyNGVkNjg3NTMwNGZhNGExZjBjNzg1YjJjYjZhNmE3MjU2M2U5ZjNlMjRlYTU1ZTE4MTc4NDUyMTE5YWE2NiJ9fX0="
+const soulweaverSkullTexture = "eyJ0aW1lc3RhbXAiOjE1NTk1ODAzNjI1NTMsInByb2ZpbGVJZCI6ImU3NmYwZDlhZjc4MjQyYzM5NDY2ZDY3MjE3MzBmNDUzIiwicHJvZmlsZU5hbWUiOiJLbGxscmFoIiwic2lnbmF0dXJlUmVxdWlyZWQiOnRydWUsInRleHR1cmVzIjp7IlNLSU4iOnsidXJsIjoiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS8yZjI0ZWQ2ODc1MzA0ZmE0YTFmMGM3ODViMmNiNmE2YTcyNTYzZTlmM2UyNGVhNTVlMTgxNzg0NTIxMTlhYTY2In19fQ=="
 const S04PacketEntityEquipment = Java.type("net.minecraft.network.play.server.S04PacketEntityEquipment")
 
 register("packetReceived", (packet, event) => {
@@ -13,8 +13,9 @@ register("packetReceived", (packet, event) => {
     if (equipmentSlot !== 4) return
     
     const skullTexture = getSkullTexture(itemStack)
+
     if (skullTexture !== soulweaverSkullTexture) return
-    
+
     cancel(event)
 
 }).setFilteredClass(S04PacketEntityEquipment)

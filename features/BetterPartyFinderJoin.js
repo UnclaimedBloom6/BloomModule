@@ -13,7 +13,7 @@ register("chat", (playerFormatted, clazz, level, event) => {
     const msg = new Message(new TextComponent(`&d&lPF > ${playerFormatted} &8| &b${clazz} ${level}`))
     if (player !== Player.getName()) {
         msg.addTextComponent(new TextComponent(" &8| &c[Kick]").setClick("run_command", `/p kick ${player}`).setHover("show_text", `&c/p kick ${player}`))
-        msg.addTextComponent(new TextComponent(" &7[Ignore]").setClick("run_command", `/ignore add ${player}`).setHover("show_text", `&7/ignore add ${player}`))
+        msg.addTextComponent(new TextComponent(" &7[Block]").setClick("run_command", `/block add ${player}`).setHover("show_text", `&7/block add ${player}`))
         msg.addTextComponent(new TextComponent(" &d[PV]").setClick("run_command", `/pv ${player}`).setHover("show_text", `&d/pv ${player}`))
     }
     msg.chat()

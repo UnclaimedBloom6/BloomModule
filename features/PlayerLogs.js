@@ -2,7 +2,7 @@ import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
 import { getHypixelPlayerV2, getMojangInfo, getPlayerUUID } from "../../BloomCore/utils/APIWrappers"
 import { onChatPacket } from "../../BloomCore/utils/Events"
-import { convertToTimeString, timeToMS } from "../../BloomCore/utils/Utils"
+import { convertToTimeString, getMedian, timeToMS } from "../../BloomCore/utils/Utils"
 import { bcData, convertToPBTime, convertToSeconds, fn, getRank, sortObjectByValues } from "../../BloomCore/utils/Utils"
 import Promise from "../../PromiseV2"
 import Config from "../Config"
@@ -29,17 +29,25 @@ const classes = {
 
 const initPlayers = () => {
     Dungeon.partyInfo = {}
-    Dungeon.party.forEach(player => Dungeon.partyInfo[player] = {})
+    Dungeon.party.forEach(player => Dungeon.partyInfo[player] = {
+        uuid: null,
+        secrets: 0,
+        deaths: []
+    })
     for (let p of Object.keys(Dungeon.partyInfo)) {
         let player = p
         getPlayerUUID(player).then(uuid => {
-            // ChatLib.chat(`${player} UUID: ${uuid}`)
+            if (!uuid) {
+                ChatLib.chat(`${prefix} &cPlayer logs failed to get UUID for ${uuid}.`)
+                return
+            }
+
+            Dungeon.partyInfo[player].uuid = uuid
+            // ChatLib.chat(`[PLAYER LOGS] ${player} UUID: ${uuid}`)
             getHypixelPlayerV2(uuid).then(playerInfo => {
-                Dungeon.partyInfo[player] = {
-                    uuid: uuid,
-                    secrets: playerInfo.player.achievements.skyblock_treasure_hunter,
-                    deaths: []
-                }
+                Dungeon.partyInfo[player].secrets = playerInfo.player.achievements.skyblock_treasure_hunter
+                // ChatLib.chat(`[PLAYER LOGS] ${player} SECRETS: ${Dungeon.partyInfo[player].secrets}`)
+                
                 // ChatLib.chat(JSON.stringify(Dungeon.partyInfo, "", 4))
             }).catch(e => ChatLib.chat(`&cError initializing ${player} (Second Request): ${e}`))
         }).catch(e => ChatLib.chat(`&cError getting UUID for ${player}: ${e}`))
@@ -58,12 +66,13 @@ const logRun = () => {
         s: score,
         p: {}
     }
+
     Promise.all(
         Object.keys(Dungeon.partyInfo).map(a => getHypixelPlayerV2(Dungeon.partyInfo[a].uuid))
     ).then(values => {
         values.forEach(playerInfo => {
-            if (!playerInfo) {
-                ChatLib.chat(`&cPlayer Logging: Failed to request data for a player.`)
+            if (!playerInfo.success) {
+                ChatLib.chat(`&cPlayer Logging: Failed to request data for a player: ${playerInfo.reason}`)
                 return
             }
             let uuid = playerInfo.player.uuid
@@ -312,11 +321,11 @@ const handleLogs = (logs, options) => {
     
     const times = logs.map(a => a.t * 1000).filter(a => !!a).sort((a, b) => a-b)
     // const avgRunTime = times.reduce((a, b) => a+b) / times.length
-    const timesMiddle = Math.floor(times.length / 2)
-    const medianRunTime = timesMiddle % 2 && timesMiddle > 1 ? (times[timesMiddle] + times[timesMiddle+1]) / 2 : times[timesMiddle]
+    const medianRunTime = getMedian(times)
     const lowestRunTime = Math.min(...times)
     const maxRunTime = Math.max(...times)
-    const averageScore = Math.floor(logs.map(a => a.s).reduce((a, b) => a+b) / logs.length)
+    const averageScore = Math.floor(getMedian(logs.map(a => a.s)))
+    
     ChatLib.chat(`&aFastest Run: &b${convertToPBTime(lowestRunTime)}`)
     // ChatLib.chat(`Average Run Time: &b${convertToPBTime(avgRunTime)}`)
     ChatLib.chat(`&eAverage Run: &b${convertToPBTime(medianRunTime)}`)

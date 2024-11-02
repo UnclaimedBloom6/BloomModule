@@ -221,6 +221,12 @@ export const dsCommand = register("command", (player, profilename) => {
 	if (!player) player = Player.getName()
 
 	getPlayerUUID(player).then(uuid => {
+        if (!uuid) {
+            ChatLib.chat(`${prefix} &c/ds command could not get UUID for ${player}.`)
+            return
+        }
+
+        // ChatLib.chat(`Got uuid for ${player}: ${JSON.stringify(uuid)}`)
         Promise.all([
             getHypixelPlayerV2(uuid),
             getSkyblockProfilesV2(uuid)

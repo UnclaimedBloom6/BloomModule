@@ -235,18 +235,6 @@ export const dsCommand = register("command", (player, profilename) => {
 
             let sbProfile = sbProfiles.profiles.find(a => a.selected)
 
-            const profileNames = sbProfiles.profiles.map(a => {
-                let final = ""
-                if (a.cute_name == sbProfile.cute_name) final += "&a> &r"
-                final += `&b${a.cute_name}`
-
-                if (a.game_mode) {
-                    final += ` &b(${gamemodeColors[a.game_mode] || "&b"}${title(a.game_mode)}&b)`
-                }
-
-                return final
-            })
-
             // Stats for a specific profile
             if (profilename) {
                 sbProfile = sbProfiles.profiles.find(a => {
@@ -258,6 +246,18 @@ export const dsCommand = register("command", (player, profilename) => {
                     return
                 }
             }
+
+            const profileNames = sbProfiles.profiles.map(a => {
+                let final = ""
+                if (a.cute_name == sbProfile.cute_name) final += "&a> &r"
+                final += `&b${a.cute_name}`
+
+                if (a.game_mode) {
+                    final += ` &b(${gamemodeColors[a.game_mode] || "&b"}${title(a.game_mode)}&b)`
+                }
+
+                return final
+            })
 
             if (!playerInfo) return ChatLib.chat(`${prefix} &cCouldn't get player info for ${player}`)
             if (!sbProfile) return ChatLib.chat(`${prefix} &cCouldn't get ${player}'s Skyblock profile!`)

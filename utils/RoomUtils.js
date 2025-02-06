@@ -1,5 +1,5 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
-import { getObjectXYZ, getRoomCenter, getRoomComponent, rotateCoords} from "../../BloomCore/utils/Utils"
+import { chunkLoaded, getObjectXYZ, getRoomCenter, getRoomComponent, rotateCoords} from "../../BloomCore/utils/Utils"
 
 const doorOffsets = [
     [0, -16],
@@ -75,6 +75,9 @@ register("tick", () => {
 
     let rotation = null
     let [x, z] = getRoomCenter()
+    
+    if (!chunkLoaded(x, 0, z)) return
+    
     for (let i = 0; i < doorOffsets.length; i++) {
         let [dx, dz] = doorOffsets[i]
         let block = World.getBlockAt(x+dx, 68, z+dz)

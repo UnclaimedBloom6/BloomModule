@@ -5,7 +5,7 @@ import Config from "../Config"
 
 let triviaData = null
 request({
-    url: "https://data.skytils.gg/solvers/oruotrivia.json", // Thanks Noobtils! (This is actually very helpful xd)
+    url: "https://data.skytils.gg/solvers/oruotrivia.json",
     headers: {
         "User-Agent": "Mozilla/5.0",
     },

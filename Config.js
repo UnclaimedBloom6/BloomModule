@@ -58,7 +58,6 @@ class Config {
     }
 
     stackTrackerGui = new Gui()
-    partyOverlayMoveGui = new Gui()
     cooldownMoveGui = new Gui()
     toggleSprintMove = new Gui()
     chMapMoveGui = new Gui()
@@ -858,7 +857,7 @@ class Config {
         placeholder: "Move"
     })
     MovePartyOverlay() {
-        this.partyOverlayMoveGui.open()
+        ChatLib.command(`bloommovepartyoverlay`, true)
     };
     
     @SwitchProperty({

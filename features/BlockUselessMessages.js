@@ -1,5 +1,6 @@
 import { onChatPacket } from "../../BloomCore/utils/Events"
 import Config from "../Config"
+import { registerTriggers } from "../utils/Utils"
 
 const uselessMsgs = [
     /Your .+ hit .+ for [\d,.]+ damage\./,
@@ -26,9 +27,17 @@ const uselessMsgs = [
     /This creature is immune to this kind of magic!/
 ]
 
+const triggers = []
+
 uselessMsgs.forEach(msg => {
-    register("chat", event => {
+    triggers.push(register("chat", event => {
         if (!Config.blockUselessMessages) return
         cancel(event)
-    }).setCriteria(msg)
+    }).setCriteria(msg).unregister())
+})
+
+registerTriggers(triggers, Config.blockUselessMessages)
+
+Config.registerListener("Block Useless Messages", state => {
+    registerTriggers(triggers, state)
 })

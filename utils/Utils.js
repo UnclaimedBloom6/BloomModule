@@ -11,7 +11,8 @@ export const data = new PogObject("Bloom", {
     },
     party: {
         x: 0,
-        y: 0
+        y: 0,
+        scale: 1
     },
     crystalPB: 0,
     runSplits: {
@@ -82,7 +83,8 @@ export const data = new PogObject("Bloom", {
         x: 0,
         y: 0,
         scale: 1
-    }
+    },
+    lastQuizFetch: null,
 }, "data/data.json")
 
 export const colorOrder = [1, 4, 13, 11, 14]
@@ -122,4 +124,20 @@ export const terminalInvNames = {
     "Navigate the maze!": Terminal.MAZE, // rest in peace
     "Change all to same color!": Terminal.RUBIX,
     "Correct all the panes!": Terminal.REDGREEN,
+}
+
+/**
+ * 
+ * @param {*} triggers A list of triggers
+ * @param {*} state The new state of the triggers, true to register, false to unregister
+ */
+export const registerTriggers = (triggers, state) => {
+    for (let i = 0; i < triggers.length; i++) {
+        if (state) {
+            triggers[i].register()
+        }
+        else {
+            triggers[i].unregister()
+        }
+    }
 }

@@ -15,40 +15,59 @@ let blazeStarted = null
 let trueTimeStarted = null
 let lastBlazeCount = 10
 
-register("command", () => {
-    const la = Player.lookingAt()
-    if (!(la instanceof Block)) return
+// Spots to check for leaves in
+const roomCoords = [
+    [-8, 69, -6],
+    [-9, 72, 5],
+]
 
-    const [x, y, z] = getObjectXYZ(la)
-    const roomInfo = getCurrRoomInfo()
-    if (!roomInfo) return
-    
-    const [rx, ry, rot] = roomInfo
-    const [x1, y1, z1] = convertToRoomCoords(x, y, z, rx, ry, rot)
-    const block = World.getBlockAt(x, y, z)
-    ChatLib.chat(`[${x1}, ${y1}, ${z1}]: ${block.type.getRegistryName()}`)
+const solverRenderer = register("renderWorld", () => {
+    blazes.forEach((entity, i) => {
+        let [r, g, b] = i == 0 ? [0, 1, 0] : i == 1 ? [1, 0.5, 0] : [1, 1, 1]
+        RenderLib.drawInnerEspBox(entity.getX(), entity.getY()-2, entity.getZ(), 0.6, 1.8, r, g, b, 1, false)
 
-}).setName("roomlookingat")
+        // Drawing lines between the blazes
+        if (Config.blazeSolverNextLine && i > 0 && i <= Config.blazeSolverLines) {
+            let [x0, y0, z0] = getEntityXYZ(blazes[i-1])
+            let [x1, y1, z1] = getEntityXYZ(blazes[i])
+            drawLine3d(x0, y0, z0, x1, y1, z1, 1, 0, 0, 1, 3, false)
+        }
+    })
+}).unregister()
+
+const blazeHider = register("renderEntity", (entity, pos, pt, event) => {
+    if (entity.getEntity() instanceof EntityBlaze) {
+        cancel(event)
+        return
+    }
+
+    if (entity.getName().removeFormatting().startsWith("[Lv15] Blaze ")) {
+        cancel(event)
+        return
+    }
+}).unregister()
+
+const checkRenders = () => {
+    if (blazes.length && Config.blazeSolver) {
+        solverRenderer.register()
+        blazeHider.register()
+    }
+    else {
+        solverRenderer.unregister()
+        blazeHider.unregister()
+    }
+}
 
 onRoomEnter((roomX, roomZ, rotation) => {
-    const roomCoords = [
-        [-8, 69, -6],
-        [-9, 72, 5],
-    ]
+    blazes = []
+    blazeStarted = null
+    trueTimeStarted = null
+    lastBlazeCount = 10
 
     inBlaze = roomCoords.some(([x, y, z]) => {
         const [x1, y1, z1] = convertToRealCoords(x, y, z, roomX, roomZ, rotation)
         return World.getBlockAt(x1, y1, z1).type.getRegistryName() == "minecraft:leaves"
     })
-
-})
-
-onRoomExit(() => {
-    inBlaze = false
-    blazes = []
-    blazeStarted = null
-    trueTimeStarted = null
-    lastBlazeCount = 10
 })
 
 register("tick", () => {
@@ -91,25 +110,7 @@ register("tick", () => {
     if (World.getBlockAt(x+1, 118, z).type.getID() !== 4) {
         blazes.reverse()
     }
+
+    checkRenders()
 })
 
-registerWhen(register("renderEntity", (entity, pos, pt, event) => {
-    if (entity.getEntity() instanceof EntityBlaze) return cancel(event)
-    if (entity.getName().removeFormatting().startsWith("[Lv15] Blaze ")) return cancel(event)
-}), () => Config.blazeSolver && Dungeon.inDungeon && blazes.length)
-
-
-
-registerWhen(register("renderWorld", () => {
-    blazes.forEach((entity, i) => {
-        let [r, g, b] = i == 0 ? [0, 1, 0] : i == 1 ? [1, 0.5, 0] : [1, 1, 1]
-        RenderLib.drawInnerEspBox(entity.getX(), entity.getY()-2, entity.getZ(), 0.6, 1.8, r, g, b, 1, false)
-
-        // Drawing lines between the blazes
-        if (Config.blazeSolverNextLine && i > 0 && i <= Config.blazeSolverLines) {
-            let [x0, y0, z0] = getEntityXYZ(blazes[i-1])
-            let [x1, y1, z1] = getEntityXYZ(blazes[i])
-            drawLine3d(x0, y0, z0, x1, y1, z1, 1, 0, 0, 1, 3, false)
-        }
-    })
-}), () => Config.blazeSolver && Dungeon.inDungeon)

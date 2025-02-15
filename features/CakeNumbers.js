@@ -1,8 +1,7 @@
 import { getMatchFromLines, getSlotCenter } from "../../BloomCore/utils/Utils"
 import Config from "../Config"
 
-register("guiRender", () => {
-    if (!Config.cakeNumbers) return
+const trigger = register("guiRender", () => {
     let inv = Player.getOpenedInventory()
     if (!inv || inv.getName() !== "New Year Cake Bag") return
     let cakes = inv.getItems().map((a, i) => a?.getName()?.removeFormatting()?.startsWith("New Year Cake") ? i : null).filter(a => a !== null)
@@ -22,4 +21,17 @@ register("guiRender", () => {
         Renderer.drawString(cakeStr, 0, 0)
         Renderer.retainTransforms(false)
     })
+}).unregister()
+
+if (Config.cakeNumbers) {
+    trigger.register()
+}
+
+Config.registerListener("Cake Numbers", state => {
+    if (state) {
+        trigger.register()
+    }
+    else {
+        trigger.unregister()
+    }
 })

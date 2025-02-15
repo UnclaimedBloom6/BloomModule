@@ -1,4 +1,7 @@
 import Config from "../Config"
+import { registerTriggers } from "../utils/Utils"
+
+const triggers = []
 
 const blessings = [
     /^DUNGEON BUFF! .+ found a Blessing of .+!$/,
@@ -11,8 +14,14 @@ const blessings = [
 ]
 
 blessings.forEach(regex => {
-    register("chat", (event) => {
+    triggers.push(register("chat", (event) => {
         if (!Config.hideBlessingMessages) return
         cancel(event)
-    }).setCriteria(regex)
+    }).setCriteria(regex).unregister())
+})
+
+registerTriggers(triggers, Config.hideBlessingMessages)
+
+Config.registerListener("Hide Blessing Messages", state => {
+    registerTriggers(triggers, state)
 })

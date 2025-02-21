@@ -25,14 +25,35 @@ if (!data.lastQuizFetch || Date.now() - data.lastQuizFetch > 1_200_000) {
     })
 }
 
-let highlightPos = null
+const buttons = {
+    "ⓐ": [5, 70, -9],
+    "ⓑ": [0, 70, -6],
+    "ⓒ": [-5, 70, -9]
+}
+
+let roomInfo = null
+let correctLetter = null
 const buttonHighlighter = register("renderWorld", () => {
-    if (!highlightPos) return
+    if (!correctLetter || !roomInfo) return
 
-    const [x, y, z] = highlightPos
-    renderFilledBox(x+0.5, y, z+0.5, 1.005, 1.005, 0, 1, 0, 0.3, false)
-    renderBoxOutline(x+0.5, y, z+0.5, 1.005, 1.005, 0, 1, 0, 1, 2, false)
+    const { roomX, roomZ, rotation } = roomInfo
 
+    for (let entry of Object.entries(buttons)) {
+        let [letter, pos] = entry
+        let [x, y, z] = convertToRealCoords(pos[0], pos[1], pos[2], roomX, roomZ, rotation)
+
+        let r = 1
+        let g = 0
+        let b = 0
+
+        if (letter == correctLetter) {
+            r = 0
+            g = 1
+        }
+
+        renderFilledBox(x+0.5, y, z+0.5, 1.005, 1.005, r, g, b, 0.3, false)
+        renderBoxOutline(x+0.5, y, z+0.5, 1.005, 1.005, r, g, b, 1, 2, false)
+    }
 }).unregister()
 
 let solutions = []
@@ -40,7 +61,7 @@ let solutions = []
 register("chat", () => {
     solutions = []
     buttonHighlighter.unregister()
-    highlightPos = null
+    correctLetter = null
 }).setCriteria(/^\[STATUE\] Oruo the Omniscient: .+$/)
 
 register("chat", () => {
@@ -49,8 +70,9 @@ register("chat", () => {
     // Calculation from Danker's Skyblock Mod
     const year = Math.floor((Date.now() / 1000 - 1560276000) / 446400 + 1)
     solutions = [`Year ${year}`]
+    buttonHighlighter.register()
     return
-}).setCriteria(/^What SkyBlock year is it\?$/)
+}).setCriteria(/^ *What SkyBlock year is it\?$/)
 
 register("chat", event => {
     if (!Dungeon.inDungeon || !Config.triviaSolver || !triviaData) return
@@ -72,41 +94,14 @@ register("chat", event => {
     // Make correct answer green
     if (solutions.some(a => ans == a)) {
         ChatLib.chat(message.replace(/§a/, "§a§l"))
-
-        // Highlight the correct blocks
-        if (roomInfo && letter in buttons) {
-            const { roomX, roomZ, rotation } = roomInfo
-            const [x, y, z] = buttons[letter]
-            highlightPos = convertToRealCoords(x, y, z, roomX, roomZ, rotation)
-            buttonHighlighter.register()
-        }
-
+        correctLetter = letter
         return
     }
 
     ChatLib.chat(message.replace(/§a/, "§4"))
+
+    buttonHighlighter.register()
 })
-
-// Make the question show green in the room too
-// register("tick", () => {
-//     if (!solutions || !Config.triviaSolver || !Dungeon.inDungeon) return
-//     let stands = World.getAllEntitiesOfType(EntityArmorStand)
-//     stands.forEach(a => {
-//         let match = a.getName().removeFormatting().match(/([ⓐⓑⓒ]) ([^.]+)[.+]?/)
-//         if (!match) return
-//         let [m, q, ans] = match
-//         if (solutions.some(a => a == ans)) return a.getEntity().func_96094_a(`§6${q} §a§l${ans}`)
-//         a.getEntity().func_96094_a(`§6${q} §4${ans}`)
-//     })
-// })
-
-const buttons = {
-    "ⓐ": [5, 70, -9],
-    "ⓑ": [0, 70, -6],
-    "ⓒ": [-5, 70, -9]
-}
-
-let roomInfo = null
 
 onRoomEnter((roomX, roomZ, rotation) => {
     if (!Config.triviaSolver) return

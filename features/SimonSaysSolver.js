@@ -25,7 +25,11 @@ export const onButtonsSpawned = (func) => doneListeners.push(func)
 export const getSolution = () => blocks
 
 register("tick", () => {
-    if (!Config.simonSolver) return
+    if (!Config.simonSolver) {
+        mouseTrigger.unregister()
+        buttonRenderer.unregister()
+        return
+    }
     let [x0, y0, z0] = start
 
     // The button on the lower left of the board exists, so all buttons exist
@@ -53,12 +57,17 @@ register("tick", () => {
             blocks.add(str)
         }
     }
+
+    if (blocks.size) {
+        mouseTrigger.register()
+        buttonRenderer.register()
+    }
 })
 
 
 const BUTTONWIDTH = 0.4
 const BUTTONHEIGHT = 0.26
-registerWhen(register("renderWorld", () => {
+const buttonRenderer = register("renderWorld", () => {
     const b = [...blocks]
     for (let i = 0; i < b.length; i++) {
         let [x, y, z] = b[i].split(",").map(a => parseInt(a))
@@ -70,9 +79,9 @@ registerWhen(register("renderWorld", () => {
         else RenderLib.drawInnerEspBox(x+0.05, y+0.5-BUTTONHEIGHT/2+0.001, z+0.5, BUTTONWIDTH, BUTTONHEIGHT, ...color, 0.7, false)
         
     }
-}), () => Config.simonSolver && blocks.size)
+}).unregister()
 
-register(MouseEvent, (event) => {
+const mouseTrigger = register(MouseEvent, (event) => {
     if (!Config.simonSolver || !Config.simonCancelClicks || Player.isSneaking()) return
 
     const button = event.button
@@ -95,7 +104,7 @@ register(MouseEvent, (event) => {
 
     // Cancel the mouse event
     cancel(event)
-})
+}).unregister()
 
 register("playerInteract", (action, pos) => {
     if (!Config.simonSolver || action.toString() !== "RIGHT_CLICK_BLOCK" || !blocks.size) return
@@ -116,4 +125,6 @@ register("playerInteract", (action, pos) => {
 
 register("worldUnload", () => {
     awaitingClick = false
+    buttonRenderer.unregister()
+    mouseTrigger.unregister()
 })

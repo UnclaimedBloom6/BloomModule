@@ -24,7 +24,16 @@ const highlightBlock = (block) => {
         block: block,
         locked: false
     })
-    Client.scheduleTask(20, () => highlights.delete(blockStr))
+
+    renderTrigger.register()
+    
+    Client.scheduleTask(20, () => {
+        highlights.delete(blockStr)
+
+        if (!highlights.size()) {
+            renderTrigger.unregister()
+        }
+    })
 }
 
 const isValidSkull = (x, y, z) => {
@@ -63,18 +72,21 @@ const renderBlockHighlight = (block, r, g, b) => {
     renderBlockHitbox(block, r, g, b, 0.2, true, 2, true)
 }
 
-register("renderWorld", () => {
-
+const renderTrigger = register("renderWorld", () => {
     const r = Config.showSecretClicksColor.getRed() / 255
     const g = Config.showSecretClicksColor.getGreen() / 255
     const b = Config.showSecretClicksColor.getBlue() / 255
     
     for (let value of highlights.values()) {
         let { block, locked } = value
-        if (locked) renderBlockHighlight(block, 1, 0, 0)
-        else renderBlockHighlight(block, r, g, b)
+        if (locked) {
+            renderBlockHighlight(block, 1, 0, 0)
+        }
+        else {
+            renderBlockHighlight(block, r, g, b)
+        }
     }
-})
+}).unregister()
 
 register("chat", () => {
     if (!highlights.size) return

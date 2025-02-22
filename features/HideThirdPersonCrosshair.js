@@ -6,7 +6,7 @@ const trigger = register("renderCrosshair", (event) => {
 }).unregister()
 
 const tickChecker = register("tick", () => {
-    if (getGameSettings().field_74320_O == 0) {
+    if (getGameSettings().field_74320_O !== 0) {
         trigger.register()
     }
     else {

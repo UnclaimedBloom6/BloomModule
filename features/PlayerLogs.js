@@ -49,7 +49,10 @@ const initPlayers = () => {
                 // ChatLib.chat(`[PLAYER LOGS] ${player} SECRETS: ${Dungeon.partyInfo[player].secrets}`)
                 
                 // ChatLib.chat(JSON.stringify(Dungeon.partyInfo, "", 4))
-            }).catch(e => ChatLib.chat(`&cError initializing ${player} (Second Request): ${e}`))
+            }).catch(e => {
+                ChatLib.chat(`&cError initializing ${player} (Second Request): ${e}`)
+                Dungeon.partyInfo[player].secrets = null
+            })
         }).catch(e => ChatLib.chat(`&cError getting UUID for ${player}: ${e}`))
     }
 }
@@ -72,12 +75,12 @@ const logRun = () => {
     ).then(values => {
         values.forEach(playerInfo => {
             if (!playerInfo.success) {
-                ChatLib.chat(`&cPlayer Logging: Failed to request data for a player: ${playerInfo.reason}`)
+                ChatLib.chat(`&cPlayer Logging: Failed to request data for a player: ${playerInfo.cause}`)
                 return
             }
             let uuid = playerInfo.player.uuid
             let player = playerInfo.player.displayname
-            let secretDiff = playerInfo.player.achievements.skyblock_treasure_hunter - Dungeon.partyInfo[player].secrets
+            let secretDiff = playerInfo.player.achievements.skyblock_treasure_hunter - (Dungeon.partyInfo[player].secrets ?? 0)
             let clazz = Dungeon.classes[player]
             if (!clazz) ChatLib.chat(`No Class for ${player}`)
             data.p[uuid] = {
@@ -90,7 +93,9 @@ const logRun = () => {
         let logs = JSON.parse(FileLib.read("Bloom", "data/playerLogs.json"))
         logs.push(data)
         FileLib.write("Bloom", "data/playerLogs.json", JSON.stringify(logs))
-    }).catch(e => ChatLib.chat(`&cError logging players: ${JSON.stringify(e)}`))
+    }).catch(e => {
+        ChatLib.chat(`&cError logging players: ${JSON.stringify(e)}`)
+    })
 }
 
 onChatPacket(() => {
@@ -142,7 +147,7 @@ register("worldUnload", () => {
 const getAverageSecrets = (logs, uuid) => {
     let l = logs.filter(a => Object.keys(a.p).includes(uuid))
     if (!l.length) return 0
-    return Math.floor(l.map(a => a.p[uuid].s).reduce((a, b) => a+b) / l.length * 100) / 100
+    return Math.floor(l.map(a => a.p[uuid].s ?? 0).reduce((a, b) => a+b) / l.length * 100) / 100
 }
 
 // Total secrets a player has found in all of the logs

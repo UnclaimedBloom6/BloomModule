@@ -1,4 +1,3 @@
-import Party from "../../BloomCore/Party"
 import { catacombs } from "../../BloomCore/skills/catacombs"
 import { getHypixelPlayerV2, getPlayerUUID, getSkyblockProfilesV2 } from "../../BloomCore/utils/APIWrappers"
 import { bcData, calcSkillLevel, convertToPBTime, fn, getRank, title, unzipGzipData } from "../../BloomCore/utils/Utils"
@@ -6,6 +5,7 @@ import Promise from "../../PromiseV2"
 import { prefix } from "../utils/Utils"
 import {getMpInfo, getSpiritPetStatus, getGdragStatus, getSelectedArrows, getSbLevelInfo, classWithSymbols} from "../utils/ProfileInfoCommons"
 import Config from "../Config"
+import PartyV2 from "../../BloomCore/PartyV2"
 
 const invisComma = "&0,"
 const columnSeparator = ` &8| `
@@ -212,7 +212,7 @@ export const dsCommand = register("command", (player, profilename) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)
-        Object.keys(Party.members).forEach(a => {
+        Object.keys(PartyV2.members).forEach(a => {
             if (a == Player.getName()) return
             ChatLib.command(`ds ${a}`, true)
         })

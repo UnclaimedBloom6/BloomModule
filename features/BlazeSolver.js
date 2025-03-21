@@ -71,7 +71,10 @@ onRoomEnter((roomX, roomZ, rotation) => {
 })
 
 register("tick", () => {
-    if ((!Config.blazeSolver && !Config.blazeTimer) || !Dungeon.inDungeon || !inBlaze) return
+    if ((!Config.blazeSolver && !Config.blazeTimer) || !Dungeon.inDungeon || !inBlaze) {
+        solverRenderer.unregister()
+        return
+    }
 
     const hpMap = new Map()
     blazes = []

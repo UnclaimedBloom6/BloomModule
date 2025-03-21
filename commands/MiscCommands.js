@@ -68,6 +68,19 @@ register("command", () => {
     }
 }).setName("id")
 
+register("command", () => {
+    const la = Player.lookingAt()
+    if (!la || !(la instanceof Block)) {
+        ChatLib.chat(`Not looking at anything!`)
+        return
+    }
+    const id = la.type.getID()
+    const name = la.type.getRegistryName()
+    const meta = la.getMetadata()
+
+    ChatLib.chat(`${name} (${id}:${meta})`)
+}).setName("blockinfo")
+
 // Random transfer command
 register("command", () => {
     if (!Object.keys(Party.members).length) return ChatLib.chat(`${prefix} &cParty empty!`)

@@ -1,27 +1,28 @@
 import { data } from "../utils/Utils"
 import ScalableGui from "../../BloomCore/utils/ScalableGui"
 import PartyV2 from "../../BloomCore/PartyV2"
+import Config from "../Config"
 
-const exampleData = [
-    {
-        name: "UnclaimedBloom6",
-        formattedRank: "&c[ADMIN]",
-        online: true
-    },
-    {
-        name: "Noob",
-        formattedRank: "&7",
-        online: false
-    },
-]
+// const exampleData = [
+//     {
+//         name: "UnclaimedBloom6",
+//         formattedRank: "&c[ADMIN]",
+//         online: true
+//     },
+//     {
+//         name: "Noob",
+//         formattedRank: "&7",
+//         online: false
+//     },
+// ]
 
 const moveGui = new ScalableGui(data, data.party).setCommand("bloommovepartyoverlay")
 
 const render = (members) => {
     Renderer.drawStringWithShadow(
         `&cParty: (&6${PartyV2.size}&c)`,
-        data.party.x * data.party.scale,
-        data.party.y * data.party.scale,
+        moveGui.getX() * moveGui.getScale(),
+        moveGui.getY() * moveGui.getScale(),
     )
 
     for (let i = 0; i < members.length; i++) {
@@ -34,8 +35,8 @@ const render = (members) => {
 
         Renderer.drawStringWithShadow(
             final,
-            data.party.x * data.party.scale,
-            (data.party.y + (i+1) * 10) * data.party.scale,
+            moveGui.getX() * moveGui.getScale(),
+            (moveGui.getY() + (i+1) * 10) * moveGui.getScale(),
         )
     }
 }
@@ -51,11 +52,21 @@ const renderTrigger = register("renderOverlay", () => {
     }
 }).unregister()
 
-register("tick", () => {
-    if (PartyV2.inParty || moveGui.isOpen()) {
+PartyV2.onPartyJoined(() => {
+    if (Config.partyOverlay) {
         renderTrigger.register()
     }
-    else {
+})
+
+PartyV2.onPartyDisband(() => {
+    renderTrigger.unregister()
+})
+
+Config.registerListener("Party List Overlay", (state) => {
+    if (state && PartyV2.size > 0) {
+        renderTrigger.register()
+    }
+    else if (!state) {
         renderTrigger.unregister()
     }
 })

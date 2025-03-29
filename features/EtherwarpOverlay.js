@@ -111,12 +111,12 @@ const renderEtherBlock = (x, y, z, r, g, b, a) => {
     const phase = chosenType == 3 || chosenType == 5 || chosenType == 1 || chosenType == 5
 
     // Any of Edges or Both
-    if (chosenType == 2 || chosenType == 3 || chosenType == 4 || chosenType == 5) {
+    if (chosenType == 0 || chosenType == 1 || chosenType == 4 || chosenType == 5) {
         renderBoxOutlineFromCorners(minX, minY, minZ, maxX, maxY, maxZ, r, g, b, 1, 1, phase)
     }
 
     // Any of Filled or Both
-    if (chosenType == 0 || chosenType == 1 || chosenType == 4 || chosenType == 5) {
+    if (chosenType == 2 || chosenType == 3 || chosenType == 4 || chosenType == 5) {
         renderFilledBoxFromCorners(minX, minY, minZ, maxX, maxY, maxZ, r, g, b, a, phase)
     }
 }

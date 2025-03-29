@@ -250,7 +250,7 @@ class Config {
             "Both (Phase)"
         ]
     })
-    etherwarpHighlightType = 0;
+    etherwarpHighlightType = 5;
 
     @ColorProperty({
         name: "Overlay Color",
@@ -258,7 +258,7 @@ class Config {
         category: "General",
         subcategory: "Etherwarp"
     })
-    etherwarpOverlayColor = new Color(0, 1, 0, 1);
+    etherwarpOverlayColor = new Color(0, 1, 0, 0.2);
 
     @ColorProperty({
         name: "Invalid Teleport Color",
@@ -266,7 +266,7 @@ class Config {
         category: "General",
         subcategory: "Etherwarp"
     })
-    etherwarpOverlayFailColor = new Color(1, 0, 0, 1);
+    etherwarpOverlayFailColor = new Color(1, 0, 0, 0.2);
 
     @SwitchProperty({
         name: "Hide Crosshair in Third Person",

@@ -56,7 +56,7 @@ let roomExitFunctions = []
  */
 export const onRoomExit = (func) => roomExitFunctions.push(func)
 
-const triggerFunctions = (arr, ...args) => arr.forEach(func => func(...args))
+const triggerFunctions = (arr, ...args) => arr.forEach(eventFunc => eventFunc(...args))
 
 const roomExited = () => {
     if (!currRoom) return

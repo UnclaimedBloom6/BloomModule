@@ -58,7 +58,7 @@ const simEtherwarp = (x0, y0, z0, x1, y1, z1) => {
             }
 
             // Head block after etherwarp
-            let headBlock = World.getBlockAt(x, y+1, z)
+            let headBlock = World.getBlockAt(x, y+2, z)
             if (!validEtherwarpFeetBlocks[headBlock.type.getID()]) {
                 return [false, x, y, z]
             }

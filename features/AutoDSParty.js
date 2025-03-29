@@ -36,7 +36,7 @@ register("chat", (player, classs, level) => {
     if (player !== Player.getName() || !storedNames.length) return
 
     for (let name of storedNames) {
-        PartyV2.addMember(name)
+        PartyV2._addMember(name)
     }
 
     if (!Config.autoDSParty) return

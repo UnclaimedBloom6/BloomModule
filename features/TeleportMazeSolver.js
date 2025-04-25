@@ -177,9 +177,13 @@ registerWhen(register("renderWorld", () => {
     if (!orderedPads || orderedPads.length < 2) return
     if (!orderedPads[0] || orderedPads[0].totalAngle == orderedPads[1].totalAngle) return
 
+    const block = orderedPads[0]?.block
+    if (!block) {
+        return
+    }
     // Why the fuck does this error saying that orderedpads[0] is undefined? I have a check for it
-    renderBlockHitbox(orderedPads[0]?.block, 0, 1, 0, 1, true, 2, false)
-    renderBlockHitbox(orderedPads[0]?.block, 0, 1, 0, 0.3, true, 2, true)
+    renderBlockHitbox(block, 0, 1, 0, 1, true, 2, false)
+    renderBlockHitbox(block, 0, 1, 0, 0.3, true, 2, true)
     
     for (let cell of cells) {
         for (let pad of cell.pads) {

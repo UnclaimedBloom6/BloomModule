@@ -3,7 +3,6 @@
 
 import { skillsCommand } from "./commands/SkillsCommand"
 import { dontRp } from "./commands/DontRP"
-import { dsCommand } from "./commands/DsCommand"
 import { memberCommand } from "./commands/MemberCommand"
 import { repartyCommand } from "./commands/RepartyCommand"
 import { pingCommand } from "./commands/PingCommand"
@@ -16,6 +15,7 @@ import "./commands/MiscCommands"
 import "./commands/EnderPearlCommand"
 import "./commands/SuperBoomCommand"
 import "./commands/wikiCommand"
+import "./commands/DsCommand"
 
 import "./utils/FirstInstall"
 

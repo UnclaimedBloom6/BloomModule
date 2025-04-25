@@ -208,7 +208,7 @@ const gamemodeColors = {
     stranded: "&a"
 }
 
-export const dsCommand = register("command", (player, profilename) => {
+register("command", (player, profilename) => {
     if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
     if (player == "p") {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)

@@ -6,6 +6,8 @@ import Config from "../Config";
 import splitInfo from "../data/floorSplits";
 import { data, prefix } from "../utils/Utils";
 
+const S32PacketConfirmTransaction = Java.type("net.minecraft.network.play.server.S32PacketConfirmTransaction")
+
 // floorSplits.js:
 // If a master mode floor is not present, the splits for the normal floor version will be used and still saved as Master Mode
 // If a split segment does not contain a starting key, it will use the end of the previous split for starting
@@ -21,20 +23,25 @@ let currRunSplits = null // {Boss Kill: { start: TIMESTAMP, end: null }, ...}
 
 const triggers = []
 let currentFloor = null
+let ticksPassed = 0
 
 // Unregister everything, reset variables
 const cleanUp = () => {
     while (triggers.length) {
         triggers.pop().unregister()
     }
+
     currRunSplits = null
     currentFloor = null
+    ticksPassed++
+    ticker.unregister()
 }
 
 register("worldUnload", cleanUp)
 
 // Time is formatted in the form m:ss
-const formatTime = (timeMs, msDigits=3) => {
+const formatTime = (ticks, msDigits=2) => {
+    const timeMs = ticks * 50
     const ms = `${timeMs % 1000}`
     const msStr = "0".repeat(3 - ms.length) + ms
     const sec = Math.floor(timeMs / 1000)
@@ -77,6 +84,7 @@ const registerSplits = (floor) => {
     currentFloor = floor
     const splitData = splitInfo[floorKey]
     currRunSplits = {}
+    ticker.register()
 
     for (let i = 0; i < splitData.length; i++) {
         let segment = splitData[i]
@@ -96,26 +104,32 @@ const registerSplits = (floor) => {
         let endCriteria = segment.end ?? RUN_END_CRITERIA
 
         let startTrigger = null
-        if (startCriteria) startTrigger = onChatPacket(() => {
-            currSplit.start = Date.now()
-            startTrigger.unregister()
-        }).setCriteria(startCriteria)
+        if (startCriteria) {
+            startTrigger = onChatPacket(() => {
+                currSplit.start = ticksPassed
+                startTrigger.unregister()
+            }).setCriteria(startCriteria)
+        }
 
         // Chat packet used so other mods cannot fuck with the splits not being detected
         let endTrigger = onChatPacket(() => {
             // Segments cannot end if they have not started
             if (!currSplit.start) return
 
-            currSplit.end = Date.now()
+            currSplit.end = ticksPassed
             let { start, end } = currSplit
             
-            const delta = end - start
-            const oldBest = getBestSplit(floor, segment.name)
-            currSplit.diffFromBest = oldBest == null ? -delta : delta - oldBest
+            const tickDelta = end - start
 
-            if (oldBest == null || delta < oldBest) {
-                saveBestSplit(floor, segment.name, delta)
-                ChatLib.chat(`${prefix} &dNew segment PB for ${floor.startsWith("M") ? "&c" : "&a"}&l${floor} ${segment.name}: ${formatTime(delta)}`)
+            const deltaMs = tickDelta * 50
+            const oldBest = getBestSplit(floor, segment.name)
+
+            const timeDiff = oldBest == null ? -deltaMs : oldBest - deltaMs
+            currSplit.diffFromBest = Math.floor(timeDiff / 50)
+
+            if (oldBest == null || deltaMs < oldBest) {
+                saveBestSplit(floor, segment.name, tickDelta * 50)
+                ChatLib.chat(`${prefix} &dNew segment PB for ${floor.startsWith("M") ? "&c" : "&a"}&l${floor} ${segment.name}: ${formatTime(tickDelta)}`)
             }
 
             endTrigger.unregister()
@@ -123,11 +137,13 @@ const registerSplits = (floor) => {
             // Fucking cancer way of doing this
             if (currSplitIndex < splitInfo[floorKey].length-1 && !splitInfo[floorKey][currSplitIndex+1].start) {
                 let nextSeg = splitInfo[floorKey][currSplitIndex+1].name
-                currRunSplits[nextSeg].start = Date.now()
+                currRunSplits[nextSeg].start = ticksPassed
             }
         }).setCriteria(endCriteria)
 
-        if (startTrigger) triggers.push(startTrigger)
+        if (startTrigger) {
+            triggers.push(startTrigger)
+        }
         triggers.push(endTrigger)
     }
 
@@ -147,7 +163,10 @@ const renderGui = () => {
         let { start, end } = info
         let timeStr = "&e--.--"
 
-        if (!end) end = Date.now()
+        if (!end) {
+            end = ticksPassed
+        }
+
         if (start) {
             let delta = end - start
             timeStr = `&e${formatTime(delta)}`
@@ -187,11 +206,13 @@ const renderGui = () => {
     Object.entries(currRunSplits).forEach(([segment, info], i) => {
         const { start, end, diffFromBest } = info
 
-        if (diffFromBest == null) return
-        const delta = end - start
+        if (diffFromBest == null) {
+            return
+        }
 
-        const prefix = diffFromBest < 0 ? "-" : "+"
-        const color = diffFromBest < 0 ? "&6" : diffFromBest > delta * 0.1 ? "&c" : "&e" // Gold if PB, green if not, yellow if >10% from best
+        const delta = end - start
+        const prefix = diffFromBest > 0 ? "-" : "+"
+        const color = diffFromBest > 0 ? "&6" : diffFromBest < delta * 0.1 ? "&c" : "&e" // Gold if PB, green if not, yellow if >10% from best
         const toDraw = `${color}(${prefix}${formatTime(Math.abs(diffFromBest), 2)})`
 
         Renderer.drawString(toDraw, timeDiffStartX + timeDiffPadding, (i+1)*10)
@@ -227,13 +248,24 @@ editGui.onClose(() => {
 })
 
 register("command", (floor) => {
-    if (!floor) return ChatLib.chat(`&c/resetsplits <floor>`)
+    if (!floor) {
+        ChatLib.chat(`&c/resetsplits <floor>`)
+        return
+    }
+
     floor = floor.toUpperCase()
 
-    if (!(floor in bestSplits)) return ChatLib.chat(`&cNo splits saved for ${floor}!`)
+    if (!(floor in bestSplits)) {
+        ChatLib.chat(`&cNo splits saved for ${floor}!`)
+        return
+    }
 
     delete bestSplits[floor]
     bestSplits.save()
 
     ChatLib.chat(`&aDeleted split PBs for ${floor}!`)
 }).setName("resetsplits")
+
+const ticker = register("packetReceived", () => {
+    ticksPassed++
+}).setFilteredClass(S32PacketConfirmTransaction).unregister()

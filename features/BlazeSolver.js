@@ -73,6 +73,7 @@ onRoomEnter((roomX, roomZ, rotation) => {
 register("tick", () => {
     if ((!Config.blazeSolver && !Config.blazeTimer) || !Dungeon.inDungeon || !inBlaze) {
         solverRenderer.unregister()
+        blazeHider.unregister()
         return
     }
 

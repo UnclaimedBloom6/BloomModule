@@ -336,7 +336,7 @@ class Config {
 
     @SwitchProperty({
         name: "Run Splits",
-        description: "Shows the Run Splits for the current run on screen. Will also keep track of your fastest splits and show how far away you are from them eg (+2.4s)",
+        description: "Shows the Run Splits for the current run on screen. Will also keep track of your fastest splits and show how far away you are from them eg (+2.4s).\n&aIf your run splits have been corrupted, do /resetsplits <floor> to reset them.",
         category: "Dungeons",
         subcategory: "Run Splits"
     })

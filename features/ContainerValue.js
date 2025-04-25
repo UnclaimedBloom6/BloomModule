@@ -30,6 +30,7 @@ const reset = () => {
 
     inContainer = false
     invSize = null
+    guiRenderer.unregister()
     renderData = null
 }
 
@@ -39,7 +40,6 @@ register("packetSent", reset).setFilteredClass(C0DPacketCloseWindow)
 onWindowItemsPacket((items) => {
     if (!Config.containerValue || !inContainer) return
 
-    renderData = null
     let currentItems = {} // {"Legion I": {value: 1000000, amount:3}, ...}
 
     for (let i = 0; i < items.length && i < invSize; i++) {
@@ -90,14 +90,14 @@ onWindowItemsPacket((items) => {
         textWidth: Math.max(...lines.map(a => Renderer.getStringWidth(a))),
         textHeight: lines.length * 9,
     }
+
+    guiRenderer.register()
 })
 
-register("guiRender", () => {
-    if (!Config.containerValue || !inContainer || !renderData) return
-
+const guiRenderer = register("guiRender", () => {
     Renderer.retainTransforms(true)
     Renderer.translate(renderData.x, renderData.y)
     Renderer.drawRect(Renderer.color(0, 0, 0, 175), 0, 0, renderData.textWidth + 10, renderData.textHeight + 10)
     Renderer.drawString(renderData.string, 5, 5)
     Renderer.retainTransforms(false)
-})
+}).unregister()

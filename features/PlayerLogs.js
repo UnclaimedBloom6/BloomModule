@@ -1,6 +1,7 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import Party from "../../BloomCore/Party"
 import { getHypixelPlayerV2, getMojangInfo, getPlayerUUID } from "../../BloomCore/utils/APIWrappers"
+import { getHypixelPlayer, getHypixelPlayerBatch, requestPlayerUUID, requestPlayerUUIDBatch } from "../../BloomCore/utils/ApiWrappers2"
 import { onChatPacket } from "../../BloomCore/utils/Events"
 import { convertToTimeString, getMedian, timeToMS } from "../../BloomCore/utils/Utils"
 import { bcData, convertToPBTime, convertToSeconds, fn, getRank, sortObjectByValues } from "../../BloomCore/utils/Utils"
@@ -36,33 +37,58 @@ const initPlayers = () => {
     })
     for (let p of Object.keys(Dungeon.partyInfo)) {
         let player = p
-        getPlayerUUID(player).then(uuid => {
-            if (!uuid) {
-                ChatLib.chat(`${prefix} &cPlayer logs failed to get UUID for ${uuid}.`)
+        requestPlayerUUID(player, resp => {
+            const { success, uuid, username, reason } = resp
+
+            if (!success) {
+                ChatLib.chat(`&cPlayer logs failed to request UUID for ${player}: ${reason}`)
                 return
             }
 
             Dungeon.partyInfo[player].uuid = uuid
-            // ChatLib.chat(`[PLAYER LOGS] ${player} UUID: ${uuid}`)
-            getHypixelPlayerV2(uuid).then(playerInfo => {
-                Dungeon.partyInfo[player].secrets = playerInfo.player.achievements.skyblock_treasure_hunter
-                // ChatLib.chat(`[PLAYER LOGS] ${player} SECRETS: ${Dungeon.partyInfo[player].secrets}`)
-                
-                // ChatLib.chat(JSON.stringify(Dungeon.partyInfo, "", 4))
-            }).catch(e => {
-                ChatLib.chat(`&cError initializing ${player} (Second Request): ${e}`)
-                Dungeon.partyInfo[player].secrets = null
+
+            getHypixelPlayer(uuid, resp => {
+                const { success, data, reason } = resp
+
+                if (!success) {
+                    ChatLib.chat(`&cPlayer logs failed to request player info for ${player}: ${reason}`)
+                    return
+                }
+
+                Dungeon.partyInfo[player].secrets = data.player.achievements.skyblock_treasure_hunter
             })
-        }).catch(e => ChatLib.chat(`&cError getting UUID for ${player}: ${e}`))
+        })
+        // getPlayerUUID(player).then(uuid => {
+        //     if (!uuid) {
+        //         ChatLib.chat(`${prefix} &cPlayer logs failed to get UUID for ${uuid}.`)
+        //         return
+        //     }
+
+        //     Dungeon.partyInfo[player].uuid = uuid
+        //     // ChatLib.chat(`[PLAYER LOGS] ${player} UUID: ${uuid}`)
+        //     getHypixelPlayerV2(uuid).then(playerInfo => {
+        //         Dungeon.partyInfo[player].secrets = playerInfo.player.achievements.skyblock_treasure_hunter
+        //         // ChatLib.chat(`[PLAYER LOGS] ${player} SECRETS: ${Dungeon.partyInfo[player].secrets}`)
+                
+        //         // ChatLib.chat(JSON.stringify(Dungeon.partyInfo, "", 4))
+        //     }).catch(e => {
+        //         ChatLib.chat(`&cError initializing ${player} (Second Request): ${e}`)
+        //         Dungeon.partyInfo[player].secrets = null
+        //     })
+        // }).catch(e => ChatLib.chat(`&cError getting UUID for ${player}: ${e}`))
     }
 }
 
 const logRun = () => {
-    if (!FileLib.exists("Bloom", "data/playerLogs.json")) FileLib.write("Bloom", "data/playerLogs.json", "[]")
+    if (!FileLib.exists("Bloom", "data/playerLogs.json")) {
+        FileLib.write("Bloom", "data/playerLogs.json", "[]")
+    }
     
-    if (!Dungeon.partyInfo) return
+    if (!Dungeon.partyInfo) {
+        return
+    }
     
-    let data = {
+    const runData = {
         f: Dungeon.floor,
         ts: Date.now(),
         t: time,
@@ -70,31 +96,35 @@ const logRun = () => {
         p: {}
     }
 
-    Promise.all(
-        Object.keys(Dungeon.partyInfo).map(a => getHypixelPlayerV2(Dungeon.partyInfo[a].uuid))
-    ).then(values => {
-        values.forEach(playerInfo => {
-            if (!playerInfo.success) {
-                ChatLib.chat(`&cPlayer Logging: Failed to request data for a player: ${playerInfo.cause}`)
-                return
-            }
-            let uuid = playerInfo.player.uuid
-            let player = playerInfo.player.displayname
-            let secretDiff = playerInfo.player.achievements.skyblock_treasure_hunter - (Dungeon.partyInfo[player].secrets ?? 0)
+    getHypixelPlayerBatch(Object.values(Dungeon.partyInfo).map(a => a.uuid), resp => {
+        const { success, data, reason } = resp
+
+        if (!success) {
+            ChatLib.chat(`&cPlayer Logs failed to get Hypixel data: ${reason}`)
+            return
+        }
+
+        for (let i = 0; i < data.length; i++) {
+            let uuid = data[i].player.uuid
+            let player = data[i].player.displayname
+            let secretDiff = data[i].player.achievements.skyblock_treasure_hunter - (Dungeon.partyInfo[player].secrets ?? 0)
             let clazz = Dungeon.classes[player]
-            if (!clazz) ChatLib.chat(`No Class for ${player}`)
-            data.p[uuid] = {
+    
+            if (!clazz) {
+                ChatLib.chat(`&cPlayer logs could not find class for ${player}`)
+            }
+    
+            runData.p[uuid] = {
                 s: secretDiff ?? 0,
                 d: Dungeon.partyInfo[player].deaths,
                 c: clazz ? clazz[0] : "U"
             }
-        })
-        // ChatLib.chat(JSON.stringify(data, "", 4))
-        let logs = JSON.parse(FileLib.read("Bloom", "data/playerLogs.json"))
-        logs.push(data)
+        }
+
+        const logs = JSON.parse(FileLib.read("Bloom", "data/playerLogs.json"))
+
+        logs.push(runData)
         FileLib.write("Bloom", "data/playerLogs.json", JSON.stringify(logs))
-    }).catch(e => {
-        ChatLib.chat(`&cError logging players: ${JSON.stringify(e)}`)
     })
 }
 
@@ -361,20 +391,28 @@ const handleLogsNoOptions = (logs) => {
         })
         return a
     }, {}), true)
+
     delete players[Player.getUUID().replace(/-/g, "")]
 
     // Make a request to the api/player method for every player in the party at the same time.
-    Promise.all(Object.keys(players).slice(0, 10).map(a => getHypixelPlayerV2(a))).then(values => {
+    const topUUIDs = Object.keys(players).slice(0, 10)
+    getHypixelPlayerBatch(topUUIDs, resp => {
+        const { success, data, reason } = resp
+        if (!success) {
+            ChatLib.chat(`Could not fetch Hypixel data for top 10 players: ${reason}`)
+            return
+        }
+
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
         ChatLib.chat(`&aShowing all runs logged with no filters.`)
-
+    
         // Floors
         new TextComponent(`&aRuns Logged: &b&l${fn(logs.length)} &7(Hover)`).setHover("show_text", floorsStr).chat()
         
         // Unique players
-        let playerStr = values.reduce((a, b) => a += b ? `\n${getRank(b)} ${b.player.displayname}&e: ${players[b.player.uuid]}` : "\nUnknown Player", "&eTop 10 Players")
+        let playerStr = data.reduce((a, b) => a += b ? `\n${getRank(b)} ${b.player.displayname}&e: ${players[b.player.uuid]}` : "\nUnknown Player", "&eTop 10 Players")
         new TextComponent(`&aUnique Players: &b${Object.keys(players).length} &7(Hover)`).setHover("show_text", playerStr).chat()
-
+    
         // Class shit
         let classHover = "&eClass Statistics"
         classHover += "\n&7This is counting every player\n&7in every run. Eg a 4m 1a\n&7party would add 4 mages\n&7and one archer to the total."
@@ -396,7 +434,7 @@ const handleLogsNoOptions = (logs) => {
             return a
         }, {})
         classData = Object.keys(classData).sort((a, b) => classData[b].timesPlayed - classData[a].timesPlayed).reduce((a, b) => (a[b] = classData[b], a), {})
-
+    
         Object.keys(classData).forEach(clazz => {
             let secretsPerRun = Math.floor(classData[clazz].totalSecrets / classData[clazz].timesPlayed*100)/100
             let deathsPerRun = Math.floor(classData[clazz].deaths / classData[clazz].timesPlayed*100)/100
@@ -405,12 +443,12 @@ const handleLogsNoOptions = (logs) => {
             classHover += `\n  &aTotal Secrets: &b${fn(classData[clazz].totalSecrets)} &a(&b${fn(secretsPerRun)}/run&a)`
             classHover += `\n  &aDeaths/run: &c${deathsPerRun}`
         })
-
+    
         new TextComponent(`&eClass Statistics &7(Hover)`).setHover("show_text", classHover).chat()
-
+    
         ChatLib.chat("")
         ChatLib.chat(`&a&m${ChatLib.getChatBreak(" ")}`)
-    }).catch(e => ChatLib.chat(e))
+    })
 
 }
 
@@ -495,35 +533,50 @@ register("command", (...args) => {
     let players = args.find(a => a.startsWith("p:"))
     if (players) {
         players = players.slice(2).split(",")
+
         for (let i = 0; i < players.length; i++) {
-            if (players[i] !== "*") continue
+            if (players[i] !== "*") {
+                continue
+            }
+
             players.splice(i, 1)
             players = players.concat(Object.keys(Party.members))
         }
-        if (players.length > 5) return ChatLib.chat(`&cMax is 5 players.`)
-        Promise.all(
-            players.map(a => getMojangInfo(a))
-        ).then(values => {
-            for (let i = 0; i < values.length; i++) {
-                if (!values[i]) return ChatLib.chat(`&cInvalid Player: &e${players[i]}`)
-            }
-            let players = values.map(a => ({
-                "uuid": a.id,
-                "name": a.name,
-                "rank": "&7"
-            }))
-            Promise.all(
-                players.map(a => getHypixelPlayerV2(a.uuid, bcData.apiKey))
-            ).then(values => {
-                players.forEach((v, i) => {
-                    v.rank = getRank(values[i])
-                })
-                options.players = players
-                // ChatLib.chat(JSON.stringify(players, null, 4))
-                handleLogs(logs, options)
-            }).catch(e => ChatLib.chat(e))
 
-        }).catch(e => ChatLib.chat(`&c${e}`))
+        if (players.length > 5) {
+            ChatLib.chat(`&cMax is 5 players.`)
+            return
+        }
+
+        const playerList = [...players]
+
+        requestPlayerUUIDBatch(playerList, (resp) => {
+            if (!resp.success) {
+                ChatLib.chat(`&cPlayer Logs failed to request UUIDs: ${resp.reason}`)
+                return
+            }
+
+            const players = resp.data.map(a => ({
+                uuid: a.uuid,
+                name: a.username,
+                rank: "&7"
+            }))
+
+            getHypixelPlayerBatch(players.map(a => a.uuid), (resp) => {
+                if (!resp.success) {
+                    ChatLib.chat(`&cPlayer Logs failed to request player info: ${resp.reason}`)
+                    return
+                }
+
+                for (let i = 0; i < resp.data.length; i++) {
+                    players[i].rank = getRank(resp.data[i])
+                }
+
+                options.players = players
+                handleLogs(logs, options)
+            })
+        })
+
         return
     }
 

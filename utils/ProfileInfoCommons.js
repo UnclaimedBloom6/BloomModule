@@ -9,6 +9,39 @@ export const classWithSymbols = {
     "berserk": "⚔ Berserk"
 }
 
+const tuningStats = {
+    health: 5,
+    defense: 1,
+    walk_speed: 1.5,
+    strength: 1,
+    critical_damage: 1,
+    critical_chance: 0.2,
+    attack_speed: 0.3,
+    intelligence: 2
+}
+
+const statColors = {
+    health: "§c",
+    defense: "§a",
+    walk_speed: "§f",
+    strength: "§c",
+    critical_damage: "§9",
+    critical_chance: "§9",
+    attack_speed: "§e",
+    intelligence: "§b"
+}
+
+const formattedStatNames = {
+    health: "§c❤ Health",
+    defense: "§a❈ Defense",
+    walk_speed: "§f✦ Speed",
+    strength: "§c❁ Strength",
+    critical_damage: "§9☠ Crit Damage",
+    critical_chance: "§9☣ Crit Chance",
+    attack_speed: "§e⚔ Bonus Attack Speed",
+    intelligence: "§b✎ Intelligence",
+}
+
 export function getMpInfo(sbProfile) {
     let mp = -1
     let mpHover = ""
@@ -17,21 +50,30 @@ export function getMpInfo(sbProfile) {
     if (!abStorage) return { mp, mpHover }
 
     mp = abStorage.highest_magical_power || null
-    let selectedPower = abStorage.selected_power || null
-    let tunings = abStorage.tuning?.slot_0 || null
+    let selectedPower = abStorage.selected_power || "NONE"
+    let tunings = abStorage.tuning?.slot_0 || {}
 
     selectedPower = selectedPower ? (selectedPower.charAt(0).toUpperCase() + selectedPower.slice(1)).replace(/_/g," ") : "NONE"
-    mpHover = `&cMagical Power: &e${fn(mp)}\n&cSelected Power: &e${selectedPower}\n&cTuning points: `
-    let temp = false
-    if (tunings) {
-        for (let statname in tunings) {
-            if (tunings[statname] == 0) continue
+    mpHover += `&cMagical Power: &e${fn(mp)}\n`
+    mpHover += `&cSelected Power: &e${selectedPower}\n`
+    
+    let tuningText = ""
+    for (let entry of Object.entries(tunings)) {
+        let [stat, qty] = entry
 
-            if (temp) mpHover += ", "
-            mpHover += "&f" + String(tunings[statname]) + " &7" + (statname.charAt(0).toUpperCase() + statname.slice(1)).replaceAll("_"," ")
-            temp = true
+        if (qty == 0) {
+            continue
         }
+
+        let thisStatAmount = "UNKOWN"
+        if (stat in tuningStats) {
+            thisStatAmount = qty * tuningStats[stat]
+        }
+
+        tuningText += `\n  ${statColors[stat]}+${thisStatAmount}${formattedStatNames[stat]}`
     }
+
+    mpHover += `&cTuning Points:${tuningText}`
 
     return { mp, mpHover }
 }

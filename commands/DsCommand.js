@@ -210,7 +210,11 @@ const gamemodeColors = {
 }
 
 register("command", (player, profilename) => {
-    if (!bcData.apiKey) return ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
+    if (!bcData.apiKey) {
+        ChatLib.chat(`${prefix} &cError: API Key not set! Set it with &b/bl setkey <key>`)
+        return
+    }
+
     if (player == "p") {
         ChatLib.chat(`${prefix} &aRunning /ds on all party members...`)
         Object.keys(PartyV2.members).forEach(a => {
@@ -220,6 +224,7 @@ register("command", (player, profilename) => {
             
             ChatLib.command(`ds ${a}`, true)
         })
+
         return
     }
     
@@ -294,11 +299,11 @@ register("command", (player, profilename) => {
                 
                 let selectedClass = dung.selected_dungeon_class
         
-                let cataXP = Math.floor(cata["experience"])
-                let cataLevel = calcSkillLevel("catacombs", cataXP)
-                let cataLevelInt = Math.floor(cataLevel)
-                let cataLevelStr = prettifyLevel(cataLevel)
-                let cataLow = cataLevel > 50 ? 50 : cataLevelInt
+                const cataXP = Math.floor(cata.experience ?? 0)
+                const cataLevel = calcSkillLevel("catacombs", cataXP)
+                const cataLevelInt = Math.floor(cataLevel)
+                const cataLevelStr = prettifyLevel(cataLevel)
+                const cataLow = cataLevel > 50 ? 50 : cataLevelInt
                 
                 let nameHover = `${nameFormatted} &a- &e${profileName}`
                 let classLvls = []
@@ -311,22 +316,29 @@ register("command", (player, profilename) => {
                     nameHover += `\n${classs == selectedClass ? "&a" : "&c"}${classWithSymbols[classs]} - &e${prettifyLevel(classLvl)}    &a(&6${fn(xpCurr)}&a/&6${fn(xpNext)}&a)`
                 })
         
-                let classAverage = Math.round(classLvls.reduce((a, b) => a + b) / classLvls.length * 100) / 100
-                nameHover += `\n\n&cClass Average: ` + (classAverage == 50 ? `&6&l${classAverage}` : `&e${classAverage}`)
+                const classAverage = (classLvls.reduce((a, b) => a + b) / classLvls.length).toFixed(2)
+
+                nameHover += `\n\n&cClass Average: ` + (classAverage >= 50 ? `&6&l${classAverage}` : `&e${classAverage}`)
                 nameHover += `\n\nProfiles:\n${profileNames.join("\n")}`
                 nameHover += `\n\n&d&lSkyCrypt &7(Click)\n&ahttps://sky.shiiyu.moe/stats/${playerName}`
         
                 let xpNext = catacombs[cataLow+1] - catacombs[cataLow]
                 xpNext = isNaN(xpNext) ? 0 : xpNext
                 let percentTo50 = Math.floor(cataXP / catacombs[catacombs.length - 1] * 10000) / 100
-        
-                let cataHover = `&e&nCatacombs\n` +
-                    `&bTotal XP: &6${fn(cataXP)}\n` +
-                    `&aProgress: &6${fn(cataXP - catacombs[cataLow])}&a/&6${fn(xpNext)}\n` +
-                    (cataLevel < 50 ? `&eRemaining: &6${fn(Math.floor(catacombs[cataLow+1] - cataXP) || 0)}\n` : "") +
-                    `&dPercent To 50: &6${percentTo50}%`
-        
-                if (cataLevel > 50) cataHover += `\n&cProgress: &6${fn((cataXP - catacombs[50])%2e8)}&c/&6200,000,000`
+
+                let cataHover = `&e&nCatacombs\n`
+                cataHover += `&bTotal XP: &6${fn(cataXP)}\n`
+                
+                if (cataLevel < 50) {
+                    let levelProgress = cataXP - catacombs[cataLow]
+                    cataHover += `&aProgress: &6${fn(levelProgress)}&a/&6${fn(xpNext)} &a(&6${(levelProgress / xpNext * 100).toFixed(2)}%&a)\n`
+                    cataHover += `&eRemaining: &6${fn(Math.floor(catacombs[cataLow+1] - cataXP) || 0)}\n`
+                    cataHover += `&dPercent To 50: &6${percentTo50}%`
+                }
+                else {
+                    let levelProgress = (cataXP - catacombs[50])%2e8
+                    cataHover += `&aProgress: &6${fn(levelProgress)}&a/&6200,000,000 &a(&6${(levelProgress / 2e8 * 100).toFixed(2)}%&a)`
+                }
                 
                 const { compHover, normalComps, masterComps } = getCompInfo(dung)
         

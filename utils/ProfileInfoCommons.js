@@ -67,7 +67,7 @@ export function getMpInfo(sbProfile) {
 
         let thisStatAmount = "UNKOWN"
         if (stat in tuningStats) {
-            thisStatAmount = qty * tuningStats[stat]
+            thisStatAmount = (qty * tuningStats[stat]).toFixed(1)
         }
 
         tuningText += `\n  ${statColors[stat]}+${thisStatAmount}${formattedStatNames[stat]}`

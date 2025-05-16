@@ -1,4 +1,4 @@
-import Party from "../../BloomCore/Party"
+import PartyV2 from "../../BloomCore/PartyV2"
 import Dungeon from "../../BloomCore/dungeons/Dungeon"
 import { onChatPacket } from "../../BloomCore/utils/Events"
 import Config from "../Config"
@@ -15,17 +15,23 @@ onChatPacket(() => {
 
 // Listen for completed terms/devices/levers
 onChatPacket((player, type) => {
-    if (!Config.terminalTracker || !completed.has(player)) return
+    if (!Config.terminalTracker || !completed.has(player)) {
+        return
+    }
+
     const data = completed.get(player)
     data[type]++
 }).setCriteria(/^(\w{1,16}) (?:activated|completed) a (\w+)! \(\d\/\d\)$/)
 
 // Print the completed stuff to chat
 register("chat", () => {
-    if (!Config.terminalTracker) return
+    if (!Config.terminalTracker) {
+        return
+    }
+
     completed.forEach((data, player) => {
-        let formatted = player
-        if (Object.keys(Party.members).includes(player)) formatted = Party.members[player]
+        const formatted = PartyV2.getFormattedName(player)
+
         ChatLib.chat(`${formatted} &8| &6${data.terminal} &aTerminals &8| &6${data.device} &aDevices &8| &6${data.lever} &aLevers`)
     })
 }).setCriteria("The Core entrance is opening!")

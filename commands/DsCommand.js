@@ -12,7 +12,7 @@ const invisComma = "&0,"
 const columnSeparator = ` &8| `
 const runTableSeparator = ` &b| `
 
-const prettifyLevel = (level) => level == 120 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
+const prettifyLevel = (level) => level == 100 ? `&b&l${level}` : level >= 50 ? `&6&l${level}` : `${level}`
 
 const padWithCommas = (string, maxLength) => {
     const toAdd = Math.floor((maxLength - Renderer.getStringWidth(string)) / Renderer.getStringWidth(invisComma))
@@ -329,7 +329,10 @@ register("command", (player, profilename) => {
                 let cataHover = `&e&nCatacombs\n`
                 cataHover += `&bTotal XP: &6${fn(cataXP)}\n`
                 
-                if (cataLevel < 50) {
+                if (cataLevel == 100) {
+                    cataHover += "&b&lMAXED"
+                }
+                else if (cataLevel < 50) {
                     let levelProgress = cataXP - catacombs[cataLow]
                     cataHover += `&aProgress: &6${fn(levelProgress)}&a/&6${fn(xpNext)} &a(&6${(levelProgress / xpNext * 100).toFixed(2)}%&a)\n`
                     cataHover += `&eRemaining: &6${fn(Math.floor(catacombs[cataLow+1] - cataXP) || 0)}\n`
@@ -337,7 +340,7 @@ register("command", (player, profilename) => {
                 }
                 else {
                     let levelProgress = (cataXP - catacombs[50])%2e8
-                    cataHover += `&aProgress: &6${fn(levelProgress)}&a/&6200,000,000 &a(&6${(levelProgress / 2e8 * 100).toFixed(2)}%&a)`
+                    cataHover += `&aProgress: &6${fn(levelProgress)}&a/&6200M &a(&6${(levelProgress / 2e8 * 100).toFixed(2)}%&a)`
                 }
                 
                 const { compHover, normalComps, masterComps } = getCompInfo(dung)
@@ -383,4 +386,19 @@ register("command", (player, profilename) => {
             })
         })
     })
+}).setTabCompletions((args) => {
+    const partyNames = Object.keys(PartyV2.members)
+    const worldPlayers = World.getAllPlayers()
+        .filter(a => a.getUUID().version() == 4)
+        .map(a => a.getName())
+
+    const final = partyNames.concat(worldPlayers)
+
+    if (args.length > 0) {
+        const finalArg = args[args.length-1]
+
+        return final.filter(a => a.toLowerCase().startsWith(finalArg.toLowerCase()))
+    }
+
+    return final
 }).setName("ds")

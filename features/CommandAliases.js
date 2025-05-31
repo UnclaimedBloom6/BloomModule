@@ -1,6 +1,6 @@
 import PogObject from "../../PogData";
 
-// {"/alias": "/some long command"}
+// {"/alias": { command: "/some long command", clientSide: true}}
 const aliasObj = new PogObject("Bloom", {}, "data/commandAliases.json")
 
 // You can't unregister command triggers so we have to use this instead.
@@ -24,12 +24,15 @@ const commandChecker = register("messageSent", (message, event) => {
 
     cancel(event)
 
-    if (parts.length == 1) {
-        ChatLib.say(`${aliasObj[command]}`)
+    const longVersion = aliasObj[command].command
+    const isCommand = longVersion.startsWith("/")
+    const extra = ` ${parts.slice(1).join(" ")}`.trim()
+
+    if (isCommand) {
+        ChatLib.command(`${longVersion.slice(1)}${extra}`, aliasObj[command].clientSide)
     }
     else {
-        // Add any other subcommands the user has added
-        ChatLib.say(`${aliasObj[command]} ${parts.slice(1).join(" ")}`)
+        ChatLib.say(`${longVersion}${extra}`)
     }
 }).unregister()
 
@@ -62,7 +65,7 @@ register("command", (subcommand, ...args) => {
             let command = commandParts.join(" ")
 
             if (alias in aliasObj) {
-                ChatLib.chat(`&cAlias already exists! ("${alias}" -> "${aliasObj[alias]}")`)
+                ChatLib.chat(`&cAlias already exists! ("${alias}" -> "${aliasObj[alias].command}")`)
                 return
             }
 
@@ -70,7 +73,11 @@ register("command", (subcommand, ...args) => {
                 return
             }
 
-            aliasObj[alias] = command
+            aliasObj[alias] = {
+                command,
+                clientSide: true
+            }
+
             aliasObj.save()
 
             ChatLib.chat(`&aAdded alias "${alias}" -> "${command}"`)
@@ -89,7 +96,7 @@ register("command", (subcommand, ...args) => {
                 return
             }
 
-            ChatLib.chat(`&aDeleted "${args[0]}" -> "${aliasObj[args[0]]}"`)
+            ChatLib.chat(`&aDeleted "${args[0]}" -> "${aliasObj[args[0]].command}"`)
 
             delete aliasObj[args[0]]
             aliasObj.save()
@@ -102,26 +109,45 @@ register("command", (subcommand, ...args) => {
         
         case "list":
             ChatLib.chat(`&aCommand Aliases (${Object.keys(aliasObj).length}):`)
-            Object.entries(aliasObj).forEach(([alias, command]) => {
-                ChatLib.chat(`&b${alias} &a-> &b${command}`)
+            Object.entries(aliasObj).forEach(([alias, { command, clientSide }]) => {
+                const suffix = clientSide ? "&a(CLIENT)" : "&c(SERVER)"
+
+                ChatLib.chat(`&b${alias} &a-> &b${command} ${suffix}`)
             })
 
             return
         
+        case "client":
+            if (args.length < 1) {
+                ChatLib.chat(`/alias client <alias> - Toggles an alias between being client-side or server-side.`)
+                return
+            }
+
+            if (!(args[0] in aliasObj)) {
+                ChatLib.chat(`Alias does not exist!`)
+                return
+            }
+
+            aliasObj[args[0]].clientSide = !aliasObj[args[0]].clientSide
+            aliasObj.save()
+
+            ChatLib.chat(`Client side for ${args[0]} is now ${aliasObj[args[0]].clientSide}`)
+            return
+        
         default:
-            ChatLib.chat(`/alias <add|remove|list>`)
+            ChatLib.chat(`/alias <add|remove|list|client>`)
             return
 
     }
 }).setTabCompletions(args => {
-    const subcommands = ["add", "remove", "list"]
+    const subcommands = ["add", "remove", "list", "client"]
 
     if (args.length == 1) {
         return subcommands.filter(a => a.startsWith(args[0].toLowerCase()))
     }
 
     
-    if (args[0] == "remove") {
+    if (args[0] == "remove" || args[0] == "client") {
         const existingAliases = Object.keys(aliasObj)
 
         return existingAliases.filter(a => a.startsWith(args[1].toLowerCase()))

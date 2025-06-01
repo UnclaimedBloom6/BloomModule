@@ -6,7 +6,6 @@ import { data, prefix } from "../utils/Utils"
 
 const rngMeterValues = JSON.parse(FileLib.read("Bloom", "data/RNGMeterValues.json"))
 
-
 // Check if data exists for a floor and fills in missing data if it isn't.
 const checkFloorDataExists = (floor) => {
     if (data.rngMeter.data[floor]) return
@@ -60,8 +59,13 @@ const getRngMeterStr = (floor) => {
     let floorColor = floor.startsWith("M") ? "&c" : "&a"
     let str = `&dRNG Meter &8- ${floorColor}${floor}&r`
     let floorData = data.rngMeter.data[floor]
-    if (!floorData) str += "\n&cNo RNG Meter Data!"
-    else if (floorData.score && !floorData.needed) str += `\n&7Stored Score: &d${fn(floorData.score)}`
+
+    if (!floorData) {
+        str += "\n&cNo RNG Meter Data!"
+    }
+    else if (floorData.score && !floorData.needed) {
+        str += `\n&7Stored Score: &d${fn(floorData.score)}`
+    }
     else {
         let percentage = Math.floor(floorData.score / floorData.needed * 10000) / 100
         str += ` &8- &d${percentage}%\n`
@@ -75,20 +79,104 @@ const renderMeterGui = (floor) => {
     let str = getRngMeterStr(floor)
     let split = str.split("\n")
     let maxWidth = Math.max(...split.map(a => Renderer.getStringWidth(a)))
+
     Renderer.retainTransforms(true)
     Renderer.translate(data.rngMeter.x, data.rngMeter.y)
     Renderer.scale(data.rngMeter.scale)
-    if (Config.rngMeterBackground) Renderer.drawRect(Renderer.color(0, 0, 0, 175), -2, -2, maxWidth+4, split.length*9 + 4)
+
+    if (Config.rngMeterBackground) {
+        Renderer.drawRect(Renderer.color(0, 0, 0, 175), -2, -2, maxWidth+4, split.length*9 + 4)
+    }
+
     Renderer.drawString(str, 0, 0)
     Renderer.retainTransforms(false)
 }
 
-registerWhen(register("renderOverlay", () => {
-    if (Config.rngMeterMoveGui.isOpen()) return renderMeterGui("F5")
-    if (!Config.rngMeter || !Dungeon.floor) return
-    if (!Dungeon.runEnded && Config.rngMeterPostRun) return
+const overlayRenderTrigger = register("renderOverlay", () => {
+    if (Config.rngMeterMoveGui.isOpen()) {
+        renderMeterGui("F5")
+        return
+    }
+
+    if (!Dungeon.floor) {
+        return
+    }
+
     renderMeterGui(Dungeon.floor)
-}), () => Config.rngMeterMoveGui.isOpen() || (Config.rngMeter && Dungeon.floor))
+}).unregister()
+
+Config.rngMeterMoveGui.registerOpened(() => {
+    overlayRenderTrigger.register()
+})
+
+const tryUnregisterOverlay = () => {
+    if (!Dungeon.runEnded && Config.rngMeterPostRun) {
+        return
+    }
+
+    if (Config.rngMeter) {
+        return
+    }
+
+    overlayRenderTrigger.unregister()
+}
+
+Config.rngMeterMoveGui.registerClosed(() => {
+    tryUnregisterOverlay()
+})
+
+register("chat", () => {
+    if (!Config.rngMeter) {
+        return
+    }
+
+    overlayRenderTrigger.register()
+}).setCriteria(/^\s*> EXTRA STATS <$/)
+
+register("worldUnload", () => {
+    overlayRenderTrigger.unregister()
+})
+
+Config.registerListener("&dRNG Meter", (newState) => {
+    if (!newState) {
+        overlayRenderTrigger.unregister()
+        return
+    }
+
+    if (!Dungeon.inDungeon || !Dungeon.runEnded && Config.rngMeterPostRun) {
+        return
+    }
+
+    overlayRenderTrigger.register()
+})
+
+Config.registerListener("&dPost-Run Only", (newState) => {
+    if (!Config.rngMeter) {
+        return
+    }
+
+    if (Dungeon.runEnded) return
+
+    if (newState) {
+        overlayRenderTrigger.unregister()
+        return
+    }
+
+    overlayRenderTrigger.register()
+})
+
+Dungeon.onDungeonChange((inDungeon) => {
+    if (inDungeon && Config.rngMeter && !Config.rngMeterPostRun) {
+        overlayRenderTrigger.register()
+    }
+})
+
+// registerWhen(register("renderOverlay", () => {
+//     if (Config.rngMeterMoveGui.isOpen()) return renderMeterGui("F5")
+//     if (!Config.rngMeter || !Dungeon.floor) return
+//     if (!Dungeon.runEnded && Config.rngMeterPostRun) return
+//     renderMeterGui(Dungeon.floor)
+// }), () => Config.rngMeterMoveGui.isOpen() || (Config.rngMeter && Dungeon.floor))
 
 register("dragged", (dx, dy, x, y, btn) => {
     if (!Config.rngMeterMoveGui.isOpen()) return

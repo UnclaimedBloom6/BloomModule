@@ -569,6 +569,14 @@ class Config {
     hideBlessingMessages = false;
 
     @SwitchProperty({
+        name: "Auto Requeue",
+        description: "Automatically joins a new dungeon. Will turn itself off for one run if \"!dt\" is sent in party chat. Can manually be toggled for one run with \"//dt\".",
+        category: "Dungeons",
+        subcategory: "QoL"
+    })
+    autoRequeue = false;
+
+    @SwitchProperty({
         name: "&aTerminal Solvers",
         description: "The main toggle to enable and disable terminal solvers.",
         category: "Terminals",

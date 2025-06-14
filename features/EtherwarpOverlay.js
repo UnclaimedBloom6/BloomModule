@@ -3,7 +3,7 @@ import { getLastSentCoord, getLastSentLook, holdingAOTV, validEtherwarpFeetBlock
 import Vector3 from "../../BloomCore/utils/Vector3";
 import Config from "../Config";
 
-const SNEAK_EYE_HEIGHT = 1.54
+const SNEAK_EYE_HEIGHT = 1.62
 const PADDING = 0.005 // To make the rendering not glitchy on block faces
 
 // Much more optimized version of BloomCore's bloated etherwarp raytracing

@@ -54,7 +54,7 @@ Object.entries(aliasObj).forEach(([alias, command]) => {
 register("command", (subcommand, ...args) => {
     switch (subcommand) {
         case "add":
-            if (args.length < 2) {
+            if (!args || args.length < 2) {
                 ChatLib.chat(`/alias add <alias> <...command>`)
                 ChatLib.chat(`Note: Start command with a "/" if you want it to be an actual command. Otherwise it will just say the message in chat.`)
                 ChatLib.chat(`Eg "gmc" -> "gamemode creative" will say "gamemode creative" in chat when /gmc is ran. To make it run a command, have it mapped to "/gamemode creative" instead.`)

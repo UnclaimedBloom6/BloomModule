@@ -3,7 +3,7 @@ import { getLastSentCoord, getLastSentLook, holdingAOTV, validEtherwarpFeetBlock
 import Vector3 from "../../BloomCore/utils/Vector3";
 import Config from "../Config";
 
-const SNEAK_EYE_HEIGHT = 1.62
+const SNEAK_EYE_HEIGHT = 1.54
 const PADDING = 0.005 // To make the rendering not glitchy on block faces
 
 // Much more optimized version of BloomCore's bloated etherwarp raytracing
@@ -42,9 +42,10 @@ const simEtherwarp = (x0, y0, z0, x1, y1, z1) => {
 
         // Do block check function stuff
         let currentBlock = World.getBlockAt(x, y, z)
+        let currentId = currentBlock.type.getID()
         
         // End Reached
-        if (currentBlock.type.getID() !== 0) {
+        if (!validEtherwarpFeetBlocks[currentId]) {
             // Cannot stand ontop
             
             if (validEtherwarpFeetBlocks[currentBlock.type.getID()]) {

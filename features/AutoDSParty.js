@@ -14,6 +14,7 @@ register("guiMouseClick", (mx, my, btn, gui, event) => {
     let match = item.getName().match(/^(?:§.)+(\w+)'s Party$/)
     if (!match) return
 
+    storedNames = []
     storedNames.push(match[1])
 
     const memberStartInd = item.getLore().indexOf("§5§o§f§7Members: ")
@@ -23,7 +24,7 @@ register("guiMouseClick", (mx, my, btn, gui, event) => {
     }
 
     const nameLines = item.getLore().slice(memberStartInd+1, memberStartInd+6)
-    storedNames = []
+    
     for (let line of nameLines) {
         let match = line.match(/^§5§o §.(\w{1,16})§f: §e\w+§b \(§e(\d+)§b\)$/)
         if (!match || storedNames.includes(match[1])) continue
@@ -35,9 +36,17 @@ register("guiMouseClick", (mx, my, btn, gui, event) => {
 register("chat", (player, classs, level) => {
     if (player !== Player.getName() || !storedNames.length) return
 
-    for (let name of storedNames) {
+    for (let i = 0; i < storedNames.length; i++) {
+        let name = storedNames[i]
         PartyV2._addMember(name)
+
+        // Leader will always be first in the list
+        if (i == 0) {
+            PartyV2.leader = name
+        }
     }
+
+    storedNames = []
 
     if (!Config.autoDSParty) return
 

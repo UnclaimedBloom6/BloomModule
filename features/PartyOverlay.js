@@ -3,18 +3,18 @@ import ScalableGui from "../../BloomCore/utils/ScalableGui"
 import PartyV2 from "../../BloomCore/PartyV2"
 import Config from "../Config"
 
-// const exampleData = [
-//     {
-//         name: "UnclaimedBloom6",
-//         formattedRank: "&c[ADMIN]",
-//         online: true
-//     },
-//     {
-//         name: "Noob",
-//         formattedRank: "&7",
-//         online: false
-//     },
-// ]
+const exampleData = [
+    {
+        name: "UnclaimedBloom6",
+        formattedRank: "&c[ADMIN]",
+        online: true
+    },
+    {
+        name: "Noob",
+        formattedRank: "&7",
+        online: false
+    },
+]
 
 const moveGui = new ScalableGui(data, data.party).setCommand("bloommovepartyoverlay")
 

@@ -1,12 +1,11 @@
 import Dungeon from "../../BloomCore/dungeons/Dungeon";
 import { onChatPacket } from "../../BloomCore/utils/Events";
 import ScalableGui from "../../BloomCore/utils/ScalableGui";
+import { onServerTick } from "../../BloomCore/utils/ServerTime";
 import PogObject from "../../PogData";
 import Config from "../Config";
 import splitInfo from "../data/floorSplits";
 import { data, prefix } from "../utils/Utils";
-
-const S32PacketConfirmTransaction = Java.type("net.minecraft.network.play.server.S32PacketConfirmTransaction")
 
 // floorSplits.js:
 // If a master mode floor is not present, the splits for the normal floor version will be used and still saved as Master Mode
@@ -90,8 +89,10 @@ const registerSplits = (floor) => {
         let segment = splitData[i]
 
         currRunSplits[segment.name] = {
-            start: null,
-            end: null,
+            start: null, // Ticks
+            end: null, // Ticks
+            startTime: null, // Date/ms
+            endTime: null, // Date/ms
             diffFromBest: null, // Distance from best, negative number = faster, positive = slower
         }
         
@@ -117,6 +118,7 @@ const registerSplits = (floor) => {
             if (!currSplit.start) return
 
             currSplit.end = ticksPassed
+            currSplit.endTime = Date.now()
             let { start, end } = currSplit
             
             const tickDelta = end - start
@@ -138,6 +140,7 @@ const registerSplits = (floor) => {
             if (currSplitIndex < splitInfo[floorKey].length-1 && !splitInfo[floorKey][currSplitIndex+1].start) {
                 let nextSeg = splitInfo[floorKey][currSplitIndex+1].name
                 currRunSplits[nextSeg].start = ticksPassed
+                currRunSplits[nextSeg].startTime = Date.now()
             }
         }).setCriteria(endCriteria)
 
@@ -266,6 +269,6 @@ register("command", (floor) => {
     ChatLib.chat(`&aDeleted split PBs for ${floor}!`)
 }).setName("resetsplits")
 
-const ticker = register("packetReceived", () => {
+const ticker = onServerTick(() => {
     ticksPassed++
-}).setFilteredClass(S32PacketConfirmTransaction).unregister()
+}).unregister()

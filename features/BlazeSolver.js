@@ -15,6 +15,9 @@ let blazeStarted = null
 let trueTimeStarted = null
 let lastBlazeCount = 10
 
+// https://regex101.com/r/NfQWut/1
+const BLAZE_REGEX = /^\[Lv15\] (?:. )?Blaze [\d,]+\/([\d,]+)❤$/
+
 // Spots to check for leaves in
 const roomCoords = [
     [-8, 69, -6],
@@ -41,7 +44,7 @@ const blazeHider = register("renderEntity", (entity, pos, pt, event) => {
         return
     }
 
-    if (entity.getName().removeFormatting().startsWith("[Lv15] Blaze ")) {
+    if (BLAZE_REGEX.test(entity.getName().removeFormatting())) {
         cancel(event)
         return
     }
@@ -80,8 +83,7 @@ register("tick", () => {
     const hpMap = new Map()
     blazes = []
     World.getAllEntitiesOfType(EntityArmorStand).forEach(e => {
-        // https://regex101.com/r/g2x8Qo/1
-        const match = e.getName().removeFormatting().match(/^\[Lv15\] Blaze [\d,]+\/([\d,]+)❤$/)
+        const match = e.getName().removeFormatting().match(BLAZE_REGEX)
         if (!match) return
         const [_, health] = match
         hp = parseInt(health.replace(/,/g, ""))

@@ -347,10 +347,12 @@ register("command", (player, profilename) => {
         
                 const { mp, mpHover } = getMpInfo(sbProfile)
         
-                let secretsHover = `&e&nSecrets\n` +
-                `&aTotal: &e${fn(secretsFound)}\n` +
-                (profileSecrets && profileSecrets !== secretsFound ? `&aProfile: &e${fn(profileSecrets)}\n` : "") +
-                `&aSecrets/Run: &e${(secretsFound / (normalComps + masterComps)).toFixed(2)}`
+                let secretsHover = `&e&nSecrets` +
+                `\n&aTotal: &e${fn(secretsFound)} &8| &6${(secretsFound / (normalComps + masterComps)).toFixed(2)} per run`
+
+                if (secretsFound !== profileSecrets) {
+                    secretsHover += `\n&aProfile: &e${fn(profileSecrets)} &8| &6${(profileSecrets / (normalComps + masterComps)).toFixed(2)} per run`
+                }
         
                 const extraComponents = [
                     new TextComponent(`&cMP: &e${fn(mp)}`).setHover("show_text", mpHover), columnSeparator,

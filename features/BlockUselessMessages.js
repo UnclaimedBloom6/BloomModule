@@ -20,7 +20,6 @@ const uselessMsgs = [
     /You cannot hit the silverfish while it's moving!/,
     /Your Kill Combo has expired! You reached a .+ Kill Combo!/,
     /Your active Potion Effects have been paused and stored. They will be restored when you leave Dungeons! You are not allowed to use existing Potion Effects while in Dungeons\./,
-    /.+ has obtained Blood Key!/,
     /The Flamethrower hit you for .+ damage!/,
     /.+ found a Wither Essence! Everyone gains an extra essence!/,
     /Ragnarok is ready to use! Press DROP to activate it!/,

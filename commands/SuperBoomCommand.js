@@ -4,7 +4,7 @@ register("command", (count) => {
     if (count) {
         const num = parseInt(count)
         if (isNaN(num)) return ChatLib.chat(`&c//superboom [amount]`)
-        ChatLib.command(`gfs ender_pearl ${num}`, false)
+        ChatLib.command(`gfs superboom_tnt ${num}`, false)
         return
     }
 

@@ -13,6 +13,7 @@ import { pbCommand } from "./commands/PBCommand"
 import "./commands/MiscCommands"
 import "./commands/EnderPearlCommand"
 import "./commands/SuperBoomCommand"
+import "./commands/SpiritLeapCommand"
 import "./commands/wikiCommand"
 import "./commands/DsCommand"
 

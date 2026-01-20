@@ -12,7 +12,7 @@ const tickChecker = register("tick", () => {
     else {
         trigger.unregister()
     }
-})
+}).unregister()
 
 if (Config.hideThirdPersonCrosshair) {
     tickChecker.register()
